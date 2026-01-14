@@ -73,11 +73,11 @@
     .btn:active{ transform: translateY(1px); }
     .btn-main{ border:2px solid rgba(255,0,0,.8); box-shadow: 0 0 18px rgba(255,0,0,.20); }
 
-    /* Floating icons */
-    .floatArea{ position:fixed; inset:0; pointer-events:none; z-index:3; }
-    .float{ position:absolute; width:52px; height:52px; opacity:.95; filter: drop-shadow(0 0 12px rgba(255,0,0,.18)); animation: drift 10s ease-in-out infinite; }
-    .float:nth-child(2){ animation-duration: 13s; opacity:.85; }
-    .float:nth-child(3){ animation-duration: 16s; opacity:.75; }
+    /* Story floating icons (solo story) */
+    .story-decor{ position:fixed; inset:0; pointer-events:none; z-index:3; }
+    .story-float{ position:absolute; width:52px; height:52px; opacity:.95; filter: drop-shadow(0 0 12px rgba(255,0,0,.18)); animation: drift 10s ease-in-out infinite; }
+    .story-float.s2{ animation-duration: 13s; opacity:.85; }
+    .story-float.s3{ animation-duration: 16s; opacity:.75; }
     @keyframes drift{
       0%,100%{ transform: translate(0,0) rotate(0deg); }
       50%{ transform: translate(10px,-18px) rotate(6deg); }
@@ -128,16 +128,16 @@
   </style>
 </head>
 
-<body>
+<body class="story-world">
   <div class="bg" id="bg"></div>
   <div class="noise"></div>
   <div class="vignette"></div>
 
-  <div class="floatArea">
-    <!-- Reemplaza estos PNG cuando los subas (si no existen verás ?) -->
-    <img class="float" src="img/dice.png" style="left:10%; top:18%;" alt="">
-    <img class="float" src="img/walkie.png" style="left:78%; top:22%;" alt="">
-    <img class="float" src="img/compass.png" style="left:18%; top:68%;" alt="">
+  <!-- Flotantes SOLO de la historia (si no tienes estos PNG verás ? hasta subirlos) -->
+  <div class="story-decor" aria-hidden="true">
+    <img class="story-float s1" src="img/dice.png" style="left:10%; top:18%;" alt="">
+    <img class="story-float s2" src="img/walkie.png" style="left:78%; top:22%;" alt="">
+    <img class="story-float s3" src="img/compass.png" style="left:18%; top:68%;" alt="">
   </div>
 
   <div class="hud">
@@ -161,15 +161,12 @@
     <a class="link" href="will.html?v=999">IR A WILL →</a>
   </div>
 
-  <!-- AUDIO (cambia ruta si lo guardaste en /audio/) -->
+  <!-- AUDIO (solo UNA vez) -->
   <audio id="bgMusic" loop>
     <source src="hub-music.mp3" type="audio/mpeg">
     <!-- Si tu archivo está en carpeta, usa: <source src="audio/hub-music.mp3" type="audio/mpeg"> -->
   </audio>
-<!-- MUSICA DE FONDO -->
-<audio id="bgMusic" loop>
-  <source src="hub-music.mp3" type="audio/mpeg">
-</audio>
+
   <script src="story.js?v=999"></script>
 </body>
 </html>
