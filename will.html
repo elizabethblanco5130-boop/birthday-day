@@ -39,7 +39,24 @@
   <div class="will-wall" id="wall"></div>
   <div class="will-hint" id="hint">Toca letras… o cambia al otro lado.</div>
 </main>
+<script>
+  const scene = document.getElementById("scene");
+  const btn = document.getElementById("switchBtn");
 
+  let upside = false;
+
+  btn.onclick = () => {
+    if (!upside) {
+      scene.src = "upside.jpg";
+      btn.textContent = "Return to Hawkins";
+      upside = true;
+    } else {
+      scene.src = "normal.jpg";
+      btn.textContent = "Enter the Upside Down";
+      upside = false;
+    }
+  };
+</script>
 <script src="will.js?v=400"></script>
 </body>
 </html>
