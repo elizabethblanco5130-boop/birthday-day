@@ -5,7 +5,7 @@
   --ink:#ffffff;
 }
 
-body, html{
+html, body{
   margin:0;
   padding:0;
   height:100%;
@@ -44,9 +44,10 @@ body, html{
   text-align:center;
 }
 
-/* STRANGER LOGO */
+/* STRANGER LOGO (3 layers superpuestas) */
 .st-logo{
   position:relative;
+  display:inline-block;
   margin:0;
   text-transform: uppercase;
   letter-spacing: .10em;
@@ -59,34 +60,45 @@ body, html{
   border-bottom: 2px solid rgba(255,0,0,.55);
   user-select:none;
 }
+
+/* cada capa ocupa EXACTAMENTE el mismo sitio */
 .logo-layer{
   display:block;
   text-align:center;
   white-space:pre-line;
 }
+
+/* capa base */
 .logo-layer.base{
   color: var(--red);
   text-shadow:
     0 0 10px rgba(255,0,0,.65),
     0 0 40px rgba(255,0,0,.18);
 }
+
+/* capas glitch encima (ABSOLUTE) */
 .logo-layer.cyan,
 .logo-layer.mag{
   position:absolute;
   left:0;
   top:0;
   width:100%;
+  height:100%;
   pointer-events:none;
   opacity:.65;
   mix-blend-mode: screen;
   filter: brightness(1.1);
 }
+
+/* glitch cyan (recorta parte superior) */
 .logo-layer.cyan{
   color: var(--cyan);
   transform: translate(2px,-1px);
   clip-path: inset(0 0 55% 0);
   animation: stGlitch1 2.2s infinite steps(1,end);
 }
+
+/* glitch magenta (recorta parte inferior) */
 .logo-layer.mag{
   color: var(--mag);
   transform: translate(-2px,1px);
