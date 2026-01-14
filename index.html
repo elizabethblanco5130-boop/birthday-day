@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Day</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Day // 02.02.2005</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,7 +12,34 @@
   <source src="background.mp4" type="video/mp4">
 </video>
 
-<h1>Day · 02.02.2005</h1>
+<!-- overlay -->
+<div class="overlay"></div>
 
+<header class="hud">
+  <div class="tag">DAY</div>
+  <div class="tag">CODE: <span id="code">????</span></div>
+  <div class="tag">❤ <span id="hearts">3</span></div>
+  <button class="tag btn-mini" id="btnAudio">SFX: ON</button>
+</header>
+
+<main class="app">
+  <section class="card">
+    <h1 class="glitch" data-text="STRANGER BIRTHDAY">STRANGER BIRTHDAY</h1>
+    <p class="sub">Hawkins, Indiana — something is wrong.</p>
+
+    <div class="type" id="text"></div>
+
+    <div class="row" id="choices"></div>
+
+    <hr>
+
+    <div class="inv">
+      <div class="inv-title">Inventory</div>
+      <div class="inv-items" id="inv">—</div>
+    </div>
+  </section>
+</main>
+
+<script src="app.js"></script>
 </body>
 </html>
