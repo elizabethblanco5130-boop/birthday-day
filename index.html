@@ -3,77 +3,186 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>Day // Stranger Birthday</title>
+  <title>Day // Hawkins Desktop</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="home">
+<body class="home-desktop">
 
+<!-- Fondo (tu video) -->
 <video autoplay muted loop playsinline id="bg">
   <source src="background.mp4" type="video/mp4">
 </video>
-<div class="overlay"></div>
 
-<main class="home-wrap">
-  <section class="panel">
-    <h1 class="title">STRANGER BIRTHDAY</h1>
-    <p class="subtitle">Para Day — versión Hawkins.</p>
+<div class="crt"></div>
 
-    <div class="menu">
-      <a class="btn" href="story.html">📼 Tu historia en Hawkins</a>
-      <a class="btn ghost" href="#facts">🧠 Facts de Stranger Things</a>
-      <a class="btn ghost" href="#playlist">🎧 Playlist para scrollear</a>
-      <a class="btn ghost" href="#gallery">🖼️ Galería / edits</a>
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <span class="badge">HAWKINS DESKTOP</span>
+    <span class="badge">USER: DAY</span>
+    <span class="badge">02/02/2005</span>
+  </div>
+  <div class="topbar-right">
+    <button class="mini-btn" id="btnSfx">SFX: ON</button>
+    <button class="mini-btn" id="btnHelp">?</button>
+  </div>
+</div>
+
+<!-- DESKTOP ICONS -->
+<div class="desktop">
+  <button class="icon" data-open="win-story">
+    <div class="icon-img">📼</div>
+    <div class="icon-label">Tu historia</div>
+  </button>
+
+  <button class="icon" data-open="win-facts">
+    <div class="icon-img">🧠</div>
+    <div class="icon-label">Facts</div>
+  </button>
+
+  <button class="icon" data-open="win-playlist">
+    <div class="icon-img">🎧</div>
+    <div class="icon-label">Playlist</div>
+  </button>
+
+  <button class="icon" data-open="win-gallery">
+    <div class="icon-img">🖼️</div>
+    <div class="icon-label">Edits</div>
+  </button>
+
+  <button class="icon secret" data-open="win-secret">
+    <div class="icon-img">🕳️</div>
+    <div class="icon-label">???</div>
+  </button>
+</div>
+
+<!-- WINDOWS -->
+<section class="win" id="win-story" aria-hidden="true">
+  <div class="win-bar" data-drag>
+    <span>📼 Tu historia en Hawkins</span>
+    <div class="win-actions">
+      <button class="win-btn" data-min>_</button>
+      <button class="win-btn" data-close>✕</button>
+    </div>
+  </div>
+  <div class="win-body">
+    <h2>Tu historia</h2>
+    <p class="muted">Modo juego: HUD, vidas, código, mini-juegos. (Todo en español + términos clave en inglés.)</p>
+    <a class="big-link" href="story.html">▶ ENTRAR A HAWKINS</a>
+    <p class="muted">Tip: hay easter eggs. Hawkins no es un menú… es una trampa.</p>
+  </div>
+</section>
+
+<section class="win" id="win-facts" aria-hidden="true">
+  <div class="win-bar" data-drag>
+    <span>🧠 Stranger Things — Facts</span>
+    <div class="win-actions">
+      <button class="win-btn" data-min>_</button>
+      <button class="win-btn" data-close>✕</button>
+    </div>
+  </div>
+  <div class="win-body">
+    <div class="tabs">
+      <button class="tab active" data-tab="tab1">Hawkins</button>
+      <button class="tab" data-tab="tab2">Upside Down</button>
+      <button class="tab" data-tab="tab3">Demogorgon</button>
     </div>
 
-    <p class="tiny">Tip: esto es un menú. La historia está en “Tu historia en Hawkins”.</p>
-  </section>
-
-  <section id="facts" class="panel">
-    <h2>Facts (rápidos)</h2>
-    <ul class="facts">
-      <li><b>Hawkins</b> no es “solo un pueblo”: es una trampa perfecta.</li>
-      <li><b>Upside Down</b> no es un lugar: es una infección.</li>
-      <li><b>Demogorgon</b> no caza por hambre… caza por costumbre.</li>
-      <li>Las luces parpadean cuando “algo” está cerca.</li>
-      <li>La fecha <b>02/02/2005</b> aquí no es cumpleaños: es código.</li>
-    </ul>
-
-    <a class="btn ghost" href="#">⬆️ Volver arriba</a>
-  </section>
-
-  <section id="playlist" class="panel">
-    <h2>Playlist</h2>
-    <p class="tiny">Aquí puedes poner su música favorita. Elige 1 opción:</p>
-
-    <div class="playlist-box">
-      <p><b>Opción A (Spotify embed):</b> pega aquí tu embed.</p>
-      <!-- Pega aquí el iframe de Spotify -->
-      <!--
-      <iframe style="border-radius:12px"
-        src="https://open.spotify.com/embed/playlist/TU_PLAYLIST"
-        width="100%" height="152" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
-      </iframe>
-      -->
-      <p class="tiny">Si no tienes playlist aún, déjalo así por ahora.</p>
+    <div class="tabpane active" id="tab1">
+      <ul>
+        <li><b>Hawkins</b> parece “normal” porque así es como te atrapa.</li>
+        <li>Las luces parpadean cuando algo se acerca.</li>
+        <li>Si escuchas “estática”, no es el TV… es señal.</li>
+      </ul>
     </div>
 
-    <a class="btn ghost" href="#">⬆️ Volver arriba</a>
-  </section>
+    <div class="tabpane" id="tab2">
+      <ul>
+        <li><b>Upside Down</b> no es “otro mundo cute”. Es invasión.</li>
+        <li>El aire se siente pesado, como si respiraras polvo viejo.</li>
+        <li>Las paredes no separan: solo disimulan.</li>
+      </ul>
+    </div>
 
-  <section id="gallery" class="panel">
-    <h2>Galería / Edits</h2>
-    <p class="tiny">Sube imágenes a tu repo y ponlas aquí.</p>
+    <div class="tabpane" id="tab3">
+      <ul>
+        <li><b>Demogorgon</b> caza por instinto, no por discusión.</li>
+        <li>Si ves flores raras… ya llegaste tarde.</li>
+        <li>La regla: no corras sin plan. (Pero igual corre.)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="win" id="win-playlist" aria-hidden="true">
+  <div class="win-bar" data-drag>
+    <span>🎧 Playlist</span>
+    <div class="win-actions">
+      <button class="win-btn" data-min>_</button>
+      <button class="win-btn" data-close>✕</button>
+    </div>
+  </div>
+  <div class="win-body">
+    <h2>Playlist para scrollear</h2>
+    <p class="muted">Aquí pegas un embed de Spotify o YouTube. (Queda pro y ya es interactivo.)</p>
+
+    <!-- PEGAS AQUÍ EL EMBED (ejemplo comentado) -->
+    <!--
+    <iframe style="border-radius:12px"
+      src="https://open.spotify.com/embed/playlist/TU_PLAYLIST"
+      width="100%" height="152" frameborder="0"
+      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
+    </iframe>
+    -->
+
+    <div class="placeholder">
+      Pega aquí tu embed (Spotify / YouTube).  
+      Si me dices qué usas, te lo dejo ya listo.
+    </div>
+  </div>
+</section>
+
+<section class="win" id="win-gallery" aria-hidden="true">
+  <div class="win-bar" data-drag>
+    <span>🖼️ Galería / Edits</span>
+    <div class="win-actions">
+      <button class="win-btn" data-min>_</button>
+      <button class="win-btn" data-close>✕</button>
+    </div>
+  </div>
+  <div class="win-body">
+    <h2>Edits</h2>
+    <p class="muted">Sube imágenes y reemplaza los cuadros por &lt;img src="img/tuimagen.jpg"&gt;.</p>
 
     <div class="grid">
-      <div class="imgph">IMG 1</div>
-      <div class="imgph">IMG 2</div>
-      <div class="imgph">IMG 3</div>
-      <div class="imgph">IMG 4</div>
+      <div class="imgbox">IMG 1</div>
+      <div class="imgbox">IMG 2</div>
+      <div class="imgbox">IMG 3</div>
+      <div class="imgbox">IMG 4</div>
     </div>
+  </div>
+</section>
 
-    <a class="btn ghost" href="#">⬆️ Volver arriba</a>
-  </section>
-</main>
+<section class="win" id="win-secret" aria-hidden="true">
+  <div class="win-bar" data-drag>
+    <span>🕳️ ???</span>
+    <div class="win-actions">
+      <button class="win-btn" data-min>_</button>
+      <button class="win-btn" data-close>✕</button>
+    </div>
+  </div>
+  <div class="win-body">
+    <h2>Acceso restringido</h2>
+    <p class="muted">Escribe <b>2005</b> en el teclado…</p>
+    <div class="placeholder">Si estás en móvil: toca 10 veces el logo “HAWKINS DESKTOP”.</div>
+  </div>
+</section>
 
+<!-- tiny SFX (optional, you can remove if you don’t want) -->
+<audio id="clickSfx" preload="auto">
+  <source src="click.mp3" type="audio/mpeg">
+</audio>
+
+<script src="home.js"></script>
 </body>
 </html>
