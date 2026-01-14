@@ -6,13 +6,21 @@ function getMusic(){
   return document.getElementById("bgMusic");
 }
 
+function updateMusicBtn(){
+  const btn = document.getElementById("musicBtn");
+  if(!btn) return;
+  btn.textContent = musicOn ? "MUSIC: ON" : "MUSIC: OFF";
+}
+
 function startMusic(){
   const music = getMusic();
   if(!music) return;
+
   if(!musicStarted){
     music.volume = 0.35;
     musicStarted = true;
   }
+
   music.play().catch(()=>{});
   musicOn = true;
   updateMusicBtn();
@@ -21,15 +29,10 @@ function startMusic(){
 function stopMusic(){
   const music = getMusic();
   if(!music) return;
+
   music.pause();
   musicOn = false;
   updateMusicBtn();
-}
-
-function updateMusicBtn(){
-  const btn = document.getElementById("musicBtn");
-  if(!btn) return;
-  btn.textContent = musicOn ? "MUSIC: ON" : "MUSIC: OFF";
 }
 
 // ===== Historia interactiva =====
@@ -218,6 +221,7 @@ const elMode = document.getElementById("mode");
 const elBg = document.getElementById("bg");
 const musicBtn = document.getElementById("musicBtn");
 
+// Chispas solo cuando presionan botones del juego o MUSIC
 function clickFx(x,y){
   const s = document.createElement("div");
   s.className = "spark";
@@ -226,8 +230,6 @@ function clickFx(x,y){
   document.body.appendChild(s);
   setTimeout(()=>s.remove(), 600);
 }
-
-document.addEventListener("click",(e)=>clickFx(e.clientX,e.clientY),{passive:true});
 
 function setMode(mode){
   state.mode = mode;
@@ -251,37 +253,49 @@ function escapeHtml(s){
     .replaceAll(">","&gt;");
 }
 
-function renderNode(id){
-  state.node = id;
-  const n = nodes[id];
-
-  // Resultado dinámico (mínimo 2 llaves)
-  if(id === "result"){
-    if(state.keys >= 2){
-      n.title = "PORTAL ABIERTO";
-      n.text = [
+function computeResultText(){
+  if(state.keys >= 2){
+    setMode("UPSIDE");
+    return {
+      title: "PORTAL ABIERTO",
+      text: [
         "💥 El portal se abre.",
         "El Upside Down te mira… pero no te consume.",
         "",
         "Ganas: un recuerdo secreto para Dayanara.",
         "Ahora puedes ir a Will y ver la carta."
-      ];
-      setMode("UPSIDE");
-    }else{
-      n.title = "PORTAL CERRADO";
-      n.text = [
+      ]
+    };
+  } else {
+    setMode("HAWKINS");
+    return {
+      title: "PORTAL CERRADO",
+      text: [
         "❌ No tienes suficientes llaves.",
         "El portal se cierra con un golpe.",
         "",
         "Consejo: explora más rutas (bosque/lab/arcade).",
         "Necesitas al menos 2 llaves 🗝️."
-      ];
-      setMode("HAWKINS");
-    }
+      ]
+    };
+  }
+}
+
+function renderNode(id){
+  state.node = id;
+  const n = nodes[id];
+
+  let title = n.title;
+  let textLines = n.text;
+
+  if(id === "result"){
+    const r = computeResultText();
+    title = r.title;
+    textLines = r.text;
   }
 
-  elTitle.textContent = n.title;
-  elText.innerHTML = n.text.map(l=>`<div>${escapeHtml(l)}</div>`).join("");
+  elTitle.textContent = title;
+  elText.innerHTML = textLines.map(l=>`<div>${escapeHtml(l)}</div>`).join("");
   elChoices.innerHTML = "";
 
   elHearts.textContent = state.hearts;
@@ -292,9 +306,10 @@ function renderNode(id){
     b.className = "btn" + (c.main ? " btn-main" : "");
     b.textContent = c.label;
 
-    b.addEventListener("click", ()=>{
-      // Música: empieza en el primer toque de un botón
+    b.addEventListener("click", (ev)=>{
+      // Música: comienza con el primer click real del juego
       if(!musicOn) startMusic();
+      clickFx(ev.clientX, ev.clientY);
 
       if(c.reset){
         state.hearts = 3;
@@ -320,13 +335,13 @@ function renderNode(id){
 
 // Botón de música ON/OFF
 if(musicBtn){
-  musicBtn.addEventListener("click", ()=>{
+  musicBtn.addEventListener("click", (ev)=>{
+    clickFx(ev.clientX, ev.clientY);
     if(!musicOn) startMusic();
     else stopMusic();
   });
 }
-updateMusicBtn();
 
-// start
+updateMusicBtn();
 setMode("HAWKINS");
 renderNode("start");
