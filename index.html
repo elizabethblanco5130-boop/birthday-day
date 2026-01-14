@@ -8,13 +8,15 @@
 </head>
 <body>
 
+<!-- VIDEO FONDO (ya lo tienes como background.mp4) -->
 <video autoplay muted loop playsinline id="bg">
   <source src="background.mp4" type="video/mp4">
 </video>
 
-<!-- overlay -->
+<!-- OSCURECE PARA QUE SE LEA EL TEXTO -->
 <div class="overlay"></div>
 
+<!-- HUD ARRIBA -->
 <header class="hud">
   <div class="tag">DAY</div>
   <div class="tag">CODE: <span id="code">????</span></div>
@@ -22,13 +24,13 @@
   <button class="tag btn-mini" id="btnAudio">SFX: ON</button>
 </header>
 
+<!-- APP (AQUÍ EL JS PONE LA HISTORIA Y BOTONES) -->
 <main class="app">
   <section class="card">
     <h1 class="glitch" data-text="STRANGER BIRTHDAY">STRANGER BIRTHDAY</h1>
     <p class="sub">Hawkins, Indiana — something is wrong.</p>
 
     <div class="type" id="text"></div>
-
     <div class="row" id="choices"></div>
 
     <hr>
@@ -40,6 +42,7 @@
   </section>
 </main>
 
+<!-- CONECTA TU JS -->
 <script src="app.js"></script>
 </body>
 </html>
