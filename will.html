@@ -4,45 +4,154 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>Will Wall</title>
+
   <style>
-    body { margin:0; background:#000; }
-    #scene{
-      width:100vw; height:100vh; object-fit:cover; display:block;
+    body{ margin:0; background:#000; overflow:hidden; font-family: system-ui, -apple-system, Arial; }
+
+    /* Contenedor de escenas */
+    .wrap{ position:fixed; inset:0; }
+
+    /* Imágenes (dos capas) */
+    .scene{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      object-fit:cover;
+      opacity:0;
+      transition: opacity 1.6s ease; /* lento */
+      filter: none;
     }
-    #flipBtn{
+    .scene.active{ opacity:1; }
+
+    /* Oscurecer un poco para vibe */
+    .vignette{
+      position:absolute; inset:0;
+      background: radial-gradient(ellipse at center, rgba(0,0,0,.15), rgba(0,0,0,.78));
+      pointer-events:none;
+    }
+
+    /* Botones */
+    .controls{
       position:fixed;
-      bottom:40px;
-      left:50%;
-      transform:translateX(-50%);
-      padding:14px 22px;
-      border:2px solid red;
-      background:black;
-      color:white;
-      font-size:16px;
-      border-radius:14px;
+      left:14px; right:14px; bottom:18px;
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
       z-index:9999;
+    }
+
+    .btn{
+      padding:12px 16px;
+      border-radius:14px;
+      border:1px solid rgba(255,0,0,.6);
+      background: rgba(0,0,0,.65);
+      color:#fff;
+      font-size:14px;
+      letter-spacing:.08em;
+      text-transform: uppercase;
+      backdrop-filter: blur(6px);
+    }
+
+    .btn-main{
+      flex:1;
+      text-align:center;
+      border:2px solid rgba(255,0,0,.75);
+      box-shadow: 0 0 22px rgba(255,0,0,.18);
+    }
+
+    /* Glitch flash al cruzar */
+    .glitch{
+      animation: glitch 420ms linear;
+    }
+    @keyframes glitch{
+      0%{ filter: none; transform:none; }
+      20%{ filter: drop-shadow(2px 0 red) drop-shadow(-2px 0 cyan) contrast(1.1); transform: translate(1px,0); }
+      40%{ filter: drop-shadow(-3px 0 red) drop-shadow(3px 0 cyan) contrast(1.2); transform: translate(-1px,1px); }
+      60%{ filter: drop-shadow(2px 0 red) drop-shadow(-2px 0 cyan) contrast(1.1); transform: translate(0,-1px); }
+      100%{ filter:none; transform:none; }
+    }
+
+    /* Texto arriba */
+    .top{
+      position:fixed;
+      top:14px; left:14px; right:14px;
+      display:flex; justify-content:space-between; align-items:center;
+      z-index:9999;
+      gap:10px;
+    }
+    .title{
+      font-weight:800;
+      letter-spacing:.18em;
+      text-shadow:0 0 16px rgba(255,0,0,.25);
+      color:#fff;
+      opacity:.9;
+    }
+    .tag{
+      font-size:12px;
+      opacity:.75;
     }
   </style>
 </head>
 
 <body>
-  <!-- SOLO LA IMAGEN -->
-  <img id="scene" src="normal.jpg" alt="Will (normal)">
 
-  <!-- SOLO UN BOTÓN -->
-  <button id="flipBtn">Enter the Upside Down</button>
+  <div class="top">
+    <div class="title">WILL’S WALL</div>
+    <div class="tag" id="modeTag">MODO: HAWKINS</div>
+  </div>
 
-  <!-- SOLO UN SCRIPT -->
+  <div class="wrap" id="wrap">
+    <!-- Normal -->
+    <img id="sceneNormal" class="scene active" src="normal.jpg" alt="Hawkins">
+
+    <!-- Upside -->
+    <img id="sceneUpside" class="scene" src="upside.jpg" alt="Upside Down">
+
+    <div class="vignette"></div>
+  </div>
+
+  <div class="controls">
+    <!-- volver -->
+    <a class="btn" href="hub.html">← HUB</a>
+
+    <!-- cruzar -->
+    <button class="btn btn-main" id="flipBtn">CRUZAR AL OTRO LADO</button>
+  </div>
+
   <script>
-    const scene = document.getElementById("scene");
-    const btn = document.getElementById("flipBtn");
-    let upside = false;
+    const normal = document.getElementById("sceneNormal");
+    const upside = document.getElementById("sceneUpside");
+    const flipBtn = document.getElementById("flipBtn");
+    const modeTag = document.getElementById("modeTag");
+    const wrap = document.getElementById("wrap");
 
-    btn.addEventListener("click", () => {
-      upside = !upside;
-      scene.src = upside ? "upside.jpg" : "normal.jpg";
-      btn.textContent = upside ? "Return to Hawkins" : "Enter the Upside Down";
+    let isUpside = false;
+
+    function glitchFlash(){
+      wrap.classList.remove("glitch");
+      void wrap.offsetWidth; // reinicia animación
+      wrap.classList.add("glitch");
+      setTimeout(()=>wrap.classList.remove("glitch"), 450);
+    }
+
+    flipBtn.addEventListener("click", () => {
+      glitchFlash();
+
+      // cambio lento (fade)
+      isUpside = !isUpside;
+
+      if(isUpside){
+        normal.classList.remove("active");
+        upside.classList.add("active");
+        flipBtn.textContent = "VOLVER A HAWKINS";
+        modeTag.textContent = "MODO: UPSIDE DOWN";
+      }else{
+        upside.classList.remove("active");
+        normal.classList.add("active");
+        flipBtn.textContent = "CRUZAR AL OTRO LADO";
+        modeTag.textContent = "MODO: HAWKINS";
+      }
     });
   </script>
+
 </body>
 </html>
