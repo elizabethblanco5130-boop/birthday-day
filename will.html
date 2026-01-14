@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Will Lights</title>
+  <link rel="stylesheet" href="style.css?v=300">
+</head>
+<body class="will normal">
+
+<!-- Fondo (imagen si la subes; si no, igual funciona) -->
+<div class="will-bg"></div>
+<div class="will-vignette"></div>
+
+<header class="will-top">
+  <a class="will-back" href="hub.html">← HUB</a>
+  <div class="will-title">WILL’S WALL</div>
+  <button class="will-btn" id="flipBtn">ENTER THE UPSIDE DOWN</button>
+</header>
+
+<main class="will-wrap">
+
+  <!-- Guía -->
+  <div class="will-note">
+    Toca letras para “encender” luces.  
+    <span class="muted">Tip: prueba tocar varias rápido.</span>
+  </div>
+
+  <!-- Luces encima -->
+  <div class="lights" id="lights"></div>
+
+  <!-- Muro con letras -->
+  <section class="wall" id="wall">
+    <!-- El JS genera letras aquí -->
+  </section>
+
+  <div class="will-sub">
+    <span id="modeLabel">Modo: NORMAL</span>
+  </div>
+
+</main>
+
+<script src="will.js?v=300"></script>
+</body>
+</html>
