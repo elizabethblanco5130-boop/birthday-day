@@ -18,7 +18,7 @@
     /* HUD */
     .hud{ position:fixed; top:14px; left:14px; right:14px; display:flex; gap:10px; justify-content:space-between; align-items:center; z-index:10; }
     .hud .title{ font-weight:900; letter-spacing:.16em; text-shadow:0 0 18px rgba(255,0,0,.25); }
-    .hud .stats{ display:flex; gap:10px; font-size:12px; opacity:.85; }
+    .hud .stats{ display:flex; gap:10px; font-size:12px; opacity:.85; flex-wrap:wrap; justify-content:flex-end; }
     .chip{ border:1px solid rgba(255,0,0,.5); background:rgba(0,0,0,.45); padding:8px 10px; border-radius:14px; backdrop-filter: blur(6px); }
 
     /* Card */
@@ -70,7 +70,6 @@
       font-family:'Press Start 2P', monospace;
       font-size:11px;
     }
-    .btn:hover{ transform: translateY(-1px); }
     .btn:active{ transform: translateY(1px); }
     .btn-main{ border:2px solid rgba(255,0,0,.8); box-shadow: 0 0 18px rgba(255,0,0,.20); }
 
@@ -96,14 +95,15 @@
       z-index:9999;
     }
     @keyframes pop{
-      from{ transform: scale(.6); opacity:1; }
-      to{ transform: scale(3.2); opacity:0; }
+      from{ transform: translate(-50%,-50%) scale(.6); opacity:1; }
+      to{ transform: translate(-50%,-50%) scale(3.2); opacity:0; }
     }
 
     /* Bottom bar */
     .bottom{
       position:fixed; left:14px; right:14px; bottom:14px;
       display:flex; gap:10px; z-index:10;
+      flex-wrap:wrap;
     }
     .link{
       flex:1;
@@ -117,6 +117,7 @@
       font-size:11px;
       letter-spacing:.06em;
       text-transform:uppercase;
+      min-width: 150px;
     }
 
     @media (max-width:420px){
@@ -133,7 +134,7 @@
   <div class="vignette"></div>
 
   <div class="floatArea">
-    <!-- puedes reemplazar estos PNG cuando los subas -->
+    <!-- Reemplaza estos PNG cuando los subas (si no existen verás ?) -->
     <img class="float" src="img/dice.png" style="left:10%; top:18%;" alt="">
     <img class="float" src="img/walkie.png" style="left:78%; top:22%;" alt="">
     <img class="float" src="img/compass.png" style="left:18%; top:68%;" alt="">
@@ -145,6 +146,7 @@
       <div class="chip">❤️ <span id="hearts">3</span></div>
       <div class="chip">🗝️ <span id="keys">0</span></div>
       <div class="chip">MODO: <span id="mode">HAWKINS</span></div>
+      <button class="chip" id="musicBtn" type="button">MUSIC: OFF</button>
     </div>
   </div>
 
@@ -158,9 +160,13 @@
     <a class="link" href="hub.html?v=999">← HUB</a>
     <a class="link" href="will.html?v=999">IR A WILL →</a>
   </div>
-<audio id="bgMusic" loop>
-  <source src="hub-music.mp3" type="audio/mpeg">
-</audio>
+
+  <!-- AUDIO (cambia ruta si lo guardaste en /audio/) -->
+  <audio id="bgMusic" loop>
+    <source src="hub-music.mp3" type="audio/mpeg">
+    <!-- Si tu archivo está en carpeta, usa: <source src="audio/hub-music.mp3" type="audio/mpeg"> -->
+  </audio>
+
   <script src="story.js?v=999"></script>
 </body>
 </html>
