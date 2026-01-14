@@ -875,3 +875,37 @@ body.upside .lights span {
   background: rgba(0,0,0,.45);
   opacity:.9;
 }
+/* ===== cake.html scenes switch ===== */
+.scene-container{
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+
+.scene{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+
+.scene.active{
+  opacity: 1;
+}
+
+.switch-btn{
+  position: fixed;
+  left: 50%;
+  bottom: 26px;
+  transform: translateX(-50%);
+  z-index: 10;
+
+  padding: 14px 22px;
+  background: rgba(0,0,0,.65);
+  color: #fff;
+  border: 1px solid rgba(255,0,0,.6);
+  border-radius: 14px;
+}
