@@ -24,3 +24,11 @@ setInterval(() => {
   title.classList.add("glitch-shift");
   setTimeout(()=>title.classList.remove("glitch-shift"), 150);
 }, 2600);
+// Start background music on first user interaction
+document.addEventListener("click", () => {
+  const bgm = document.getElementById("bgm");
+  if (bgm && bgm.paused) {
+    bgm.volume = 0.5;
+    bgm.play();
+  }
+}, { once: true });
