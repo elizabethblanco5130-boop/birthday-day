@@ -4,42 +4,45 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>Will Wall</title>
-  <link rel="stylesheet" href="style.css?v=400">
-</head>
-<body class="will-page normal">
-<img
-  id="scene"
-  src="normal.jpg"
-  alt="Casa de Will"
-  style="width:100%; height:100vh; object-fit:cover;"
->
-<header class="will-top">
-  <a class="will-back" href="hub.html">← HUB</a>
-  <div class="will-title">WILL’S WALL</div>
-  <button class="will-btn" id="flipBtn">CRUZAR AL OTRO LADO</button>
-</header>
-
-<main class="will-stage" id="stage">
-  <div class="will-wall" id="wall"></div>
-  <div class="will-hint" id="hint">Toca letras… o cambia al otro lado.</div>
-</main>
-<script>
-  const scene = document.getElementById("scene");
-  const btn = document.getElementById("flipBtn");
-
-  let upside = false;
-
-  btn.onclick = () => {
-    if (!upside) {
-      scene.src = "upside.jpg";
-      btn.textContent = "Return to Hawkins";
-      upside = true;
-    } else {
-      scene.src = "normal.jpg";
-      btn.textContent = "Enter the Upside Down";
-      upside = false;
+  <style>
+    body { margin:0; background:#000; }
+    #scene{
+      width:100vw; height:100vh; object-fit:cover; display:block;
     }
-  };
-</script>
+    #flipBtn{
+      position:fixed;
+      bottom:40px;
+      left:50%;
+      transform:translateX(-50%);
+      padding:14px 22px;
+      border:2px solid red;
+      background:black;
+      color:white;
+      font-size:16px;
+      border-radius:14px;
+      z-index:9999;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- SOLO LA IMAGEN -->
+  <img id="scene" src="normal.jpg" alt="Will (normal)">
+
+  <!-- SOLO UN BOTÓN -->
+  <button id="flipBtn">Enter the Upside Down</button>
+
+  <!-- SOLO UN SCRIPT -->
+  <script>
+    const scene = document.getElementById("scene");
+    const btn = document.getElementById("flipBtn");
+    let upside = false;
+
+    btn.addEventListener("click", () => {
+      upside = !upside;
+      scene.src = upside ? "upside.jpg" : "normal.jpg";
+      btn.textContent = upside ? "Return to Hawkins" : "Enter the Upside Down";
+    });
+  </script>
 </body>
 </html>
