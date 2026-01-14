@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday — Hawkins</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body class="room normal">
+
+<div class="room-bg normal-bg"></div>
+<div class="room-bg upside-bg"></div>
+
+<div class="lights">
+  <span>H</span><span>A</span><span>P</span><span>P</span><span>Y</span>
+  <br>
+  <span>B</span><span>I</span><span>R</span><span>T</span><span>H</span><span>D</span><span>A</span><span>Y</span>
+  <br>
+  <span>D</span><span>A</span><span>Y</span>
+</div>
+
+<button id="switchWorld">Enter the Upside Down</button>
+
+<script>
+const btn = document.getElementById('switchWorld');
+const body = document.body;
+
+btn.addEventListener('click', () => {
+  body.classList.toggle('upside');
+});
+</script>
+
+</body>
+</html>
