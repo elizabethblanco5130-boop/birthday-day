@@ -21,3 +21,85 @@ h1 {
   font-size: 40px;
   text-shadow: 0 0 10px black;
 }
+/* overlay to make text readable */
+.overlay{
+  position:fixed; inset:0;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,.25), rgba(0,0,0,.75));
+  z-index:-1;
+}
+
+.app{ height:100vh; display:grid; place-items:center; padding:20px; }
+
+.card{
+  width:min(900px, 95vw);
+  background: rgba(0,0,0,.55);
+  border: 1px solid rgba(255,42,42,.45);
+  padding: 18px;
+  box-shadow: 0 0 40px rgba(255,42,42,.12);
+}
+
+.hud{
+  position:fixed; top:10px; left:10px; right:10px;
+  display:flex; gap:10px; flex-wrap:wrap; z-index:5;
+}
+
+.tag{
+  color:white;
+  background: rgba(0,0,0,.45);
+  border: 1px solid rgba(255,255,255,.2);
+  padding: 6px 10px;
+  font-size:18px;
+}
+
+.btn-mini{ cursor:pointer; }
+
+.sub{ color:#ffd3d3; font-size:20px; margin:8px 0 12px; }
+
+.type{
+  color:white;
+  font-size:22px;
+  line-height:1.25;
+  min-height:90px;
+  white-space:pre-wrap;
+}
+
+.row{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+.choice{
+  padding:10px 14px;
+  border: 1px solid rgba(255,42,42,.85);
+  background: rgba(255,42,42,.10);
+  color:white;
+  font-size:20px;
+  cursor:pointer;
+}
+.choice:hover{ background: rgba(255,42,42,.20); }
+
+.inv{ margin-top:10px; }
+.inv-title{ opacity:.8; margin-bottom:6px; }
+.inv-items{ opacity:.95; }
+
+/* glitch title */
+.glitch{
+  position:relative;
+  font-size:52px;
+  color:#ff2a2a;
+  margin:0;
+}
+.glitch::before,.glitch::after{
+  content:attr(data-text);
+  position:absolute; left:0; top:0; width:100%;
+}
+.glitch::before{
+  transform:translate(2px,-1px);
+  color:#33fff2; opacity:.65;
+  clip-path: inset(0 0 65% 0);
+  animation: g1 1.2s infinite linear;
+}
+.glitch::after{
+  transform:translate(-2px,1px);
+  color:#ff78c6; opacity:.55;
+  clip-path: inset(55% 0 0 0);
+  animation: g2 .9s infinite linear;
+}
+@keyframes g1{0%{clip-path: inset(0 0 70% 0)}50%{clip-path: inset(10% 0 55% 0)}100%{clip-path: inset(0 0 70% 0)}}
+@keyframes g2{0%{clip-path: inset(60% 0 0 0)}50%{clip-path: inset(45% 0 10% 0)}100%{clip-path: inset(60% 0 0 0)}}
