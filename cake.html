@@ -1,61 +1,144 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Happy Birthday — Hawkins</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Cake Portal</title>
+
+  <style>
+    body{ margin:0; background:#000; overflow:hidden; font-family: system-ui, -apple-system, Arial; }
+
+    .wrap{ position:fixed; inset:0; }
+
+    .scene{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      object-fit:cover;
+      opacity:0;
+      transition: opacity 1.4s ease;
+    }
+    .scene.active{ opacity:1; }
+
+    .vignette{
+      position:absolute; inset:0;
+      background: radial-gradient(ellipse at center, rgba(0,0,0,.12), rgba(0,0,0,.82));
+      pointer-events:none;
+    }
+
+    .glitch{ animation: glitch 420ms linear; }
+    @keyframes glitch{
+      0%{ filter:none; transform:none; }
+      20%{ filter: drop-shadow(2px 0 red) drop-shadow(-2px 0 cyan) contrast(1.1); transform: translate(1px,0); }
+      40%{ filter: drop-shadow(-3px 0 red) drop-shadow(3px 0 cyan) contrast(1.2); transform: translate(-1px,1px); }
+      60%{ filter: drop-shadow(2px 0 red) drop-shadow(-2px 0 cyan) contrast(1.1); transform: translate(0,-1px); }
+      100%{ filter:none; transform:none; }
+    }
+
+    .top{
+      position:fixed;
+      top:14px; left:14px; right:14px;
+      display:flex; justify-content:space-between; align-items:center;
+      z-index:9999;
+      gap:10px;
+      pointer-events:none;
+    }
+    .title{
+      font-weight:800;
+      letter-spacing:.18em;
+      color:#fff;
+      opacity:.92;
+      text-shadow:0 0 16px rgba(255,0,0,.25);
+    }
+    .tag{
+      font-size:12px;
+      opacity:.75;
+      color:#fff;
+    }
+
+    .controls{
+      position:fixed;
+      left:14px; right:14px; bottom:18px;
+      display:flex;
+      gap:12px;
+      z-index:9999;
+    }
+
+    .btn{
+      padding:12px 16px;
+      border-radius:14px;
+      border:1px solid rgba(255,0,0,.6);
+      background: rgba(0,0,0,.65);
+      color:#fff;
+      font-size:14px;
+      letter-spacing:.08em;
+      text-transform: uppercase;
+      backdrop-filter: blur(6px);
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      flex:1;
+    }
+
+    .btn-main{
+      border:2px solid rgba(255,0,0,.75);
+      box-shadow: 0 0 22px rgba(255,0,0,.18);
+    }
+  </style>
 </head>
 
-<body class="room normal">
-<div class="scene-container">
-  <img id="sceneNormal" class="scene active" src="normal.jpg" alt="Normal">
-  <img id="sceneUpside" class="scene" src="upside.jpg" alt="Upside Down">
-</div>
+<body>
 
-<button id="switchBtn" class="switch-btn">Enter the Upside Down</button>
+  <div class="top">
+    <div class="title">CAKE PORTAL</div>
+    <div class="tag" id="modeTag">MODO: HAWKINS</div>
+  </div>
 
-<script>
-  const btn = document.getElementById("switchBtn");
-  const normal = document.getElementById("sceneNormal");
-  const upside = document.getElementById("sceneUpside");
-  let isUpside = false;
+  <div class="wrap" id="wrap">
+    <img id="sceneNormal" class="scene active" src="normal.jpg" alt="Hawkins">
+    <img id="sceneUpside" class="scene" src="upside.jpg" alt="Upside Down">
+    <div class="vignette"></div>
+  </div>
 
-  btn.addEventListener("click", () => {
-    isUpside = !isUpside;
+  <div class="controls">
+    <a class="btn" href="hub.html?v=999">← HUB</a>
+    <button class="btn btn-main" id="flipBtn" type="button">ABRIR PORTAL</button>
+    <a class="btn" href="will.html?v=999">IR A WILL →</a>
+  </div>
 
-    if (isUpside) {
-      normal.classList.remove("active");
-      upside.classList.add("active");
-      btn.textContent = "Volver a Hawkins";
-    } else {
-      upside.classList.remove("active");
-      normal.classList.add("active");
-      btn.textContent = "Enter the Upside Down";
+  <script>
+    const normal = document.getElementById("sceneNormal");
+    const upside = document.getElementById("sceneUpside");
+    const flipBtn = document.getElementById("flipBtn");
+    const modeTag = document.getElementById("modeTag");
+    const wrap = document.getElementById("wrap");
+
+    let isUpside = false;
+
+    function glitchFlash(){
+      wrap.classList.remove("glitch");
+      void wrap.offsetWidth;
+      wrap.classList.add("glitch");
+      setTimeout(()=>wrap.classList.remove("glitch"), 450);
     }
-  });
-</script>
-<div class="room-bg normal-bg"></div>
-<div class="room-bg upside-bg"></div>
 
-<div class="lights">
-  <span>H</span><span>A</span><span>P</span><span>P</span><span>Y</span>
-  <br>
-  <span>B</span><span>I</span><span>R</span><span>T</span><span>H</span><span>D</span><span>A</span><span>Y</span>
-  <br>
-  <span>D</span><span>A</span><span>Y</span>
-</div>
+    flipBtn.addEventListener("click", () => {
+      glitchFlash();
+      isUpside = !isUpside;
 
-<button id="switchWorld">Enter the Upside Down</button>
-
-<script>
-const btn = document.getElementById('switchWorld');
-const body = document.body;
-
-btn.addEventListener('click', () => {
-  body.classList.toggle('upside');
-});
-</script>
+      if(isUpside){
+        normal.classList.remove("active");
+        upside.classList.add("active");
+        modeTag.textContent = "MODO: UPSIDE DOWN";
+        flipBtn.textContent = "CERRAR PORTAL";
+      } else {
+        upside.classList.remove("active");
+        normal.classList.add("active");
+        modeTag.textContent = "MODO: HAWKINS";
+        flipBtn.textContent = "ABRIR PORTAL";
+      }
+    });
+  </script>
 
 </body>
 </html>
