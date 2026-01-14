@@ -208,3 +208,141 @@ html, body{
   font-size: 13px;
   margin-top: 10px;
 }
+/* ===== HUB: Stranger Neocities vibe ===== */
+.hub-world { overflow:hidden; }
+.hub-vignette{
+  position:fixed; inset:0;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,.15), rgba(0,0,0,.82));
+  z-index:-1;
+}
+
+/* Top bar */
+.hub-top{
+  position:fixed; top:14px; left:14px; right:14px;
+  display:flex; align-items:center; justify-content:space-between;
+  z-index:50;
+  gap:10px;
+}
+.hub-back{
+  width:42px; height:42px;
+  display:grid; place-items:center;
+  text-decoration:none;
+  color:#fff;
+  border:1px solid rgba(255,255,255,.22);
+  background: rgba(0,0,0,.45);
+  border-radius:12px;
+}
+.hub-title{
+  font-weight:800;
+  letter-spacing:.18em;
+  color:#ff1b1b;
+  text-shadow:0 0 14px rgba(255,0,0,.35);
+}
+.hub-worldbtn{
+  padding:10px 12px;
+  border:1px solid rgba(255,255,255,.22);
+  background: rgba(0,0,0,.45);
+  color:#fff;
+  border-radius:12px;
+}
+
+/* Stage */
+.hub-stage{
+  position:relative;
+  height:100vh;
+  padding:80px 14px 14px;
+}
+
+/* Icon cards */
+.hub-icon{
+  position:absolute;
+  width:120px;
+  display:grid;
+  gap:8px;
+  justify-items:center;
+  text-decoration:none;
+  color:#fff;
+  background: rgba(0,0,0,.35);
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:18px;
+  padding:12px 10px;
+  backdrop-filter: blur(2px);
+}
+.hub-icon img{
+  width:42px; height:42px;
+  object-fit:contain;
+  filter: drop-shadow(0 0 10px rgba(255,0,0,.18));
+}
+.hub-icon span{ font-size:14px; opacity:.9; }
+
+.hub-icon:hover{
+  border-color: rgba(255,0,0,.55);
+  box-shadow:0 0 22px rgba(255,0,0,.18);
+  transform: translateY(-2px) scale(1.02);
+}
+
+/* Position icons (feel free to move) */
+.float1{ left:18px; top:120px; animation: floaty 3.8s ease-in-out infinite; }
+.float2{ right:18px; top:150px; animation: floaty 4.4s ease-in-out infinite; }
+.float3{ left:22px; bottom:120px; animation: floaty 4.9s ease-in-out infinite; }
+.float4{ right:22px; bottom:140px; animation: floaty 3.6s ease-in-out infinite; }
+.float5{ left:50%; top:52%; transform: translateX(-50%); animation: floaty 4.2s ease-in-out infinite; }
+
+@keyframes floaty{
+  0%,100%{ transform: translateY(0); }
+  50%{ transform: translateY(-10px); }
+}
+
+/* Hint */
+.hub-hint{
+  position:fixed;
+  left:14px; right:14px;
+  bottom:14px;
+  padding:12px;
+  background: rgba(0,0,0,.45);
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:16px;
+  opacity:.85;
+  z-index:40;
+}
+
+/* Worlds */
+.hub-world.normal #bg{ filter: contrast(1.05) saturate(1.05); }
+.hub-world.upside #bg{
+  filter: hue-rotate(160deg) contrast(1.25) saturate(0.85) brightness(0.85);
+  transform: scale(1.02) rotate(180deg);
+}
+.hub-world.will #bg{
+  filter: contrast(1.2) saturate(1.1) brightness(0.9);
+}
+
+/* Sparks */
+.spark{
+  position:absolute;
+  width:10px; height:10px;
+  border-radius:50%;
+  pointer-events:none;
+  transform: translate(-50%,-50%);
+  animation: popOut forwards;
+}
+
+.spark.ink{
+  background: rgba(160,255,240,.9);
+  box-shadow: 0 0 14px rgba(51,255,242,.55);
+}
+.spark.ash{
+  background: rgba(255,255,255,.75);
+  box-shadow: 0 0 12px rgba(255,255,255,.25);
+}
+.spark.light{
+  background: rgba(255,40,40,.9);
+  box-shadow: 0 0 18px rgba(255,0,0,.45);
+}
+
+@keyframes popOut{
+  from{ opacity:1; transform: translate(-50%,-50%) scale(1); }
+  to{
+    opacity:0;
+    transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.2);
+  }
+}
