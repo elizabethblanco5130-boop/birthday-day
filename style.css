@@ -921,3 +921,40 @@ body.upside .lights span {
   font-size: 16px;
   z-index: 10;
 }
+/* Texto tipo luces / arcade */
+.letter{
+  position: fixed;
+  left: 50%;
+  bottom: 90px;
+  transform: translateX(-50%);
+  width: min(90%, 720px);
+  text-align: center;
+  z-index: 9000;
+  pointer-events: none;
+}
+
+.letter p{
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  line-height: 1.9;
+  color: #ffe38a;
+  text-shadow:
+    0 0 6px rgba(255,200,80,.6),
+    0 0 14px rgba(255,120,0,.4);
+  animation: flicker 3.5s infinite;
+}
+
+.letter span{
+  color:#ff5555;
+  text-shadow:
+    0 0 8px rgba(255,0,0,.9),
+    0 0 16px rgba(255,0,0,.6);
+}
+
+/* parpadeo suave */
+@keyframes flicker{
+  0%,100%{opacity:1}
+  45%{opacity:.85}
+  48%{opacity:.6}
+  52%{opacity:1}
+}
