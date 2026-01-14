@@ -4,26 +4,38 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>STRANGER BIRTHDAY // Day</title>
+
+  <!-- Fuente vibe Stranger -->
+  <link href="https://fonts.cdnfonts.com/css/benguiat" rel="stylesheet">
+
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="landing">
 
+<!-- Video fondo -->
 <video autoplay muted loop playsinline id="bg">
   <source src="background.mp4" type="video/mp4">
 </video>
+
+<!-- Oscurece para lectura -->
 <div class="landing-vignette"></div>
 
 <main class="landing-center">
-  <h1 class="st-title" id="stTitle">
-    <span>STRANGER</span>
-    <span>BIRTHDAY</span>
+
+  <!-- LOGO Stranger + glitch colores -->
+  <h1 class="st-logo" id="stTitle" aria-label="Stranger Birthday">
+    <span class="logo-layer base">STRANGER<br>BIRTHDAY</span>
+    <span class="logo-layer cyan" aria-hidden="true">STRANGER<br>BIRTHDAY</span>
+    <span class="logo-layer mag" aria-hidden="true">STRANGER<br>BIRTHDAY</span>
   </h1>
 
   <p class="landing-sub">Para Day — 02/02/2005. Hawkins te está mirando.</p>
 
+  <!-- Botón principal -->
   <div class="landing-panel">
     <a class="landing-btn primary" href="hub.html">✦ ENTER ✦</a>
 
+    <!-- accesos rápidos -->
     <div class="landing-links">
       <a href="story.html">Tu historia en Hawkins</a>
       <a href="playlist.html">Playlist</a>
@@ -32,15 +44,30 @@
     </div>
   </div>
 
+  <!-- ICONOS PNG -->
   <div class="st-icons">
-    <a class="icon-btn" href="story.html" title="Hawkins Story">📼</a>
-    <a class="icon-btn" href="facts.html" title="Facts">🎄</a>
-    <a class="icon-btn" href="playlist.html" title="Mixtape">📻</a>
-    <a class="icon-btn" href="gallery.html" title="Photos">🕳️</a>
-    <a class="icon-btn" href="hub.html" title="Mapa">🗺️</a>
+    <a class="icon-btn" href="story.html" title="Tu historia">
+      <img src="img/tape.png" alt="Tape">
+    </a>
+
+    <a class="icon-btn" href="facts.html" title="Facts">
+      <img src="img/lights.png" alt="Lights">
+    </a>
+
+    <a class="icon-btn" href="playlist.html" title="Playlist">
+      <img src="img/radio.png" alt="Radio">
+    </a>
+
+    <a class="icon-btn" href="gallery.html" title="Edits">
+      <img src="img/portal.png" alt="Portal">
+    </a>
+
+    <a class="icon-btn" href="hub.html" title="Mapa">
+      <img src="img/map.png" alt="Map">
+    </a>
   </div>
 
-  <p class="tiny-note">Tip: toca el título 7 veces para un easter egg.</p>
+  <p class="tiny-note">Tip: toca el logo 7 veces para un easter egg.</p>
 </main>
 
 <script src="landing.js"></script>
