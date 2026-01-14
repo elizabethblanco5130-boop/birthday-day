@@ -1,96 +1,87 @@
 const wall = document.getElementById("wall");
-const lights = document.getElementById("lights");
 const flipBtn = document.getElementById("flipBtn");
-const modeLabel = document.getElementById("modeLabel");
-
-let isUpside = false;
+const hint = document.getElementById("hint");
 
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+let upside = false;
 
-function buildLights(){
-  lights.innerHTML = "";
-  // 26 “bombillitos”
-  alphabet.forEach((_, i) => {
-    const b = document.createElement("span");
-    b.className = "bulb";
-    b.style.setProperty("--i", i);
-    lights.appendChild(b);
-  });
-}
+// Mapa de “luces” que se prenden en modo Upside Down para formar el mensaje
+const message = "HAPPY BIRTHDAY DAY";
 
-function buildWallNormal(){
+// Construye la pared A–Z (como en la serie)
+function buildAlphabetWall(){
   wall.innerHTML = "";
-  alphabet.forEach((ch, i) => {
-    const btn = document.createElement("button");
-    btn.className = "letter";
-    btn.textContent = ch;
-    btn.dataset.i = i;
-    btn.addEventListener("click", () => popLight(i, "normal"));
-    wall.appendChild(btn);
+
+  alphabet.forEach((ch) => {
+    const b = document.createElement("button");
+    b.className = "wl-letter";
+    b.textContent = ch;
+    b.dataset.letter = ch;
+
+    b.addEventListener("click", () => {
+      // En normal: parpadea lindo
+      if(!upside){
+        flash(b);
+        hint.textContent = `La pared escucha… (${ch})`;
+      } else {
+        // En upside: chispas + glow raro
+        flashUpside(b);
+        hint.textContent = `El Upside Down responde… (${ch})`;
+      }
+    });
+
+    wall.appendChild(b);
   });
 }
 
-function buildWallUpside(){
-  wall.innerHTML = "";
-  const msg = "HAPPY BIRTHDAY DAY";
-  // convertimos a “tiles”
-  msg.split("").forEach((ch, idx) => {
-    const btn = document.createElement("button");
-    btn.className = "letter upside-letter";
-    btn.textContent = ch === " " ? "·" : ch;
-    btn.addEventListener("click", () => popLight(idx % 26, "upside"));
-    wall.appendChild(btn);
+// Enciende letras para formar el mensaje (sin borrar el A–Z)
+function lightMessage(){
+  // apaga todo primero
+  document.querySelectorAll(".wl-letter").forEach(el=>{
+    el.classList.remove("on","on-up");
   });
+
+  // Prende letras por orden (usa las letras que existan)
+  const chars = message.replace(/\s/g,"").split("");
+  let i = 0;
+
+  const timer = setInterval(() => {
+    if(!upside){ clearInterval(timer); return; }
+
+    const ch = chars[i];
+    const el = document.querySelector(`.wl-letter[data-letter="${ch}"]`);
+    if(el){
+      el.classList.add("on-up");
+    }
+    i++;
+    if(i >= chars.length) clearInterval(timer);
+  }, 120);
 }
 
-function popLight(i, mode){
-  const bulbs = document.querySelectorAll(".bulb");
-  const b = bulbs[i];
-  if(!b) return;
-
-  b.classList.remove("hit","hit-up");
-  void b.offsetWidth;
-
-  if(mode === "upside") b.classList.add("hit-up");
-  else b.classList.add("hit");
-
-  // chispita rápida
-  spawnSpark();
+// Efectos
+function flash(el){
+  el.classList.add("on");
+  setTimeout(()=>el.classList.remove("on"), 180);
 }
 
-function spawnSpark(){
-  const s = document.createElement("span");
-  s.className = isUpside ? "spark up" : "spark";
-  s.style.left = (10 + Math.random()*80) + "vw";
-  s.style.top  = (20 + Math.random()*60) + "vh";
-  document.body.appendChild(s);
-  s.addEventListener("animationend", () => s.remove());
+function flashUpside(el){
+  el.classList.add("on-up");
+  setTimeout(()=>el.classList.remove("on-up"), 220);
 }
 
-function setMode(up){
-  isUpside = up;
-  document.body.classList.toggle("upside", up);
-  document.body.classList.toggle("normal", !up);
-
-  if(up){
-    buildWallUpside();
-    modeLabel.textContent = "Modo: UPSIDE DOWN";
-    flipBtn.textContent = "VOLVER A LA LUZ";
-  } else {
-    buildWallNormal();
-    modeLabel.textContent = "Modo: NORMAL";
-    flipBtn.textContent = "ENTER THE UPSIDE DOWN";
-  }
-}
-
-// init
-buildLights();
-setMode(false);
-
-// botón toggle
 flipBtn.addEventListener("click", () => {
-  setMode(!isUpside);
-  // un pequeño “temblor”
-  document.body.classList.add("shake");
-  setTimeout(()=>document.body.classList.remove("shake"), 300);
+  upside = !upside;
+  document.body.classList.toggle("upside", upside);
+  document.body.classList.toggle("normal", !upside);
+
+  if(upside){
+    flipBtn.textContent = "VOLVER A HAWKINS";
+    hint.textContent = "HAPPY BIRTHDAY DAY… (se está formando)";
+    lightMessage();
+  } else {
+    flipBtn.textContent = "CRUZAR AL OTRO LADO";
+    hint.textContent = "Toca letras… o cambia al otro lado.";
+  }
 });
+
+buildAlphabetWall();
