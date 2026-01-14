@@ -1,6 +1,7 @@
 const title = document.getElementById("stTitle");
 
 let taps = 0;
+
 title.addEventListener("click", () => {
   taps++;
   title.classList.add("pulse");
@@ -12,13 +13,13 @@ title.addEventListener("click", () => {
   }
 });
 
-// Random flicker
+// flicker automático
 setInterval(() => {
   title.classList.add("flicker");
   setTimeout(()=>title.classList.remove("flicker"), 120);
 }, 1800);
 
-// Tiny “glitch” shake sometimes
+// mini “glitch shift”
 setInterval(() => {
   title.classList.add("glitch-shift");
   setTimeout(()=>title.classList.remove("glitch-shift"), 150);
