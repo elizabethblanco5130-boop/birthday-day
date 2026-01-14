@@ -1,10 +1,42 @@
-// Historia interactiva tipo "choose your path"
-// Cambia NODES para agregar más escenas.
+// ===== Música (iPhone: solo suena después de interacción) =====
+let musicStarted = false;
+let musicOn = false;
 
+function getMusic(){
+  return document.getElementById("bgMusic");
+}
+
+function startMusic(){
+  const music = getMusic();
+  if(!music) return;
+  if(!musicStarted){
+    music.volume = 0.35;
+    musicStarted = true;
+  }
+  music.play().catch(()=>{});
+  musicOn = true;
+  updateMusicBtn();
+}
+
+function stopMusic(){
+  const music = getMusic();
+  if(!music) return;
+  music.pause();
+  musicOn = false;
+  updateMusicBtn();
+}
+
+function updateMusicBtn(){
+  const btn = document.getElementById("musicBtn");
+  if(!btn) return;
+  btn.textContent = musicOn ? "MUSIC: ON" : "MUSIC: OFF";
+}
+
+// ===== Historia interactiva =====
 const state = {
   hearts: 3,
   keys: 0,
-  mode: "HAWKINS",   // HAWKINS / UPSIDE
+  mode: "HAWKINS",
   node: "start",
   inventory: new Set()
 };
@@ -22,7 +54,7 @@ const nodes = {
     choices: [
       { label: "IR AL BOSQUE", to: "forest" },
       { label: "IR AL LAB", to: "lab" },
-      { label: "IR AL ARCADE", to: "arcade", gain: { keys: 1 }, add: "token" }
+      { label: "IR AL ARCADE", to: "arcade", gain: { keys: 1 }, add: "token", main:true }
     ]
   },
 
@@ -134,7 +166,7 @@ const nodes = {
       "Y luego: “EL REGALO ESTÁ DEL OTRO LADO.”"
     ],
     choices: [
-      { label: "CRUZAR", to: "portal", setMode: "UPSIDE" },
+      { label: "CRUZAR", to: "portal", setMode: "UPSIDE", main:true },
       { label: "VOLVER", to: "start" }
     ]
   },
@@ -148,7 +180,7 @@ const nodes = {
       "¿Cuántas llaves tienes? (Mira arriba: 🗝️)"
     ],
     choices: [
-      { label: "INTENTAR ABRIR", to: "open" },
+      { label: "INTENTAR ABRIR", to: "open", main:true },
       { label: "VOLVER A BUSCAR", to: "start" }
     ]
   },
@@ -162,20 +194,13 @@ const nodes = {
       "Si te faltan llaves… algo sale mal."
     ],
     choices: [
-      { label: "ABRIR YA", to: "result" }
+      { label: "ABRIR YA", to: "result", main:true }
     ]
   },
 
   result: {
     title: "RESULTADO",
-    text: [
-      "El portal responde a tu energía.",
-      "Si juntaste suficientes llaves, se abre sin romper el mundo.",
-      "",
-      "Si no… te empuja de vuelta.",
-      "",
-      "TIP: vuelve a jugar y elige rutas distintas."
-    ],
+    text: [],
     choices: [
       { label: "REINICIAR", to: "start", reset: true },
       { label: "IR A WILL", toUrl: "will.html?v=999" }
@@ -191,12 +216,13 @@ const elHearts = document.getElementById("hearts");
 const elKeys = document.getElementById("keys");
 const elMode = document.getElementById("mode");
 const elBg = document.getElementById("bg");
+const musicBtn = document.getElementById("musicBtn");
 
 function clickFx(x,y){
   const s = document.createElement("div");
   s.className = "spark";
-  s.style.left = (x-5)+"px";
-  s.style.top = (y-5)+"px";
+  s.style.left = x + "px";
+  s.style.top = y + "px";
   document.body.appendChild(s);
   setTimeout(()=>s.remove(), 600);
 }
@@ -206,7 +232,6 @@ document.addEventListener("click",(e)=>clickFx(e.clientX,e.clientY),{passive:tru
 function setMode(mode){
   state.mode = mode;
   elMode.textContent = mode === "UPSIDE" ? "UPSIDE" : "HAWKINS";
-  // cambia fondo según modo
   elBg.style.background =
     mode === "UPSIDE"
       ? "radial-gradient(circle at 70% 20%, rgba(0,255,255,.12), rgba(0,0,0,.90))"
@@ -219,23 +244,31 @@ function applyDelta(obj, sign=1){
   if(obj.keys) state.keys = Math.max(0, state.keys + sign*obj.keys);
 }
 
+function escapeHtml(s){
+  return (s ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;");
+}
+
 function renderNode(id){
   state.node = id;
   const n = nodes[id];
 
-  // si llegamos al final: verifica llaves (mínimo 2)
+  // Resultado dinámico (mínimo 2 llaves)
   if(id === "result"){
     if(state.keys >= 2){
+      n.title = "PORTAL ABIERTO";
       n.text = [
         "💥 El portal se abre.",
         "El Upside Down te mira… pero no te consume.",
         "",
-        "Ganas: un recuerdo secreto para Daya.",
-        "",
+        "Ganas: un recuerdo secreto para Dayanara.",
         "Ahora puedes ir a Will y ver la carta."
       ];
       setMode("UPSIDE");
     }else{
+      n.title = "PORTAL CERRADO";
       n.text = [
         "❌ No tienes suficientes llaves.",
         "El portal se cierra con un golpe.",
@@ -248,18 +281,21 @@ function renderNode(id){
   }
 
   elTitle.textContent = n.title;
-  elText.innerHTML = typeLines(n.text);
+  elText.innerHTML = n.text.map(l=>`<div>${escapeHtml(l)}</div>`).join("");
   elChoices.innerHTML = "";
 
   elHearts.textContent = state.hearts;
   elKeys.textContent = state.keys;
-  elMode.textContent = state.mode === "UPSIDE" ? "UPSIDE" : "HAWKINS";
 
   n.choices.forEach(c=>{
     const b = document.createElement("button");
     b.className = "btn" + (c.main ? " btn-main" : "");
     b.textContent = c.label;
+
     b.addEventListener("click", ()=>{
+      // Música: empieza en el primer toque de un botón
+      if(!musicOn) startMusic();
+
       if(c.reset){
         state.hearts = 3;
         state.keys = 0;
@@ -277,23 +313,19 @@ function renderNode(id){
       }
       renderNode(c.to);
     });
+
     elChoices.appendChild(b);
   });
 }
 
-// Texto tipo máquina simple
-function typeLines(lines){
-  const html = lines.map(l=>`<div>${escapeHtml(l)}</div>`).join("");
-  // hacemos un “typing” visual con CSS simple: mostramos todo pero con un estilo tipo terminal
-  return html;
+// Botón de música ON/OFF
+if(musicBtn){
+  musicBtn.addEventListener("click", ()=>{
+    if(!musicOn) startMusic();
+    else stopMusic();
+  });
 }
-
-function escapeHtml(s){
-  return (s ?? "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;");
-}
+updateMusicBtn();
 
 // start
 setMode("HAWKINS");
