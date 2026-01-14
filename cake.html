@@ -8,7 +8,33 @@
 </head>
 
 <body class="room normal">
+<div class="scene-container">
+  <img id="sceneNormal" class="scene active" src="normal.jpg" alt="Normal">
+  <img id="sceneUpside" class="scene" src="upside.jpg" alt="Upside Down">
+</div>
 
+<button id="switchBtn" class="switch-btn">Enter the Upside Down</button>
+
+<script>
+  const btn = document.getElementById("switchBtn");
+  const normal = document.getElementById("sceneNormal");
+  const upside = document.getElementById("sceneUpside");
+  let isUpside = false;
+
+  btn.addEventListener("click", () => {
+    isUpside = !isUpside;
+
+    if (isUpside) {
+      normal.classList.remove("active");
+      upside.classList.add("active");
+      btn.textContent = "Volver a Hawkins";
+    } else {
+      upside.classList.remove("active");
+      normal.classList.add("active");
+      btn.textContent = "Enter the Upside Down";
+    }
+  });
+</script>
 <div class="room-bg normal-bg"></div>
 <div class="room-bg upside-bg"></div>
 
