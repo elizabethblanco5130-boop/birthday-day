@@ -3,46 +3,77 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>Day // 02.02.2005</title>
+  <title>Day // Stranger Birthday</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="home">
 
-<!-- VIDEO FONDO (ya lo tienes como background.mp4) -->
 <video autoplay muted loop playsinline id="bg">
   <source src="background.mp4" type="video/mp4">
 </video>
-
-<!-- OSCURECE PARA QUE SE LEA EL TEXTO -->
 <div class="overlay"></div>
 
-<!-- HUD ARRIBA -->
-<header class="hud">
-  <div class="tag">DAY</div>
-  <div class="tag">CODE: <span id="code">????</span></div>
-  <div class="tag">❤ <span id="hearts">3</span></div>
-  <button class="tag btn-mini" id="btnAudio">SFX: ON</button>
-</header>
+<main class="home-wrap">
+  <section class="panel">
+    <h1 class="title">STRANGER BIRTHDAY</h1>
+    <p class="subtitle">Para Day — versión Hawkins.</p>
 
-<!-- APP (AQUÍ EL JS PONE LA HISTORIA Y BOTONES) -->
-<main class="app">
-  <section class="card">
-    <h1 class="glitch" data-text="STRANGER BIRTHDAY">STRANGER BIRTHDAY</h1>
-    <p class="sub">Hawkins, Indiana — something is wrong.</p>
-
-    <div class="type" id="text"></div>
-    <div class="row" id="choices"></div>
-
-    <hr>
-
-    <div class="inv">
-      <div class="inv-title">Inventory</div>
-      <div class="inv-items" id="inv">—</div>
+    <div class="menu">
+      <a class="btn" href="story.html">📼 Tu historia en Hawkins</a>
+      <a class="btn ghost" href="#facts">🧠 Facts de Stranger Things</a>
+      <a class="btn ghost" href="#playlist">🎧 Playlist para scrollear</a>
+      <a class="btn ghost" href="#gallery">🖼️ Galería / edits</a>
     </div>
+
+    <p class="tiny">Tip: esto es un menú. La historia está en “Tu historia en Hawkins”.</p>
+  </section>
+
+  <section id="facts" class="panel">
+    <h2>Facts (rápidos)</h2>
+    <ul class="facts">
+      <li><b>Hawkins</b> no es “solo un pueblo”: es una trampa perfecta.</li>
+      <li><b>Upside Down</b> no es un lugar: es una infección.</li>
+      <li><b>Demogorgon</b> no caza por hambre… caza por costumbre.</li>
+      <li>Las luces parpadean cuando “algo” está cerca.</li>
+      <li>La fecha <b>02/02/2005</b> aquí no es cumpleaños: es código.</li>
+    </ul>
+
+    <a class="btn ghost" href="#">⬆️ Volver arriba</a>
+  </section>
+
+  <section id="playlist" class="panel">
+    <h2>Playlist</h2>
+    <p class="tiny">Aquí puedes poner su música favorita. Elige 1 opción:</p>
+
+    <div class="playlist-box">
+      <p><b>Opción A (Spotify embed):</b> pega aquí tu embed.</p>
+      <!-- Pega aquí el iframe de Spotify -->
+      <!--
+      <iframe style="border-radius:12px"
+        src="https://open.spotify.com/embed/playlist/TU_PLAYLIST"
+        width="100%" height="152" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
+      </iframe>
+      -->
+      <p class="tiny">Si no tienes playlist aún, déjalo así por ahora.</p>
+    </div>
+
+    <a class="btn ghost" href="#">⬆️ Volver arriba</a>
+  </section>
+
+  <section id="gallery" class="panel">
+    <h2>Galería / Edits</h2>
+    <p class="tiny">Sube imágenes a tu repo y ponlas aquí.</p>
+
+    <div class="grid">
+      <div class="imgph">IMG 1</div>
+      <div class="imgph">IMG 2</div>
+      <div class="imgph">IMG 3</div>
+      <div class="imgph">IMG 4</div>
+    </div>
+
+    <a class="btn ghost" href="#">⬆️ Volver arriba</a>
   </section>
 </main>
 
-<!-- CONECTA TU JS -->
-<script src="app.js"></script>
 </body>
 </html>
