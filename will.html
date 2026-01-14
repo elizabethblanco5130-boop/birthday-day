@@ -5,57 +5,43 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>Will Wall</title>
 
+  <!-- Fuente arcade -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
   <style>
-    body{ margin:0; background:#000; overflow:hidden; font-family: system-ui, -apple-system, Arial; }
+    body{
+      margin:0;
+      background:#000;
+      overflow:hidden;
+      font-family: system-ui, -apple-system, Arial;
+    }
 
     /* Contenedor de escenas */
-    .wrap{ position:fixed; inset:0; }
+    .wrap{
+      position:fixed;
+      inset:0;
+    }
 
     /* Imágenes (dos capas) */
     .scene{
-      position:absolute; inset:0;
-      width:100%; height:100%;
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
       object-fit:cover;
       opacity:0;
       transition: opacity 1.6s ease; /* lento */
-      filter: none;
     }
     .scene.active{ opacity:1; }
 
-    /* Oscurecer un poco para vibe */
+    /* Oscurece un poco para vibe */
     .vignette{
-      position:absolute; inset:0;
-      background: radial-gradient(ellipse at center, rgba(0,0,0,.15), rgba(0,0,0,.78));
+      position:absolute;
+      inset:0;
+      background: radial-gradient(ellipse at center, rgba(0,0,0,.10), rgba(0,0,0,.78));
       pointer-events:none;
-    }
-
-    /* Botones */
-    .controls{
-      position:fixed;
-      left:14px; right:14px; bottom:18px;
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      z-index:9999;
-    }
-
-    .btn{
-      padding:12px 16px;
-      border-radius:14px;
-      border:1px solid rgba(255,0,0,.6);
-      background: rgba(0,0,0,.65);
-      color:#fff;
-      font-size:14px;
-      letter-spacing:.08em;
-      text-transform: uppercase;
-      backdrop-filter: blur(6px);
-    }
-
-    .btn-main{
-      flex:1;
-      text-align:center;
-      border:2px solid rgba(255,0,0,.75);
-      box-shadow: 0 0 22px rgba(255,0,0,.18);
     }
 
     /* Glitch flash al cruzar */
@@ -63,7 +49,7 @@
       animation: glitch 420ms linear;
     }
     @keyframes glitch{
-      0%{ filter: none; transform:none; }
+      0%{ filter:none; transform:none; }
       20%{ filter: drop-shadow(2px 0 red) drop-shadow(-2px 0 cyan) contrast(1.1); transform: translate(1px,0); }
       40%{ filter: drop-shadow(-3px 0 red) drop-shadow(3px 0 cyan) contrast(1.2); transform: translate(-1px,1px); }
       60%{ filter: drop-shadow(2px 0 red) drop-shadow(-2px 0 cyan) contrast(1.1); transform: translate(0,-1px); }
@@ -74,9 +60,12 @@
     .top{
       position:fixed;
       top:14px; left:14px; right:14px;
-      display:flex; justify-content:space-between; align-items:center;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
       z-index:9999;
       gap:10px;
+      pointer-events:none;
     }
     .title{
       font-weight:800;
@@ -88,6 +77,88 @@
     .tag{
       font-size:12px;
       opacity:.75;
+      color:#fff;
+    }
+
+    /* Botones */
+    .controls{
+      position:fixed;
+      left:14px; right:14px; bottom:18px;
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      z-index:9999;
+    }
+    .btn{
+      padding:12px 16px;
+      border-radius:14px;
+      border:1px solid rgba(255,0,0,.6);
+      background: rgba(0,0,0,.65);
+      color:#fff;
+      font-size:14px;
+      letter-spacing:.08em;
+      text-transform: uppercase;
+      backdrop-filter: blur(6px);
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .btn-main{
+      flex:1;
+      text-align:center;
+      border:2px solid rgba(255,0,0,.75);
+      box-shadow: 0 0 22px rgba(255,0,0,.18);
+    }
+
+    /* Carta arcade (SIN fondo sólido, no tapa el fondo) */
+    .letter{
+      position:fixed;
+      left:50%;
+      bottom:92px;
+      transform:translateX(-50%);
+      width:min(92vw, 720px);
+      z-index:9000;
+      pointer-events:none;
+
+      opacity:0;
+      transition: opacity .6s ease, transform .6s ease;
+      transform: translateX(-50%) translateY(10px);
+    }
+    .letter.show{
+      opacity:1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .letter p{
+      margin:0;
+      text-align:center;
+      font-family:'Press Start 2P', monospace;
+      font-size:10.5px;
+      line-height:1.9;
+      color:#ffe08a;
+      text-shadow:
+        0 0 6px rgba(255,200,80,.55),
+        0 0 14px rgba(255,120,0,.35);
+      animation: flicker 3.6s infinite;
+    }
+    .letter span{
+      color:#ff4d4d;
+      text-shadow:
+        0 0 8px rgba(255,0,0,.85),
+        0 0 18px rgba(255,0,0,.55);
+    }
+
+    @keyframes flicker{
+      0%,100%{ opacity:1; }
+      44%{ opacity:.9; }
+      48%{ opacity:.65; }
+      52%{ opacity:1; }
+    }
+
+    /* En pantallas muy chicas, baja la letra */
+    @media (max-width:420px){
+      .letter p{ font-size:9.5px; }
     }
   </style>
 </head>
@@ -100,44 +171,40 @@
   </div>
 
   <div class="wrap" id="wrap">
-    <!-- Normal -->
     <img id="sceneNormal" class="scene active" src="normal.jpg" alt="Hawkins">
-
-    <!-- Upside -->
     <img id="sceneUpside" class="scene" src="upside.jpg" alt="Upside Down">
-
     <div class="vignette"></div>
   </div>
-<div class="letter" id="letter">
-  <p>
-    Cuando hablo de amistad, y años compartidos, no hablo del tiempo:
-    <span>hablo de nosotras.</span><br><br>
 
-    De las niñas que fuimos, inventando refugios sin saber que lo eran,
-    del día en que sin darnos cuenta empezamos a crecer juntas a la distancia
-    y ya no supimos hacerlo de otra manera.<br><br>
+  <!-- Carta: solo se muestra en Upside Down -->
+  <div class="letter" id="letter">
+    <p>
+      Cuando hablo de amistad y años compartidos, no hablo del tiempo:
+      <span>hablo de nosotras.</span><br><br>
 
-    A mí, que crecer me da miedo,
-    que los cumpleaños me pesan como una cuenta regresiva,
-    me calma saber que el tiempo no me empuja
-    cuando vamos caminando ambas.<br><br>
+      De las niñas que fuimos, inventando refugios sin saber que lo eran;<br>
+      del día en que sin darnos cuenta empezamos a crecer juntas a la distancia<br>
+      y ya no supimos hacerlo de otra manera.<br><br>
 
-    Gracias por hacer la vida más liviana,
-    por la risa desfachatada,
-    por cuidar un corazón que vos no rompiste
-    pero decidiste acompañar.<br><br>
+      A mí, que crecer me da miedo,<br>
+      que los cumpleaños me pesan como una cuenta regresiva,<br>
+      me calma saber que el tiempo no me empuja<br>
+      cuando vamos caminando ambas.<br><br>
 
-    Siempre voy a pensarte como mi lugar seguro,
-    mi exilio elegido cuando el mundo me cause ruido.<br><br>
+      Gracias por hacer la vida más liviana,<br>
+      por la risa desfachatada,<br>
+      por cuidar un corazón que vos no rompiste<br>
+      pero decidiste acompañar.<br><br>
 
-    <span>Feliz cumpleaños, Daya.</span>
-  </p>
-</div>
+      Siempre voy a pensarte como mi lugar seguro,<br>
+      mi exilio elegido cuando el mundo me cause ruido.<br><br>
+
+      <span>Feliz cumpleaños, Daya.</span>
+    </p>
+  </div>
+
   <div class="controls">
-    <!-- volver -->
     <a class="btn" href="hub.html?v=999">← HUB</a>
-
-    <!-- cruzar -->
     <button class="btn btn-main" id="flipBtn">CRUZAR AL OTRO LADO</button>
   </div>
 
@@ -147,6 +214,7 @@
     const flipBtn = document.getElementById("flipBtn");
     const modeTag = document.getElementById("modeTag");
     const wrap = document.getElementById("wrap");
+    const letter = document.getElementById("letter");
 
     let isUpside = false;
 
@@ -157,24 +225,30 @@
       setTimeout(()=>wrap.classList.remove("glitch"), 450);
     }
 
-    flipBtn.addEventListener("click", () => {
-      glitchFlash();
-
-      // cambio lento (fade)
-      isUpside = !isUpside;
-
+    function setWorld(){
       if(isUpside){
         normal.classList.remove("active");
         upside.classList.add("active");
         flipBtn.textContent = "VOLVER A HAWKINS";
         modeTag.textContent = "MODO: UPSIDE DOWN";
+        letter.classList.add("show");
       }else{
         upside.classList.remove("active");
         normal.classList.add("active");
         flipBtn.textContent = "CRUZAR AL OTRO LADO";
         modeTag.textContent = "MODO: HAWKINS";
+        letter.classList.remove("show");
       }
+    }
+
+    flipBtn.addEventListener("click", () => {
+      glitchFlash();
+      isUpside = !isUpside;
+      setWorld();
     });
+
+    // Asegura estado inicial limpio
+    setWorld();
   </script>
 
 </body>
