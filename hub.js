@@ -1,3 +1,20 @@
+// ===== HUB MUSIC (iPhone: solo suena después de un toque) =====
+const hubMusic = document.getElementById("hubMusic");
+let hubMusicStarted = false;
+
+function startHubMusic(){
+  if(!hubMusic) return;
+  if(!hubMusicStarted){
+    hubMusic.volume = 0.35;
+    hubMusicStarted = true;
+  }
+  hubMusic.play().catch(()=>{});
+}
+
+// Primer toque en la página => empieza la música (una sola vez)
+window.addEventListener("pointerdown", () => {
+  startHubMusic();
+}, { once:true });
 const body = document.body;
 const worldBtn = document.getElementById("worldBtn");
 const stage = document.getElementById("stage");
