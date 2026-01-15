@@ -115,25 +115,25 @@
     .btn:active{ transform: translateY(1px); }
     .btn-main{ border:2px solid rgba(255,0,0,.8); box-shadow: 0 0 18px rgba(255,0,0,.20); }
 
-    /* ===== DECOR flotante (NO bloquea clicks del juego) ===== */
+    /* ===== DECOR (no bloquea clicks) ===== */
     .story-decor{
       position:fixed; inset:0;
       pointer-events:none;
       z-index:20;
     }
 
-    /* bike atrás */
+    /* ✅ BICI: vuelve “como antes”, abajo y centrada, siempre atrás */
     .story-final{
-      position:absolute;
+      position:fixed;
       left:50%;
-      top:74%;
-      transform:translate(-50%,-50%);
-      width:280px;
-      max-width:84vw;
-      opacity:.33;
-      pointer-events:none;
-      z-index:21;
+      bottom:110px;              /* fijo para que NO se mueva por el texto */
+      transform:translateX(-50%);
+      width:360px;               /* más visible como antes */
+      max-width:92vw;
+      opacity:.28;               /* atrás */
+      z-index:21;                /* detrás del card (card=55) */
       filter: drop-shadow(0 0 18px rgba(255,0,0,.15));
+      user-select:none;
     }
 
     /* personaje flotante */
@@ -148,41 +148,44 @@
       user-select:none;
       z-index:23;
     }
+    .story-float.s2{ animation-duration: 13s; opacity:.85; }
+    .story-float.s3{ animation-duration: 16s; opacity:.75; }
 
     @keyframes drift{
       0%,100%{ transform: translate(0,0) rotate(0deg); }
       50%{ transform: translate(10px,-18px) rotate(6deg); }
     }
 
-    /* ✅ Slot "?" (bate adentro) — FIX: flex centra el bate SIEMPRE */
+    /* ✅ SLOT "?" para el bate (y el bate MÁS GRANDE + al frente) */
     .qslot{
-      position:absolute;
-      left:18%;
-      top:68%;
-      width:90px;
-      height:90px;
+      position:fixed;
+      left:50%;
+      bottom:205px;                 /* queda “debajo del card”, no tapa botones */
+      transform:translateX(-50%) rotate(-6deg);
+      width:110px;
+      height:110px;
       border:1px solid rgba(255,255,255,.20);
-      border-radius:14px;
+      border-radius:16px;
       background: rgba(0,0,0,.10);
-      box-shadow: inset 0 0 0 1px rgba(255,0,0,.20);
-      transform: rotate(-6deg);
-      z-index:24;
+      box-shadow:
+        inset 0 0 0 1px rgba(255,0,0,.20),
+        0 0 18px rgba(255,0,0,.10);
+      z-index:54;                   /* justo debajo del card (55) para que se vea */
       pointer-events:none;
-
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      overflow:hidden;
     }
     .qslot img{
-      width:85%;
-      height:85%;
+      width:120%;                   /* MÁS grande */
+      height:120%;
       object-fit:contain;
-      filter: drop-shadow(0 0 14px rgba(255,0,0,.25));
-      opacity:.95;
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform:translate(-50%,-50%);
+      filter: drop-shadow(0 0 16px rgba(255,0,0,.30));
+      opacity:1;
     }
 
-    /* ✅ Demogorgon clickeable */
+    /* ✅ Demogorgon clickeable (NO dentro del decor) */
     .enemigo{
       position:fixed;
       left:78%;
@@ -242,8 +245,9 @@
       .btn{ min-width: 140px; }
       .story-float{ width:96px; }
       .enemigo{ width:78px; }
-      .story-final{ width:230px; top:76%; opacity:.28; }
-      .qslot{ width:78px; height:78px; }
+      .story-final{ width:290px; bottom:120px; opacity:.24; }
+      .qslot{ width:94px; height:94px; bottom:220px; }
+      .qslot img{ width:125%; height:125%; }
     }
   </style>
 </head>
@@ -253,18 +257,16 @@
   <div class="noise"></div>
   <div class="vignette"></div>
 
-  <!-- Decor SOLO de story -->
+  <!-- ✅ Decor SOLO de story (no bloquea clicks) -->
   <div class="story-decor" aria-hidden="true">
     <img class="story-final" src="img/bike.png" alt="Bike final">
-    <img class="story-float" src="img/personaje.png" style="left:10%; top:18%;" alt="Personaje Hawkins">
-
-    <!-- Slot con bate adentro -->
+    <img class="story-float s1" src="img/personaje.png" style="left:10%; top:18%;" alt="Personaje Hawkins">
     <div class="qslot">
       <img src="img/Bate.png" alt="Bate">
     </div>
   </div>
 
-  <!-- Demogorgon clickeable -->
+  <!-- ✅ Demogorgon clickeable -->
   <img class="enemigo"
     src="img/Demogorgon.png"
     onclick="window.hitEnemy && window.hitEnemy()"
