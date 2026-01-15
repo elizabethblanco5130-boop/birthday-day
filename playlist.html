@@ -13,13 +13,8 @@
   <style>
     :root{
       --red: rgba(255,0,0,.75);
-      --red2: rgba(255,0,0,.35);
       --glass: rgba(0,0,0,.45);
-      --glass2: rgba(0,0,0,.25);
-      --cyan: rgba(0,255,255,.20);
-      --txt: rgba(255,255,255,.92);
     }
-
     *{ box-sizing:border-box; }
     html, body { height:100%; }
     body{
@@ -31,23 +26,18 @@
     }
 
     /* ===== BACKGROUND IMAGE ===== */
-    .bg{
-      position:fixed; inset:0;
-      background:#000;
-      z-index:0;
-    }
+    .bg{ position:fixed; inset:0; background:#000; z-index:0; }
     .bg img{
       position:absolute; inset:0;
       width:100%; height:100%;
       object-fit:cover;
       filter: saturate(0.95) contrast(1.05);
       transform: scale(1.01);
-      cursor:pointer; /* para los 7 taps */
+      cursor:pointer;
       user-select:none;
       -webkit-user-drag:none;
     }
 
-    /* Vignette / mood */
     .vignette{
       position:fixed; inset:0;
       background:
@@ -57,7 +47,6 @@
       z-index:2;
     }
 
-    /* Extra tint that increases when "protected" */
     .shieldTint{
       position:fixed; inset:0;
       background: radial-gradient(circle at 22% 72%, rgba(255,0,0,.10), rgba(0,0,0,0));
@@ -65,25 +54,19 @@
       pointer-events:none;
       z-index:3;
       transition: opacity .6s ease, filter .6s ease;
-      filter: none;
-    }
-    body.protected .shieldTint{
-      opacity:.40;
-      filter: drop-shadow(0 0 22px rgba(255,0,0,.18));
+      filter:none;
     }
 
-    /* ===== IDLE DARK ===== */
+    /* ===== IDLE DARK/RED ===== */
     .idleDark{
       position:fixed; inset:0;
       opacity:0;
       pointer-events:none;
       z-index:20;
       transition: opacity .8s ease;
-      background: rgba(0,0,0,.0);
     }
-    body.idle .idleDark{ opacity: .45; }
+    body.idle .idleDark{ opacity:.45; }
 
-    /* ✅ IDLE RED TINT (rojo encima SIN tapar imagen) */
     .idleRed{
       position:fixed; inset:0;
       opacity:0;
@@ -94,24 +77,15 @@
         radial-gradient(circle at 50% 45%, rgba(255,0,0,.32), rgba(0,0,0,0) 55%),
         linear-gradient(180deg, rgba(120,0,0,.25), rgba(0,0,0,.35));
       mix-blend-mode: screen;
-      filter: saturate(1.05);
     }
-    body.idle:not(.musicOn) .idleRed{ opacity:1; }
+    body.idle .idleRed{ opacity:1; }
 
-    /* ===== PARTICLES CANVAS ===== */
-    canvas#fx{
-      position:fixed; inset:0;
-      z-index:4;
-      pointer-events:none;
-      opacity:.9;
-    }
-
-    /* ===== LIGHTNING LAYER ===== */
+    /* ===== LIGHTNING (rojo) ===== */
     .stormLayer{
       position:fixed; inset:0;
       pointer-events:none;
       z-index:22;
-      opacity:.0;
+      opacity:0;
       transition: opacity .25s ease;
     }
     body.idle .stormLayer{ opacity:1; }
@@ -122,23 +96,10 @@
       mix-blend-mode: screen;
       filter: blur(1px);
       animation: lightning 4.8s infinite;
-    }
-
-    /* ✅ por defecto (IDLE): relámpagos ROJOS */
-    body.idle:not(.musicOn) .stormFlash{
       background:
         radial-gradient(circle at 70% 30%, rgba(255,0,0,.18), rgba(0,0,0,0) 42%),
         radial-gradient(circle at 25% 55%, rgba(255,80,80,.12), rgba(0,0,0,0) 45%);
     }
-
-    /* ✅ cuando suena música: relámpagos BLANCOS */
-    body.musicOn .stormLayer{ opacity:1; }
-    body.musicOn .stormFlash{
-      background:
-        radial-gradient(circle at 70% 30%, rgba(255,255,255,.20), rgba(0,0,0,0) 42%),
-        radial-gradient(circle at 25% 55%, rgba(210,255,255,.14), rgba(0,0,0,0) 45%);
-    }
-
     @keyframes lightning{
       0%, 70%, 100% { opacity:0; transform: translate(0,0); }
       72% { opacity:.14; transform: translate(-8px, 4px); }
@@ -149,7 +110,7 @@
       80% { opacity:0; }
     }
 
-    /* vibración cuando idle */
+    /* vibración de UI en idle */
     body.idle .ui{ animation: shake .22s infinite; }
     @keyframes shake{
       0%{ transform: translate(0,0); }
@@ -159,7 +120,13 @@
       100%{ transform: translate(0,0); }
     }
 
-    /* ===== TOP WHISPER ===== */
+    canvas#fx{
+      position:fixed; inset:0;
+      z-index:4;
+      pointer-events:none;
+      opacity:.9;
+    }
+
     .whisper{
       position:fixed;
       top:14px; left:50%;
@@ -185,58 +152,7 @@
       transform: translateX(-50%) translateY(0);
     }
 
-    /* ✅ RED ALERT (7 taps) */
-    .redAlert{
-      position:fixed; inset:0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-      padding:24px;
-      background: rgba(140,0,0,.78);
-      backdrop-filter: blur(2px);
-      opacity:0;
-      pointer-events:none;
-      z-index:100;
-      transition: opacity .18s ease;
-    }
-    .redAlert.show{ opacity:1; }
-    .redAlert .msg{
-      font-family: 'Press Start 2P', monospace;
-      font-size: 12px;
-      letter-spacing:.06em;
-      line-height:1.8;
-      text-transform: uppercase;
-      color: rgba(255,255,255,.95);
-      text-shadow: 0 0 18px rgba(255,0,0,.35);
-    }
-
-    /* ✅ GOOD CHOICE toast */
-    .toast{
-      position:fixed;
-      right:16px;
-      bottom:16px;
-      z-index:90;
-      opacity:0;
-      transform: translateY(6px);
-      pointer-events:none;
-      transition: opacity .25s ease, transform .25s ease;
-      padding:10px 12px;
-      border-radius:14px;
-      border:1px solid rgba(0,255,255,.25);
-      background: rgba(0,0,0,.35);
-      backdrop-filter: blur(10px);
-      font-family:'Press Start 2P', monospace;
-      font-size:10px;
-      letter-spacing:.06em;
-      text-transform: uppercase;
-    }
-    .toast.show{
-      opacity:1;
-      transform: translateY(0);
-    }
-
-    /* ===== UI PANEL (bottom-left; doesn't cover her) ===== */
+    /* ===== UI ===== */
     .ui{
       position:fixed;
       left:16px;
@@ -260,7 +176,6 @@
     .header{
       padding:14px 14px 12px;
       border-bottom: 1px solid rgba(255,255,255,.08);
-      position:relative;
     }
 
     .logo{
@@ -278,6 +193,7 @@
       user-select:none;
       cursor:pointer;
     }
+
     .subtitle{
       margin:10px 0 0;
       color: rgba(255,255,255,.82);
@@ -293,7 +209,6 @@
       line-height: 1.6;
     }
 
-    /* ===== PLAYLIST GRID (10 slots) ===== */
     .playlist{
       padding:14px;
       display:grid;
@@ -303,7 +218,7 @@
 
     .track{
       position:relative;
-      padding:12px 12px 12px;
+      padding:12px;
       border-radius:16px;
       border:1px solid rgba(255,0,0,.55);
       background: rgba(0,0,0,.38);
@@ -312,21 +227,7 @@
       user-select:none;
       overflow:hidden;
       min-height:64px;
-      transition: transform .12s ease, box-shadow .35s ease, border-color .35s ease;
     }
-    .track:hover{ transform: translateY(-1px); }
-    .track:active{ transform: translateY(1px); }
-
-    .track::before{
-      content:"";
-      position:absolute; inset:-2px;
-      background:
-        linear-gradient(90deg, rgba(255,0,0,.10), rgba(0,255,255,.06), rgba(255,0,0,.10));
-      opacity:.22;
-      filter: blur(10px);
-      pointer-events:none;
-    }
-
     .track .tag{
       font-family: 'Press Start 2P', monospace;
       font-size: 9px;
@@ -345,22 +246,6 @@
       text-transform: uppercase;
     }
 
-    .track.playing{
-      border-color: rgba(0,255,255,.40);
-      box-shadow: 0 0 0 2px rgba(0,255,255,.10), 0 0 26px rgba(255,0,0,.14);
-    }
-
-    .track.buzz{ animation: buzz .35s ease-in-out; }
-    @keyframes buzz{
-      0%{ transform: translate(0,0); }
-      20%{ transform: translate(1px,-1px); }
-      40%{ transform: translate(-1px,1px); }
-      60%{ transform: translate(1px,1px); }
-      80%{ transform: translate(-1px,-1px); }
-      100%{ transform: translate(0,0); }
-    }
-
-    /* ===== FOOTER CONTROLS ===== */
     .controls{
       padding:12px 14px;
       border-top: 1px solid rgba(255,255,255,.08);
@@ -393,110 +278,16 @@
       box-shadow: 0 0 18px rgba(255,0,0,.18);
     }
 
-    /* ===== FLOATING OBJECTS (reubicados para NO tapar a ella) ===== */
-    .objects{
-      position:fixed; inset:0;
-      z-index:40;
-      pointer-events:none;
-    }
-
-    .obj{
-      position:absolute;
-      width:66px; height:66px;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-      backdrop-filter: blur(6px);
-      box-shadow: inset 0 0 0 1px rgba(255,0,0,.12);
-      transform: rotate(-6deg);
-      pointer-events:auto;
-      cursor:pointer;
-      user-select:none;
-      display:grid;
-      place-items:center;
-      overflow:hidden;
-      transition: transform .16s ease, filter .25s ease, opacity .25s ease;
-      opacity:.92;
-    }
-    .obj:active{ transform: rotate(-6deg) scale(.98); }
-
-    .obj .icon{
-      font-size: 22px;
-      filter: drop-shadow(0 0 12px rgba(255,0,0,.20));
-      opacity:.95;
-    }
-    .obj .label{
-      position:absolute;
-      bottom:8px; left:10px; right:10px;
-      font-family:'Press Start 2P', monospace;
-      font-size:8px;
-      letter-spacing:.06em;
-      opacity:.82;
-      text-transform: uppercase;
-      text-align:center;
-      color: rgba(255,255,255,.82);
-    }
-
-    /* ✅ dispersados en bordes */
-    .obj.clock{ left:14px; top:92px; transform: rotate(-10deg); }
-    .obj.walkie{ left:14px; bottom:150px; transform: rotate(7deg); }
-    .obj.bag{ right:14px; top:220px; transform: rotate(-12deg); }
-    .obj.vecna{ right:14px; bottom:140px; transform: rotate(10deg); opacity:.55; }
-    .obj.vecna:hover{ opacity:.85; }
-
-    /* ===== SECRET MESSAGE MODAL ===== */
-    .modal{
-      position:fixed; inset:0;
-      display:none;
-      z-index:80;
-    }
-    .modal.show{ display:block; }
-    .modal .backdrop{
-      position:absolute; inset:0;
-      background: rgba(0,0,0,.65);
-      backdrop-filter: blur(4px);
-    }
-    .modal .box{
-      position:absolute;
-      left:50%; top:50%;
-      transform: translate(-50%,-50%);
-      width:min(92vw, 520px);
-      border-radius:18px;
-      border:1px solid rgba(255,0,0,.55);
-      background: rgba(0,0,0,.55);
-      box-shadow: 0 0 30px rgba(255,0,0,.18);
-      padding:16px;
-    }
-    .modal .box h3{
-      margin:0 0 10px;
-      font-family:'Press Start 2P', monospace;
-      font-size:12px;
-      letter-spacing:.06em;
-      text-transform: uppercase;
-    }
-    .modal .box p{
-      margin:0;
-      line-height:1.6;
-      color: rgba(255,255,255,.88);
-    }
-    .modal .box .close{
-      margin-top:12px;
-      width:100%;
-    }
-
     @media (min-width: 900px){
       .ui{ left:26px; bottom:26px; width: 440px; }
       .logo{ font-size: 40px; }
-      .playlist{ grid-template-columns: 1fr 1fr; }
-      .obj{ width:80px; height:80px; }
-      .obj.clock{ top:110px; }
     }
   </style>
 </head>
 
 <body>
   <div class="bg">
-    <!-- ✅ TU IMAGEN (no se quita): -->
+    <!-- ✅ tu imagen (con mayúsculas si así está) -->
     <img id="maxImg" src="img/max.PNG" alt="Max moment">
   </div>
 
@@ -511,32 +302,7 @@
     <div class="stormFlash"></div>
   </div>
 
-  <div class="redAlert" id="redAlert" aria-hidden="true">
-    <div class="msg">YOU ALMOST LOST HER.</div>
-  </div>
-
-  <div class="toast" id="toast">GOOD CHOICE.</div>
-
   <div class="whisper" id="whisper">Running won’t save you…</div>
-
-  <div class="objects" id="objects">
-    <div class="obj clock" data-obj="clock" title="Reloj roto">
-      <div class="icon">🕰️</div>
-      <div class="label">clock</div>
-    </div>
-    <div class="obj walkie" data-obj="walkie" title="Walkie">
-      <div class="icon">📻</div>
-      <div class="label">walkie</div>
-    </div>
-    <div class="obj bag" data-obj="bag" title="Mochila">
-      <div class="icon">🎒</div>
-      <div class="label">bag</div>
-    </div>
-    <div class="obj vecna" data-obj="vecna" title="¿Lo viste?">
-      <div class="icon">🕳️</div>
-      <div class="label">???</div>
-    </div>
-  </div>
 
   <div class="ui">
     <section class="panel">
@@ -546,6 +312,7 @@
         <div class="quote">“When the noise gets too loud, this is what brings her back.”</div>
       </div>
 
+      <!-- 10 placeholders -->
       <div class="playlist" id="playlist">
         <div class="track" data-index="0" data-src="" data-title="Song 01" data-artist="Artist">
           <div class="tag">Cassette 01</div>
@@ -597,22 +364,16 @@
     </section>
   </div>
 
-  <!-- previews (opcional) -->
+  <!-- preview player (para después) -->
   <audio id="player" preload="auto"></audio>
 
-  <!-- ✅ sonido de relámpagos/rojo en idle -->
-  <audio id="stormSfx" preload="auto" loop>
-    <source src="efectosr.mp3" type="audio/mpeg">
+  <!-- ✅ IDLE AUDIO: primero underw.mp3, 5s después vecna.wav -->
+  <audio id="underw" preload="auto" loop>
+    <source src="underw.mp3" type="audio/mpeg">
   </audio>
-
-  <div class="modal" id="modal">
-    <div class="backdrop"></div>
-    <div class="box">
-      <h3 id="modalTitle">SEÑAL</h3>
-      <p id="modalText">...</p>
-      <button class="btn close" id="closeModal" type="button">CERRAR</button>
-    </div>
-  </div>
+  <audio id="vecna" preload="auto" loop>
+    <source src="vecna.wav" type="audio/wav">
+  </audio>
 
   <script>
     // =========================
@@ -630,106 +391,69 @@
     window.addEventListener("click", unlockAudio, { once:true });
 
     // =========================
-    // PARTICLES
-    // =========================
-    const canvas = document.getElementById("fx");
-    const ctx = canvas.getContext("2d");
-    let W=0,H=0, dpr=1;
-
-    function resize(){
-      dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
-      W = Math.floor(window.innerWidth);
-      H = Math.floor(window.innerHeight);
-      canvas.width = Math.floor(W*dpr);
-      canvas.height = Math.floor(H*dpr);
-      canvas.style.width = W+"px";
-      canvas.style.height = H+"px";
-      ctx.setTransform(dpr,0,0,dpr,0,0);
-    }
-    window.addEventListener("resize", resize);
-    resize();
-
-    const particles = [];
-    const COUNT = 110;
-    function rand(a,b){ return a + Math.random()*(b-a); }
-
-    for(let i=0;i<COUNT;i++){
-      particles.push({
-        x: rand(0,W),
-        y: rand(0,H),
-        r: rand(0.8, 2.2),
-        vx: rand(-0.18, 0.22),
-        vy: rand(-0.35, 0.15),
-        a: rand(0.05, 0.22)
-      });
-    }
-
-    function tick(){
-      ctx.clearRect(0,0,W,H);
-      for(const p of particles){
-        p.x += p.vx; p.y += p.vy;
-        if(p.x < -10) p.x = W+10;
-        if(p.x > W+10) p.x = -10;
-        if(p.y < -10) p.y = H+10;
-        if(p.y > H+10) p.y = -10;
-
-        ctx.beginPath();
-        ctx.fillStyle = `rgba(255,255,255,${p.a})`;
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-        ctx.fill();
-
-        if(Math.random() < 0.006){
-          ctx.beginPath();
-          ctx.fillStyle = `rgba(255,0,0,${rand(0.10,0.25)})`;
-          ctx.arc(p.x+rand(-3,3), p.y+rand(-3,3), p.r+rand(1,2), 0, Math.PI*2);
-          ctx.fill();
-        }
-      }
-      requestAnimationFrame(tick);
-    }
-    tick();
-
-    // =========================
-    // Whisper + Toast
+    // Whisper helper
     // =========================
     const whisper = document.getElementById("whisper");
-    const toast = document.getElementById("toast");
-    let toastTimer = null;
-
     function showWhisper(msg){
       whisper.textContent = msg;
       whisper.classList.add("show");
       setTimeout(()=>whisper.classList.remove("show"), 1800);
     }
 
-    function showToast(txt="GOOD CHOICE."){
-      toast.textContent = txt;
-      toast.classList.add("show");
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(()=>toast.classList.remove("show"), 1100);
+    // =========================
+    // IDLE + 2 audios en secuencia
+    // =========================
+    const aUnderw = document.getElementById("underw");
+    const aVecna  = document.getElementById("vecna");
+
+    let idleTimer = null;
+    let vecnaDelayTimer = null;
+    let inIdle = false;
+
+    function stopIdleAudio(){
+      clearTimeout(vecnaDelayTimer);
+      vecnaDelayTimer = null;
+
+      if(aUnderw){
+        try{ aUnderw.pause(); aUnderw.currentTime = 0; }catch(e){}
+      }
+      if(aVecna){
+        try{ aVecna.pause(); aVecna.currentTime = 0; }catch(e){}
+      }
     }
 
-    // =========================
-    // Idle + storm sound
-    // =========================
-    let idleTimer = null;
-    const stormSfx = document.getElementById("stormSfx");
+    function startIdleAudioSequence(){
+      if(!audioUnlocked) return; // iPhone necesita un toque previo
 
-    function setIdle(on){
-      document.body.classList.toggle("idle", on);
-      if(on){
-        // solo suena si NO hay música y ya hubo interacción
-        if(audioUnlocked && !document.body.classList.contains("musicOn")){
+      // Underw primero
+      if(aUnderw){
+        try{
+          aUnderw.volume = 0.55;
+          aUnderw.play().catch(()=>{});
+        }catch(e){}
+      }
+
+      // 5 segundos después entra Vecna
+      vecnaDelayTimer = setTimeout(()=>{
+        if(!inIdle) return;
+        if(aVecna){
           try{
-            stormSfx.volume = 0.55;
-            stormSfx.play().catch(()=>{});
+            aVecna.volume = 0.55;
+            aVecna.play().catch(()=>{});
           }catch(e){}
         }
+      }, 5000);
+    }
+
+    function setIdle(on){
+      inIdle = on;
+      document.body.classList.toggle("idle", on);
+
+      if(on){
+        showWhisper("Running won’t save you…");
+        startIdleAudioSequence();
       }else{
-        try{
-          stormSfx.pause();
-          stormSfx.currentTime = 0;
-        }catch(e){}
+        stopIdleAudio();
       }
     }
 
@@ -738,7 +462,6 @@
       clearTimeout(idleTimer);
       idleTimer = setTimeout(()=>{
         setIdle(true);
-        showWhisper("Running won’t save you…");
       }, 6500);
     }
 
@@ -748,55 +471,19 @@
     resetIdle();
 
     // =========================
-    // MUSIC / “Protection”
+    // TU PARTE DE MUSIC/PLAYLIST
+    // (lo dejamos igual por ahora)
     // =========================
     const tracks = [...document.querySelectorAll(".track")];
     const player = document.getElementById("player");
     const panicBtn = document.getElementById("panicBtn");
 
-    let protection = 0;
-    let playingIndex = -1;
-
-    function setProtected(on){
-      document.body.classList.toggle("protected", on);
-    }
-    function setMusicOn(on){
-      document.body.classList.toggle("musicOn", on);
-      if(on){
-        // al empezar música: quitar idle rojo + parar efectos
-        setIdle(false);
-        try{ stormSfx.pause(); stormSfx.currentTime = 0; }catch(e){}
-      }
-    }
-
-    function bumpProtection(){
-      protection = Math.min(10, protection + 1);
-      setProtected(true);
-      showWhisper("Good. You chose music.");
-      setTimeout(()=>{
-        if(protection <= 1) setProtected(false);
-      }, 1500);
-    }
-
-    function setPlaying(i){
-      tracks.forEach(t => t.classList.remove("playing"));
-      if(i >= 0) tracks[i].classList.add("playing");
-      playingIndex = i;
-    }
-
     function playTrack(el){
+      resetIdle(); // tocar música saca del idle
+      // (por ahora: todavía no enciende relámpagos blancos; lo hacemos después)
+      showWhisper("Good. You chose music.");
+
       const src = (el.dataset.src || "").trim();
-      bumpProtection();
-      setPlaying(Number(el.dataset.index));
-
-      // ✅ al “reproducir” -> Good Choice + relámpagos blancos
-      showToast("GOOD CHOICE.");
-      setMusicOn(true);
-
-      // vibra el cassette
-      el.classList.remove("buzz"); void el.offsetWidth; el.classList.add("buzz");
-
-      // si no hay audio todavía, solo FX, igual se siente vivo
       if(src){
         player.src = src;
         player.currentTime = 0;
@@ -806,10 +493,7 @@
     }
 
     tracks.forEach(el=>{
-      el.addEventListener("click", ()=>{
-        resetIdle();
-        playTrack(el);
-      });
+      el.addEventListener("click", ()=> playTrack(el));
     });
 
     panicBtn.addEventListener("click", ()=>{
@@ -817,106 +501,6 @@
       const i = Math.floor(Math.random()*tracks.length);
       playTrack(tracks[i]);
     });
-
-    player.addEventListener("ended", ()=>{
-      setPlaying(-1);
-      setMusicOn(false);
-    });
-
-    // =========================
-    // OBJECTS modal
-    // =========================
-    const modal = document.getElementById("modal");
-    const modalTitle = document.getElementById("modalTitle");
-    const modalText = document.getElementById("modalText");
-    const closeModal = document.getElementById("closeModal");
-
-    function openModal(title, text){
-      modalTitle.textContent = title;
-      modalText.textContent = text;
-      modal.classList.add("show");
-    }
-    function close(){
-      modal.classList.remove("show");
-    }
-    closeModal.addEventListener("click", close);
-    modal.querySelector(".backdrop").addEventListener("click", close);
-
-    const objMessages = {
-      clock: { title: "RELOJ ROTO", text: "El tiempo aquí no avanza… se repite. Si te quedas quieta, él te encuentra." },
-      walkie:{ title: "WALKIE", text: "📡 ‘Day… ¿me copias? Si escuchas estática, no apagues. RESPONDE con música.’" },
-      bag:  { title: "MOCHILA", text: "Dentro hay cosas pequeñas que pesan mucho: recuerdos, rutas, y una canción que siempre vuelve." }
-    };
-
-    let vecnaTaps = 0;
-    document.querySelectorAll(".obj").forEach(o=>{
-      o.addEventListener("click", ()=>{
-        resetIdle();
-        const k = o.dataset.obj;
-        if(k === "vecna"){
-          vecnaTaps++;
-          if(vecnaTaps >= 3){
-            vecnaTaps = 0;
-            openModal("¿LO VISTE?", "No lo mires por mucho tiempo. Presiona PLAY. Mantente aquí.");
-            showWhisper("Don’t stop listening…");
-            setIdle(true);
-          }else{
-            showWhisper("…");
-          }
-          return;
-        }
-        const m = objMessages[k];
-        if(m) openModal(m.title, m.text);
-      });
-    });
-
-    // =========================
-    // 7 taps en LOGO (ya lo tenías)
-    // =========================
-    let logoTaps = 0;
-    const logo = document.getElementById("logo");
-    logo.addEventListener("click", ()=>{
-      resetIdle();
-      logoTaps++;
-      if(logoTaps >= 7){
-        logoTaps = 0;
-        openModal("SEÑAL ENCONTRADA", "Hawkins responde. El ruido baja… por ahora.");
-        bumpProtection();
-      }
-    });
-
-    // =========================
-    // ✅ 7 taps en la IMAGEN (ella)
-    // =========================
-    const maxImg = document.getElementById("maxImg");
-    const redAlert = document.getElementById("redAlert");
-    let imgTaps = 0;
-    let imgTapTimer = null;
-
-    function triggerRedAlert(){
-      redAlert.classList.add("show");
-      setIdle(false); // para que sea “limpio” el flash
-      try{ stormSfx.pause(); stormSfx.currentTime = 0; }catch(e){}
-
-      setTimeout(()=>{
-        redAlert.classList.remove("show");
-        showWhisper("1. 💿 CANCIONES QUE SE DEFENDEN");
-      }, 900);
-    }
-
-    if(maxImg){
-      maxImg.addEventListener("click", ()=>{
-        resetIdle();
-        imgTaps++;
-        clearTimeout(imgTapTimer);
-        imgTapTimer = setTimeout(()=>{ imgTaps = 0; }, 1400);
-
-        if(imgTaps >= 7){
-          imgTaps = 0;
-          triggerRedAlert();
-        }
-      });
-    }
   </script>
 </body>
 </html>
