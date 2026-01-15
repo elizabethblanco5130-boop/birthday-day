@@ -400,3 +400,38 @@ body.will .hub-vignette{
     filter: blur(.2px);
   }
 }
+/* ========= RESPONSIVE + SCROLL FIX (ADD-ON) ========= */
+
+/* Permite scroll SOLO en Starcourt (para ver todo el collage) */
+body.mallScroll{
+  overflow: auto;
+  -webkit-overflow-scrolling: touch; /* iPhone smooth scroll */
+}
+
+/* En Starcourt, que el frame no sea fijo a 78vh si ocupa más */
+body.mallScroll .collageWrap{
+  min-height: 100vh;
+  place-items: start center;   /* arranca arriba y centra */
+  padding: 72px 16px 28px;
+}
+
+/* Frame flexible: muestra TODO (sin recortar) */
+body.mallScroll .collageFrame{
+  height: auto;
+  min-height: 70vh;
+  max-height: none;
+  aspect-ratio: 16 / 9;        /* buen default para video horizontal */
+}
+
+/* El video se adapta completo dentro del frame */
+body.mallScroll .collageFrame video{
+  object-fit: contain;         /* ✅ muestra TODO el video */
+  background: #000;            /* barras negras elegantes si sobran */
+}
+
+/* En pantallas altas (teléfono vertical): relación más “vertical” */
+@media (max-width: 520px){
+  body.mallScroll .collageFrame{
+    aspect-ratio: 9 / 16;      /* si tu collage es vertical, se verá perfecto */
+  }
+}
