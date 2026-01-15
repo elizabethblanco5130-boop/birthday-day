@@ -14,7 +14,9 @@
     :root{
       --red: rgba(255,0,0,.75);
       --glass: rgba(0,0,0,.45);
+      --txt: rgba(255,255,255,.92);
     }
+
     *{ box-sizing:border-box; }
     html, body { height:100%; }
     body{
@@ -33,7 +35,6 @@
       object-fit:cover;
       filter: saturate(0.95) contrast(1.05);
       transform: scale(1.01);
-      cursor:pointer;
       user-select:none;
       -webkit-user-drag:none;
     }
@@ -54,7 +55,6 @@
       pointer-events:none;
       z-index:3;
       transition: opacity .6s ease, filter .6s ease;
-      filter:none;
     }
 
     /* ===== IDLE DARK/RED ===== */
@@ -64,6 +64,7 @@
       pointer-events:none;
       z-index:20;
       transition: opacity .8s ease;
+      background: rgba(0,0,0,.0);
     }
     body.idle .idleDark{ opacity:.45; }
 
@@ -120,6 +121,7 @@
       100%{ transform: translate(0,0); }
     }
 
+    /* ===== PARTICLES CANVAS ===== */
     canvas#fx{
       position:fixed; inset:0;
       z-index:4;
@@ -127,6 +129,7 @@
       opacity:.9;
     }
 
+    /* ===== TOP WHISPER ===== */
     .whisper{
       position:fixed;
       top:14px; left:50%;
@@ -152,7 +155,7 @@
       transform: translateX(-50%) translateY(0);
     }
 
-    /* ===== UI ===== */
+    /* ===== UI PANEL (bottom-left) ===== */
     .ui{
       position:fixed;
       left:16px;
@@ -193,7 +196,6 @@
       user-select:none;
       cursor:pointer;
     }
-
     .subtitle{
       margin:10px 0 0;
       color: rgba(255,255,255,.82);
@@ -209,6 +211,7 @@
       line-height: 1.6;
     }
 
+    /* ===== PLAYLIST GRID (10 slots) ===== */
     .playlist{
       padding:14px;
       display:grid;
@@ -227,7 +230,11 @@
       user-select:none;
       overflow:hidden;
       min-height:64px;
+      transition: transform .12s ease;
     }
+    .track:hover{ transform: translateY(-1px); }
+    .track:active{ transform: translateY(1px); }
+
     .track .tag{
       font-family: 'Press Start 2P', monospace;
       font-size: 9px;
@@ -246,6 +253,7 @@
       text-transform: uppercase;
     }
 
+    /* ===== FOOTER CONTROLS ===== */
     .controls{
       padding:12px 14px;
       border-top: 1px solid rgba(255,255,255,.08);
@@ -278,16 +286,105 @@
       box-shadow: 0 0 18px rgba(255,0,0,.18);
     }
 
+    /* ===== HIDDEN OBJECTS ===== */
+    .objects{
+      position:fixed; inset:0;
+      z-index:40;
+      pointer-events:none;
+    }
+    .obj{
+      position:absolute;
+      width:74px; height:74px;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      backdrop-filter: blur(6px);
+      box-shadow: inset 0 0 0 1px rgba(255,0,0,.12);
+      transform: rotate(-6deg);
+      pointer-events:auto;
+      cursor:pointer;
+      user-select:none;
+      display:grid;
+      place-items:center;
+      overflow:hidden;
+      transition: transform .16s ease, opacity .25s ease, filter .25s ease;
+    }
+    .obj:active{ transform: rotate(-6deg) scale(.98); }
+    .obj .icon{
+      font-size: 22px;
+      filter: drop-shadow(0 0 12px rgba(255,0,0,.20));
+      opacity:.95;
+    }
+    .obj .label{
+      position:absolute;
+      bottom:8px; left:10px; right:10px;
+      font-family:'Press Start 2P', monospace;
+      font-size:8px;
+      letter-spacing:.06em;
+      opacity:.82;
+      text-transform: uppercase;
+      text-align:center;
+      color: rgba(255,255,255,.82);
+    }
+
+    /* Posiciones: dispersos, pegados a bordes, evitando el centro */
+    .obj.clock{ left:14px; top:110px; }
+    .obj.walkie{ left:16px; top:250px; transform: rotate(7deg); }
+    .obj.bag{ right:16px; bottom:140px; transform: rotate(10deg); }
+    .obj.vecna{ right:16px; top:140px; transform: rotate(10deg); opacity:.45; }
+    .obj.vecna:hover{ opacity:.85; }
+
+    /* ===== SECRET MODAL ===== */
+    .modal{
+      position:fixed; inset:0;
+      display:none;
+      z-index:80;
+    }
+    .modal.show{ display:block; }
+    .modal .backdrop{
+      position:absolute; inset:0;
+      background: rgba(0,0,0,.65);
+      backdrop-filter: blur(4px);
+    }
+    .modal .box{
+      position:absolute;
+      left:50%; top:50%;
+      transform: translate(-50%,-50%);
+      width:min(92vw, 520px);
+      border-radius:18px;
+      border:1px solid rgba(255,0,0,.55);
+      background: rgba(0,0,0,.55);
+      box-shadow: 0 0 30px rgba(255,0,0,.18);
+      padding:16px;
+    }
+    .modal .box h3{
+      margin:0 0 10px;
+      font-family:'Press Start 2P', monospace;
+      font-size:12px;
+      letter-spacing:.06em;
+      text-transform: uppercase;
+    }
+    .modal .box p{
+      margin:0;
+      line-height:1.6;
+      color: rgba(255,255,255,.88);
+    }
+    .modal .box .close{
+      margin-top:12px;
+      width:100%;
+    }
+
     @media (min-width: 900px){
       .ui{ left:26px; bottom:26px; width: 440px; }
       .logo{ font-size: 40px; }
+      .obj{ width:84px; height:84px; }
     }
   </style>
 </head>
 
 <body>
   <div class="bg">
-    <!-- ✅ tu imagen (con mayúsculas si así está) -->
+    <!-- ✅ OJO: tu archivo se llama max.PNG (mayúsculas) -->
     <img id="maxImg" src="img/max.PNG" alt="Max moment">
   </div>
 
@@ -304,6 +401,27 @@
 
   <div class="whisper" id="whisper">Running won’t save you…</div>
 
+  <!-- ✅ Objetos ocultos -->
+  <div class="objects" id="objects">
+    <div class="obj clock" data-obj="clock" title="Reloj roto">
+      <div class="icon">🕰️</div>
+      <div class="label">clock</div>
+    </div>
+    <div class="obj walkie" data-obj="walkie" title="Walkie">
+      <div class="icon">📻</div>
+      <div class="label">walkie</div>
+    </div>
+    <div class="obj bag" data-obj="bag" title="Mochila">
+      <div class="icon">🎒</div>
+      <div class="label">bag</div>
+    </div>
+    <div class="obj vecna" data-obj="vecna" title="¿Lo viste?">
+      <div class="icon">🕳️</div>
+      <div class="label">???</div>
+    </div>
+  </div>
+
+  <!-- UI -->
   <div class="ui">
     <section class="panel">
       <div class="header">
@@ -312,7 +430,6 @@
         <div class="quote">“When the noise gets too loud, this is what brings her back.”</div>
       </div>
 
-      <!-- 10 placeholders -->
       <div class="playlist" id="playlist">
         <div class="track" data-index="0" data-src="" data-title="Song 01" data-artist="Artist">
           <div class="tag">Cassette 01</div>
@@ -364,18 +481,138 @@
     </section>
   </div>
 
-  <!-- preview player (para después) -->
   <audio id="player" preload="auto"></audio>
 
-  <!-- ✅ IDLE AUDIO: primero underw.mp3, 5s después vecna.wav -->
+  <!-- ✅ IDLE AUDIO -->
   <audio id="underw" preload="auto" loop>
     <source src="underw.mp3" type="audio/mpeg">
   </audio>
-  <audio id="vecna" preload="auto" loop>
+  <audio id="vecnaAudio" preload="auto">
     <source src="vecna.wav" type="audio/wav">
   </audio>
 
+  <!-- Modal -->
+  <div class="modal" id="modal">
+    <div class="backdrop"></div>
+    <div class="box">
+      <h3 id="modalTitle">SEÑAL</h3>
+      <p id="modalText">...</p>
+      <button class="btn close" id="closeModal" type="button">CERRAR</button>
+    </div>
+  </div>
+
   <script>
+    // =========================
+    // FX particles (simple ash)
+    // =========================
+    const canvas = document.getElementById("fx");
+    const ctx = canvas.getContext("2d");
+    let W=0,H=0, dpr=1;
+
+    function resize(){
+      dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+      W = Math.floor(window.innerWidth);
+      H = Math.floor(window.innerHeight);
+      canvas.width = Math.floor(W*dpr);
+      canvas.height = Math.floor(H*dpr);
+      canvas.style.width = W+"px";
+      canvas.style.height = H+"px";
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    const particles = [];
+    const COUNT = 110;
+    const rand = (a,b)=> a + Math.random()*(b-a);
+
+    for(let i=0;i<COUNT;i++){
+      particles.push({
+        x: rand(0,W), y: rand(0,H),
+        r: rand(0.8, 2.2),
+        vx: rand(-0.18, 0.22),
+        vy: rand(-0.35, 0.15),
+        a: rand(0.05, 0.22)
+      });
+    }
+
+    function tick(){
+      ctx.clearRect(0,0,W,H);
+      for(const p of particles){
+        p.x += p.vx; p.y += p.vy;
+        if(p.x < -10) p.x = W+10;
+        if(p.x > W+10) p.x = -10;
+        if(p.y < -10) p.y = H+10;
+        if(p.y > H+10) p.y = -10;
+
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(255,255,255,${p.a})`;
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+        ctx.fill();
+      }
+      requestAnimationFrame(tick);
+    }
+    tick();
+
+    // =========================
+    // Whisper helper
+    // =========================
+    const whisper = document.getElementById("whisper");
+    function showWhisper(msg){
+      whisper.textContent = msg;
+      whisper.classList.add("show");
+      setTimeout(()=>whisper.classList.remove("show"), 1800);
+    }
+
+    // =========================
+    // Modal objects
+    // =========================
+    const modal = document.getElementById("modal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalText = document.getElementById("modalText");
+    const closeModal = document.getElementById("closeModal");
+
+    function openModal(title, text){
+      modalTitle.textContent = title;
+      modalText.textContent = text;
+      modal.classList.add("show");
+    }
+    function close(){
+      modal.classList.remove("show");
+    }
+    closeModal.addEventListener("click", close);
+    modal.querySelector(".backdrop").addEventListener("click", close);
+
+    const objMessages = {
+      clock: { title:"RELOJ ROTO", text:"El tiempo aquí no avanza… se repite. Si te quedas quieta, él te encuentra." },
+      walkie:{ title:"WALKIE", text:"📡 ‘Day… ¿me copias? Si escuchas estática, no apagues. RESPONDE con música.’" },
+      bag:   { title:"MOCHILA", text:"Dentro hay cosas pequeñas que pesan mucho: recuerdos, rutas, y una canción que siempre vuelve." }
+    };
+
+    let vecnaTaps = 0;
+    document.querySelectorAll(".obj").forEach(o=>{
+      o.addEventListener("click", ()=>{
+        resetIdle();
+        const k = o.dataset.obj;
+
+        if(k === "vecna"){
+          vecnaTaps++;
+          if(vecnaTaps >= 3){
+            vecnaTaps = 0;
+            openModal("¿LO VISTE?", "No lo mires por mucho tiempo. Presiona PLAY. Mantente aquí.");
+            showWhisper("Don’t stop listening…");
+            setIdle(true);
+          }else{
+            showWhisper("…");
+          }
+          return;
+        }
+
+        const m = objMessages[k];
+        if(m) openModal(m.title, m.text);
+      });
+    });
+
     // =========================
     // AUDIO unlock (iPhone)
     // =========================
@@ -391,24 +628,17 @@
     window.addEventListener("click", unlockAudio, { once:true });
 
     // =========================
-    // Whisper helper
-    // =========================
-    const whisper = document.getElementById("whisper");
-    function showWhisper(msg){
-      whisper.textContent = msg;
-      whisper.classList.add("show");
-      setTimeout(()=>whisper.classList.remove("show"), 1800);
-    }
-
-    // =========================
-    // IDLE + 2 audios en secuencia
+    // IDLE + 2 audios
+    // - underw: loop
+    // - vecna: suena 1 vez y nunca se repite
     // =========================
     const aUnderw = document.getElementById("underw");
-    const aVecna  = document.getElementById("vecna");
+    const aVecna  = document.getElementById("vecnaAudio");
 
     let idleTimer = null;
     let vecnaDelayTimer = null;
     let inIdle = false;
+    let vecnaHasPlayedEver = false; // ✅ NO vuelve a sonar nunca
 
     function stopIdleAudio(){
       clearTimeout(vecnaDelayTimer);
@@ -417,32 +647,42 @@
       if(aUnderw){
         try{ aUnderw.pause(); aUnderw.currentTime = 0; }catch(e){}
       }
+      // si vecna estaba sonando, lo paramos al salir del idle
       if(aVecna){
         try{ aVecna.pause(); aVecna.currentTime = 0; }catch(e){}
       }
     }
 
     function startIdleAudioSequence(){
-      if(!audioUnlocked) return; // iPhone necesita un toque previo
+      if(!audioUnlocked) return;
 
-      // Underw primero
+      // underw primero (loop)
       if(aUnderw){
         try{
+          aUnderw.loop = true;
           aUnderw.volume = 0.55;
           aUnderw.play().catch(()=>{});
         }catch(e){}
       }
 
-      // 5 segundos después entra Vecna
+      // 7 segundos después, vecna UNA sola vez (si nunca sonó)
       vecnaDelayTimer = setTimeout(()=>{
         if(!inIdle) return;
+        if(vecnaHasPlayedEver) return;
+
         if(aVecna){
           try{
-            aVecna.volume = 0.55;
-            aVecna.play().catch(()=>{});
+            aVecna.loop = false;
+            aVecna.volume = 0.75;
+            aVecna.currentTime = 0;
+            aVecna.play().then(()=>{
+              vecnaHasPlayedEver = true;
+            }).catch(()=>{});
           }catch(e){}
+        } else {
+          vecnaHasPlayedEver = true;
         }
-      }, 5000);
+      }, 7000);
     }
 
     function setIdle(on){
@@ -471,16 +711,14 @@
     resetIdle();
 
     // =========================
-    // TU PARTE DE MUSIC/PLAYLIST
-    // (lo dejamos igual por ahora)
+    // PLAYLIST (sin previews todavía)
     // =========================
     const tracks = [...document.querySelectorAll(".track")];
     const player = document.getElementById("player");
     const panicBtn = document.getElementById("panicBtn");
 
     function playTrack(el){
-      resetIdle(); // tocar música saca del idle
-      // (por ahora: todavía no enciende relámpagos blancos; lo hacemos después)
+      resetIdle();
       showWhisper("Good. You chose music.");
 
       const src = (el.dataset.src || "").trim();
@@ -500,6 +738,20 @@
       resetIdle();
       const i = Math.floor(Math.random()*tracks.length);
       playTrack(tracks[i]);
+    });
+
+    // =========================
+    // EASTER: 7 taps en logo
+    // =========================
+    let logoTaps = 0;
+    const logo = document.getElementById("logo");
+    logo.addEventListener("click", ()=>{
+      resetIdle();
+      logoTaps++;
+      if(logoTaps >= 7){
+        logoTaps = 0;
+        openModal("SEÑAL ENCONTRADA", "Hawkins responde. El ruido baja… por ahora.");
+      }
     });
   </script>
 </body>
