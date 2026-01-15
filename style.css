@@ -1,9 +1,8 @@
-/* ========== RESET ========== */
 *{ box-sizing:border-box; }
 html,body{ margin:0; padding:0; }
 body{ background:#000; color:#fff; font-family: system-ui, -apple-system, Arial, sans-serif; }
+a{ color:inherit; }
 
-/* ========== HUB base ========== */
 body.page-hub{ overflow:hidden; }
 
 /* Video fondo */
@@ -13,46 +12,21 @@ body.page-hub{ overflow:hidden; }
   width:100%;
   height:100%;
   object-fit:cover;
-  z-index:-5;
+  z-index:-3;
 }
 
-/* Overlay (cambia con world) */
-.hub-overlay{
-  position:fixed;
-  inset:0;
-  z-index:-4;
-  pointer-events:none;
-  opacity:.0;
-  transition: opacity .9s ease;
-}
-
-/* Normal */
-body.normal .hub-overlay{
-  opacity:.12;
-  background: radial-gradient(circle at 30% 20%, rgba(255,0,0,.22), rgba(0,0,0,.65));
-}
-
-/* Upside Down */
-body.upside .hub-overlay{
-  opacity:.22;
-  background: radial-gradient(circle at 70% 20%, rgba(0,255,255,.18), rgba(0,0,0,.82));
-}
-
-.hub-overlay.pulse{
-  animation: pulse 420ms ease;
-}
-@keyframes pulse{
-  0%{ opacity:0; }
-  100%{ opacity:1; }
-}
-
-/* Vignette */
+/* Vignette + modo */
 .hub-vignette{
   position:fixed;
   inset:0;
-  z-index:-3;
+  z-index:-2;
   pointer-events:none;
-  background: radial-gradient(ellipse at center, rgba(0,0,0,.10), rgba(0,0,0,.85));
+  background: radial-gradient(ellipse at center, rgba(0,0,0,.05), rgba(0,0,0,.78));
+}
+
+/* Upside: más oscuro/frío */
+body.upside .hub-vignette{
+  background: radial-gradient(ellipse at center, rgba(0,255,255,.06), rgba(0,0,0,.90));
 }
 
 /* Top bar */
@@ -65,18 +39,15 @@ body.upside .hub-overlay{
   gap:12px;
   z-index:10;
 }
-
 .hub-back{
   width:44px; height:44px;
   display:grid; place-items:center;
   text-decoration:none;
-  color:#fff;
   border:1px solid rgba(255,255,255,.25);
   border-radius:14px;
   background: rgba(0,0,0,.35);
   backdrop-filter: blur(8px);
 }
-
 .hub-title{
   flex:1;
   text-align:center;
@@ -84,9 +55,7 @@ body.upside .hub-overlay{
   letter-spacing:.18em;
   color:#ff3b3b;
   text-shadow:0 0 18px rgba(255,0,0,.22);
-  user-select:none;
 }
-
 .hub-worldbtn{
   height:44px;
   padding:0 14px;
@@ -97,87 +66,126 @@ body.upside .hub-overlay{
   backdrop-filter: blur(8px);
 }
 
-/* Stage */
+/* Stage grid */
 .hub-stage{
   position:fixed;
   inset:0;
-  padding: 82px 14px 86px;
+  padding: 80px 14px 120px;
   z-index:5;
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:14px;
+  align-content:start;
 }
 
-/* Iconos flotantes */
+/* Icon cards */
 .hub-icon{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:space-between;
+  text-decoration:none;
+  border-radius:22px;
+  padding:14px;
+  border:1px solid rgba(255,255,255,.22);
+  background: rgba(0,0,0,.26);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 22px rgba(255,0,0,.10);
+  min-height: 128px;
+  position:relative;
+  overflow:hidden;
+}
+.hub-icon::after{
+  content:"";
   position:absolute;
-  width: 150px;
-  min-height: 120px;
+  inset:-40%;
+  background: radial-gradient(circle at 30% 20%, rgba(255,0,0,.22), transparent 60%);
+  opacity:.55;
+  transform: rotate(10deg);
+  pointer-events:none;
+}
+.hub-icon:active{ transform: translateY(1px); }
 
+.hub-icon .tag{
+  font-size:12px;
+  opacity:.85;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  z-index:2;
+}
+.hub-icon span{
+  margin-top:8px;
+  font-size:13px;
+  opacity:.95;
+  z-index:2;
+}
+.hub-icon img{
+  width:52px;
+  height:52px;
+  object-fit:contain;
+  display:block;
+  margin-top:8px;
+  filter: drop-shadow(0 0 12px rgba(255,0,0,.16));
+  z-index:2;
+}
+
+/* Dock */
+.hub-dock{
+  position:fixed;
+  left:14px; right:14px; bottom:14px;
+  z-index:10;
+  display:flex;
+  gap:12px;
+  align-items:stretch;
+}
+.hub-hint{
+  flex:1;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.18);
+  background: rgba(0,0,0,.30);
+  backdrop-filter: blur(10px);
+  padding:12px 14px;
+  font-size:13px;
+  line-height:1.25;
+}
+.hub-cake{
+  width:120px;
+  border-radius:18px;
+  border:1px solid rgba(255,0,0,.45);
+  background: rgba(0,0,0,.38);
+  backdrop-filter: blur(10px);
+  text-decoration:none;
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
-
-  gap:10px;
-  text-decoration:none;
-
-  border-radius:22px;
-  border:1px solid rgba(255,255,255,.20);
-  background: rgba(0,0,0,.26);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 0 22px rgba(255,0,0,.10);
-  padding:14px;
+  gap:6px;
+  box-shadow: 0 0 22px rgba(255,0,0,.12);
 }
-
-.hub-icon img{
-  width:52px; height:52px;
-  object-fit:contain;
-  display:block;
-  filter: drop-shadow(0 0 12px rgba(255,0,0,.16));
-}
-
-.hub-icon span{
-  font-size:13px;
+.hub-cake img{ width:46px; height:46px; object-fit:contain; }
+.hub-cake small{
+  font-size:11px;
   letter-spacing:.10em;
   text-transform:uppercase;
   opacity:.95;
 }
 
-/* posiciones “desordenado cool” */
-.hub-icon.f1{ left:10%; top:20%; }
-.hub-icon.f2{ right:10%; top:18%; }
-.hub-icon.f3{ left:18%; top:48%; }
-.hub-icon.f4{ right:16%; top:50%; }
-.hub-icon.f5{ left:40%; top:34%; }
-.hub-icon.f6{ right:38%; top:72%; width:160px; }
-
-/* flotación */
-.float{ animation: floaty 6.5s ease-in-out infinite; }
-.f2{ animation-duration: 7.8s; }
-.f3{ animation-duration: 6.9s; }
-.f4{ animation-duration: 8.5s; }
-.f5{ animation-duration: 7.2s; }
-.f6{ animation-duration: 9.2s; }
-
-@keyframes floaty{
-  0%,100%{ transform: translate(0,0) rotate(0deg); }
-  50%{ transform: translate(10px,-14px) rotate(2deg); }
+/* Desktop hub */
+@media (min-width: 860px){
+  .hub-stage{
+    padding: 92px 22px 120px;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap:18px;
+    max-width: 980px;
+    margin: 0 auto;
+  }
+  .hub-dock{
+    max-width: 980px;
+    margin: 0 auto;
+  }
 }
 
-/* Hint abajo */
-.hub-hint{
-  position:fixed;
-  left:14px; right:14px; bottom:14px;
-  z-index:10;
-  border-radius:18px;
-  border:1px solid rgba(255,255,255,.18);
-  background: rgba(0,0,0,.30);
-  backdrop-filter: blur(10px);
-  color:#fff;
-  padding:12px 14px;
-  font-size:13px;
-  line-height:1.25;
-}
-
-/* Linterna */
+/* ===== Linterna + Polvo + FX ===== */
 .flashlight{
   position:fixed;
   inset:0;
@@ -192,7 +200,6 @@ body.upside .hub-overlay{
   mix-blend-mode: screen;
   opacity:.85;
 }
-
 body.upside .flashlight{
   background: radial-gradient(
     circle 160px at var(--mx, 50vw) var(--my, 35vh),
@@ -203,24 +210,17 @@ body.upside .flashlight{
   mix-blend-mode: normal;
   opacity:.92;
 }
-
-/* polvo */
-#dust{
+canvas#dust{
   position:fixed;
   inset:0;
   pointer-events:none;
   z-index:8;
   opacity:.85;
 }
-
-/* Easter: más intenso */
-body.easter #dust{ opacity:1; }
-body.easter .flashlight{ opacity:1; }
-
-/* click fx */
 .fx{
   position:fixed;
-  width:10px; height:10px;
+  width:10px;
+  height:10px;
   border-radius:50%;
   pointer-events:none;
   z-index:99999;
@@ -237,9 +237,10 @@ body.easter .flashlight{ opacity:1; }
 .fx.ash{ background: rgba(220,220,220,.95); box-shadow: 0 0 18px rgba(220,220,220,.55), 0 0 28px rgba(255,0,0,.10); }
 .fx.spark{ background: rgba(255,170,0,.95); box-shadow: 0 0 18px rgba(255,170,0,.75), 0 0 28px rgba(255,0,0,.12); }
 
-/* Responsive */
-@media (max-width:420px){
-  .hub-icon{ width:140px; }
-  .hub-icon.f5{ left:34%; top:36%; }
-  .hub-icon.f6{ right:28%; top:74%; }
+body.glitch-shake{ animation: hubshake 260ms linear; }
+@keyframes hubshake{
+  0%{ transform:none; filter:none; }
+  30%{ transform: translate(1px,0); filter: drop-shadow(2px 0 rgba(0,255,255,.25)) drop-shadow(-2px 0 rgba(255,0,0,.25)); }
+  60%{ transform: translate(-1px,1px); filter: drop-shadow(-2px 0 rgba(0,255,255,.28)) drop-shadow(2px 0 rgba(255,0,0,.20)); }
+  100%{ transform:none; filter:none; }
 }
