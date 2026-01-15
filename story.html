@@ -74,7 +74,7 @@
     .btn:active{ transform: translateY(1px); }
     .btn-main{ border:2px solid rgba(255,0,0,.8); box-shadow: 0 0 18px rgba(255,0,0,.20); }
 
-    /* ===== Decor flotante (NO bloquea clicks) ===== */
+    /* ===== Decor flotante (NO bloquea clicks del juego) ===== */
     .story-decor{ position:fixed; inset:0; pointer-events:none; z-index:15; }
 
     .story-float{
@@ -84,7 +84,7 @@
       opacity:.95;
       filter: drop-shadow(0 0 18px rgba(255,0,0,.45));
       animation: drift 10s ease-in-out infinite;
-      pointer-events:none; /* por default no clickable */
+      pointer-events:none;
       user-select:none;
     }
     .story-float.s2{ animation-duration: 13s; opacity:.85; }
@@ -95,12 +95,26 @@
       50%{ transform: translate(10px,-18px) rotate(6deg); }
     }
 
+    /* ✅ NUEVO: bike.png (no bloquea clicks) */
+    .story-final{
+      position:absolute;
+      left:50%;
+      top:72%;
+      transform: translate(-50%, -50%);
+      width:260px;
+      max-width:75vw;
+      opacity:.95;
+      pointer-events:none;
+      z-index:16;
+      filter: drop-shadow(0 0 22px rgba(255,0,0,.35));
+    }
+
     /* Solo el enemigo se puede tocar */
     .enemigo{
       width:90px;
       height:auto;
       opacity:.85;
-      pointer-events:auto !important;
+      pointer-events:auto !important; /* clickable */
       cursor:pointer;
       z-index:60;
       position:absolute;
@@ -151,6 +165,7 @@
       .btn{ min-width: 140px; }
       .story-float{ width:96px; }
       .enemigo{ width:78px; }
+      .story-final{ width:210px; top:74%; }
     }
   </style>
 </head>
@@ -160,8 +175,10 @@
   <div class="noise"></div>
   <div class="vignette"></div>
 
-  <!-- Flotantes SOLO de la historia -->
-  <img class="story-final" src="img/bike.png" alt="Bike final">
+  <!-- ✅ Flotantes SOLO de la historia (todo dentro del contenedor correcto) -->
+  <div class="story-decor" aria-hidden="true">
+    <img class="story-final" src="img/bike.png" alt="Bike final">
+
     <img class="story-float s1" src="img/personaje.png" style="left:10%; top:18%;" alt="Personaje Hawkins">
 
     <!-- Demogorgon: ÚNICO clickeable -->
