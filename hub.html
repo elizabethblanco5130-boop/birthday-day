@@ -6,57 +6,59 @@
   <title>Hawkins Hub</title>
   <link rel="stylesheet" href="style.css?v=20">
 </head>
+
 <body class="hub-world normal">
 
-<!-- ✅ Música (archivo en la raíz: should.mp3) -->
-<audio id="hubMusic" loop preload="auto">
-  <source src="should.mp3" type="audio/mpeg">
-</audio>
-
+<!-- VIDEO FONDO -->
 <video autoplay muted loop playsinline id="bg">
   <source src="background.mp4" type="video/mp4">
 </video>
 <div class="hub-vignette"></div>
 
-<!-- Barra arriba -->
+<!-- 🔊 MÚSICA HUB -->
+<audio id="hubMusic" loop preload="auto">
+  <source src="should.mp3" type="audio/mpeg">
+</audio>
+
+<!-- BARRA SUPERIOR -->
 <header class="hub-top">
   <a class="hub-back" href="index.html">←</a>
   <div class="hub-title">HAWKINS HUB</div>
   <button class="hub-worldbtn" id="worldBtn">WORLD: NORMAL</button>
 </header>
 
-<!-- Área de iconos -->
+<!-- ICONOS -->
 <main class="hub-stage" id="stage">
 
-  <!-- ICONOS (PNG) -->
-  <a class="hub-icon float1" href="story.html" data-spark="ink" aria-label="Tu historia">
-    <img src="img/tape.png" alt="Tape">
+  <a class="hub-icon float1" href="story.html" data-spark="ink">
+    <img src="img/tape.png" alt="">
     <span>Historia</span>
   </a>
 
-  <a class="hub-icon float2" href="facts.html" data-spark="light" aria-label="Luces">
-    <img src="img/lights.png" alt="Lights">
+  <a class="hub-icon float2" href="facts.html" data-spark="light">
+    <img src="img/lights.png" alt="">
     <span>Luces</span>
   </a>
 
-  <a class="hub-icon float3" href="playlist.html" data-spark="ink" aria-label="Playlist">
-    <img src="img/radio.png" alt="Radio">
+  <a class="hub-icon float3" href="playlist.html" data-spark="ink">
+    <img src="img/radio.png" alt="">
     <span>Mixtape</span>
   </a>
 
-  <a class="hub-icon float4" href="gallery.html" data-spark="ash" aria-label="Edits">
-    <img src="img/portal.png" alt="Portal">
+  <a class="hub-icon float4" href="gallery.html" data-spark="ash">
+    <img src="img/portal.png" alt="">
     <span>Edits</span>
   </a>
 
-  <a class="hub-icon float5" href="lab.html" data-spark="ink" aria-label="Lab">
-    <img src="img/lab.png" alt="Lab">
+  <a class="hub-icon float5" href="lab.html" data-spark="ink">
+    <img src="img/lab.png" alt="">
     <span>Lab</span>
   </a>
 
   <div class="hub-hint">
-    Toca los iconos. Cambia el mundo arriba.  
+    Toca los iconos. Cambia el mundo arriba.
   </div>
+
 </main>
 
 <script src="hub.js?v=20"></script>
