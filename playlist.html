@@ -44,6 +44,7 @@
       object-fit:cover;
       filter: saturate(0.95) contrast(1.05);
       transform: scale(1.01);
+      cursor: pointer; /* ✅ NUEVO: para que se sienta clickeable */
     }
 
     /* Vignette / mood */
@@ -84,6 +85,62 @@
       opacity: .55;
     }
 
+    /* ===== ✅ NUEVO: STORM LAYER (relámpagos) ===== */
+    .stormLayer{
+      position:fixed; inset:0;
+      pointer-events:none;
+      z-index:21; /* encima de idleDark */
+      opacity:0;
+      transition: opacity .25s ease;
+    }
+    body.idle .stormLayer{ opacity:1; }
+
+    .stormFlash{
+      position:absolute; inset:-20%;
+      background:
+        radial-gradient(circle at 70% 30%, rgba(200,255,255,.18), rgba(0,0,0,0) 40%),
+        radial-gradient(circle at 25% 55%, rgba(255,255,255,.10), rgba(0,0,0,0) 45%);
+      opacity:0;
+      mix-blend-mode: screen;
+      filter: blur(1px);
+      animation: lightning 4.8s infinite;
+    }
+    @keyframes lightning{
+      0%, 70%, 100% { opacity:0; transform: translate(0,0); }
+      72% { opacity:.15; transform: translate(-8px, 4px); }
+      73% { opacity:0; }
+      76% { opacity:.22; transform: translate(10px, -6px); }
+      77% { opacity:0; }
+      79% { opacity:.12; transform: translate(-6px, 2px); }
+      80% { opacity:0; }
+    }
+
+    /* ✅ NUEVO: vibración global */
+    body.idle .ui,
+    body.stormPulse .ui{
+      animation: shake .22s infinite;
+    }
+    @keyframes shake{
+      0%{ transform: translate(0,0); }
+      25%{ transform: translate(1px,-1px); }
+      50%{ transform: translate(-1px,1px); }
+      75%{ transform: translate(1px,1px); }
+      100%{ transform: translate(0,0); }
+    }
+
+    /* ✅ NUEVO: vibración de cassette al tocar */
+    .track.buzz{
+      animation: buzz .35s ease-in-out;
+    }
+    @keyframes buzz{
+      0%{ transform: translate(0,0); }
+      20%{ transform: translate(1px,-1px); }
+      40%{ transform: translate(-1px,1px); }
+      60%{ transform: translate(1px,1px); }
+      80%{ transform: translate(-1px,-1px); }
+      100%{ transform: translate(0,0); }
+    }
+
     /* ===== PARTICLES CANVAS ===== */
     canvas#fx{
       position:fixed; inset:0;
@@ -116,6 +173,36 @@
     .whisper.show{
       opacity:1;
       transform: translateX(-50%) translateY(0);
+    }
+
+    /* ===== ✅ NUEVO: RED ALERT OVERLAY ===== */
+    .redAlert{
+      position:fixed; inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:24px;
+      background: rgba(140,0,0,.78);
+      backdrop-filter: blur(2px);
+      opacity:0;
+      pointer-events:none;
+      z-index:100;
+      transition: opacity .18s ease;
+    }
+    .redAlert.show{ opacity:1; }
+
+    .redAlert .msg{
+      font-family: 'Press Start 2P', monospace;
+      font-size: 12px;
+      letter-spacing:.06em;
+      line-height:1.8;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.95);
+      text-shadow: 0 0 18px rgba(255,0,0,.35);
+    }
+    @media(min-width:900px){
+      .redAlert .msg{ font-size: 14px; }
     }
 
     /* ===== UI PANEL (bottom-left; doesn't cover her) ===== */
@@ -272,7 +359,7 @@
     .objects{
       position:fixed; inset:0;
       z-index:40;
-      pointer-events:none; /* default, but objects themselves can be clickable */
+      pointer-events:none;
     }
 
     .obj{
@@ -311,7 +398,6 @@
       color: rgba(255,255,255,.82);
     }
 
-    /* place objects away from the subject: top-left-ish / far edges */
     .obj.clock{ left:18px; top:110px; }
     .obj.walkie{ left:18px; top:200px; transform: rotate(7deg); }
     .obj.bag{ left:18px; top:290px; transform: rotate(-12deg); }
@@ -358,7 +444,7 @@
       width:100%;
     }
 
-    /* ===== RESPONSIVE (desktop: keep UI bottom-left; image stays center) ===== */
+    /* ===== RESPONSIVE (desktop) ===== */
     @media (min-width: 900px){
       .ui{ left:26px; bottom:26px; width: 440px; }
       .logo{ font-size: 40px; }
@@ -371,8 +457,7 @@
 <body>
   <!-- background -->
   <div class="bg">
-    <!-- CAMBIA ESTA RUTA SI QUIERES -->
-    <img src="img/max.PNG" alt="Max moment">
+    <img id="maxImg" src="img/max.png" alt="Max moment">
   </div>
 
   <div class="vignette"></div>
@@ -380,6 +465,17 @@
   <canvas id="fx"></canvas>
 
   <div class="idleDark"></div>
+
+  <!-- ✅ NUEVO: relámpagos -->
+  <div class="stormLayer" aria-hidden="true">
+    <div class="stormFlash"></div>
+  </div>
+
+  <!-- ✅ NUEVO: red alert -->
+  <div class="redAlert" id="redAlert" aria-hidden="true">
+    <div class="msg">YOU ALMOST LOST HER.</div>
+  </div>
+
   <div class="whisper" id="whisper">Running won’t save you…</div>
 
   <!-- Floating objects -->
@@ -411,9 +507,7 @@
         <div class="quote">“When the noise gets too loud, this is what brings her back.”</div>
       </div>
 
-      <!-- 10 placeholders -->
       <div class="playlist" id="playlist">
-        <!-- Deja estos 10: solo cambia TITLE/ARTIST y luego pones data-src si quieres previews -->
         <div class="track" data-index="0" data-src="" data-title="Song 01" data-artist="Artist">
           <div class="tag">Cassette 01</div>
           <div class="name">Song 01 — Artist</div>
@@ -464,10 +558,8 @@
     </section>
   </div>
 
-  <!-- Audio element (optional previews; you can also use one bg music later) -->
   <audio id="player" preload="auto"></audio>
 
-  <!-- Modal for secrets -->
   <div class="modal" id="modal">
     <div class="backdrop"></div>
     <div class="box">
@@ -528,7 +620,6 @@
         ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
         ctx.fill();
 
-        // tiny ember red occasionally
         if(Math.random() < 0.006){
           ctx.beginPath();
           ctx.fillStyle = `rgba(255,0,0,${rand(0.10,0.25)})`;
@@ -545,7 +636,6 @@
     // =========================
     let idleTimer = null;
     const whisper = document.getElementById("whisper");
-    const idleDark = document.querySelector(".idleDark");
 
     function showWhisper(msg){
       whisper.textContent = msg;
@@ -600,14 +690,24 @@
       playingIndex = i;
     }
 
+    function stormPulse(){
+      document.body.classList.add("stormPulse");
+      setTimeout(()=>document.body.classList.remove("stormPulse"), 650);
+    }
+
     function playTrack(el){
       const src = el.dataset.src?.trim();
-      const title = el.dataset.title || "Song";
-      // If user hasn't set src yet, do only FX (still feels alive)
       bumpProtection();
       setPlaying(Number(el.dataset.index));
 
-      // optional preview: you can later set data-src="audio/song01.mp3"
+      // ✅ NUEVO: vibración + relámpago al tocar cassette
+      el.classList.remove("buzz");
+      void el.offsetWidth;
+      el.classList.add("buzz");
+      stormPulse();
+
+      showWhisper("💿 CANCIONES QUE SE DEFENDEN");
+
       if(src){
         player.src = src;
         player.currentTime = 0;
@@ -623,14 +723,13 @@
       });
     });
 
-    // Big “PRESS PLAY” button: picks a random track
     panicBtn.addEventListener("click", ()=>{
       resetIdle();
+      stormPulse(); // ✅ NUEVO
       const i = Math.floor(Math.random()*tracks.length);
       playTrack(tracks[i]);
     });
 
-    // If music ends (preview), remove playing highlight
     player.addEventListener("ended", ()=> setPlaying(-1));
 
     // =========================
@@ -667,8 +766,11 @@
       }
     };
 
+    let logoTaps = 0;
+    let vecnaTaps = 0;
+
     document.querySelectorAll(".obj").forEach(o=>{
-      o.addEventListener("click", (e)=>{
+      o.addEventListener("click", ()=>{
         resetIdle();
         const k = o.dataset.obj;
         if(k === "vecna"){
@@ -689,11 +791,8 @@
     });
 
     // =========================
-    // EASTER EGGS
+    // EASTER EGGS (logo)
     // =========================
-    let logoTaps = 0;
-    let vecnaTaps = 0;
-
     const logo = document.getElementById("logo");
     logo.addEventListener("click", ()=>{
       resetIdle();
@@ -704,6 +803,41 @@
         bumpProtection();
       }
     });
+
+    // =========================
+    // ✅ NUEVO: 7 taps en la IMAGEN de ella (pantalla roja + texto)
+    // =========================
+    const maxImg = document.getElementById("maxImg");
+    const redAlert = document.getElementById("redAlert");
+    let imgTaps = 0;
+    let imgTapTimer = null;
+
+    function triggerRedAlert(){
+      redAlert.classList.add("show");
+      showWhisper("…");
+
+      setTimeout(()=>{
+        redAlert.classList.remove("show");
+        // vuelve normal + mensaje de “defensa”
+        showWhisper("1. 💿 CANCIONES QUE SE DEFENDEN");
+      }, 900);
+    }
+
+    if(maxImg){
+      maxImg.addEventListener("click", ()=>{
+        resetIdle();
+        imgTaps++;
+
+        clearTimeout(imgTapTimer);
+        imgTapTimer = setTimeout(()=>{ imgTaps = 0; }, 1400);
+
+        if(imgTaps >= 7){
+          imgTaps = 0;
+          triggerRedAlert();
+          stormPulse(); // vibra/flash también
+        }
+      });
+    }
   </script>
 </body>
 </html>
