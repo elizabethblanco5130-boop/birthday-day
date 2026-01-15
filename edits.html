@@ -3,20 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>Starcourt Edits</title>
+  <title>Edits — Starcourt</title>
 
+  <!-- Pixel/arcade -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --pink:#ff3bd4;
-      --cyan:#18f6ff;
-      --lime:#b8ff2e;
-      --purple:#7b2cff;
-      --glass: rgba(0,0,0,.45);
-      --line: rgba(255,255,255,.12);
+      --pink: rgba(255, 0, 153, .75);
+      --cyan: rgba(0, 255, 255, .40);
+      --glass: rgba(0,0,0,.40);
+      --glass2: rgba(0,0,0,.22);
+      --white: rgba(255,255,255,.92);
     }
 
     *{ box-sizing:border-box; }
@@ -29,548 +29,412 @@
       font-family: system-ui, -apple-system, Arial;
     }
 
-    /* ====== INTRO (black screen + cake) ====== */
-    .intro{
+    /* ======= SCREENS ======= */
+    .screen{
       position:fixed; inset:0;
-      display:grid;
-      place-items:center;
+      display:none;
+    }
+    .screen.show{ display:block; }
+
+    /* ======= INTRO (black + cake) ======= */
+    .intro{
       background:#000;
-      z-index:999;
-    }
-    .introInner{
-      width:min(92vw, 520px);
-      text-align:center;
-      padding:18px 16px;
-    }
-    .introTitle{
-      font-family:'Press Start 2P', monospace;
-      letter-spacing:.06em;
-      font-size:12px;
-      opacity:.9;
-      margin:0 0 16px;
-    }
-    .cakeBtn{
-      width:120px; height:120px;
-      border-radius:28px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.25);
       display:grid;
       place-items:center;
-      margin: 0 auto 16px;
+      padding:24px;
+    }
+
+    .introWrap{
+      width:min(520px, 92vw);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:14px;
+      text-align:center;
+    }
+
+    .introText{
+      font-family:'Press Start 2P', monospace;
+      font-size:12px;
+      letter-spacing:.05em;
+      line-height:1.6;
+      opacity:.9;
+    }
+
+    .cakeBtn{
+      width:108px;
+      height:108px;
+      border-radius:26px;
+      border:1px solid rgba(255,255,255,.12);
+      background: radial-gradient(circle at 30% 30%, rgba(255,0,153,.25), rgba(0,0,0,.65));
+      box-shadow:
+        0 0 0 2px rgba(255,0,153,.10),
+        0 0 26px rgba(255,0,153,.25),
+        0 0 32px rgba(0,255,255,.10);
+      display:grid;
+      place-items:center;
       cursor:pointer;
       user-select:none;
-      box-shadow:
-        0 0 0 1px rgba(255,0,0,.10) inset,
-        0 0 40px rgba(255,0,180,.10);
-      position:relative;
-      overflow:hidden;
+      transition: transform .12s ease, filter .25s ease;
     }
-    .cakeBtn::before{
-      content:"";
-      position:absolute; inset:-40%;
-      background:
-        radial-gradient(circle at 30% 30%, rgba(255,59,212,.25), rgba(0,0,0,0) 55%),
-        radial-gradient(circle at 70% 70%, rgba(24,246,255,.18), rgba(0,0,0,0) 60%);
-      filter: blur(10px);
-      animation: swirl 6s linear infinite;
-      opacity:.9;
-      pointer-events:none;
+    .cakeBtn:active{ transform: scale(.98); }
+
+    .cakeEmoji{
+      font-size:42px;
+      filter: drop-shadow(0 0 10px rgba(255,0,153,.25));
     }
-    @keyframes swirl{
-      0%{ transform: rotate(0deg); }
-      100%{ transform: rotate(360deg); }
-    }
-    .cakeIcon{
-      font-size:44px;
-      filter: drop-shadow(0 0 18px rgba(255,59,212,.25));
-      z-index:2;
-    }
-    .introHint{
+
+    .hint{
       font-family:'Press Start 2P', monospace;
-      font-size:10px;
-      line-height:1.7;
-      opacity:.75;
-      margin:0;
+      font-size:9px;
+      opacity:.65;
+      letter-spacing:.06em;
     }
-    .introClose{
-      margin-top:14px;
-      width:min(320px, 100%);
+
+    /* ======= VIDEO SCREEN ======= */
+    .videoScreen{
+      background:#000;
+    }
+
+    .videoWrap{
+      position:absolute; inset:0;
+      display:grid;
+      place-items:center;
+      padding:18px;
+    }
+
+    video#jamieVid{
+      width:min(920px, 96vw);
+      height:auto;
+      max-height: 82vh;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow: 0 0 40px rgba(255,0,153,.18);
+      background:#000;
+    }
+
+    .closeBtn{
+      position:fixed;
+      right:14px;
+      top:14px;
+      z-index:50;
       padding:12px 14px;
       border-radius:14px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.35);
+      border:1px solid rgba(255,0,153,.60);
+      background: rgba(0,0,0,.55);
       color:#fff;
       font-family:'Press Start 2P', monospace;
       font-size:10px;
       letter-spacing:.06em;
-      text-transform:uppercase;
+      text-transform: uppercase;
       cursor:pointer;
-      display:none;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 0 18px rgba(255,0,153,.12);
     }
-    .introClose.show{ display:inline-block; }
+    .closeBtn:active{ transform: translateY(1px); }
 
-    /* ====== STARCOURT WORLD ====== */
-    .world{
-      position:fixed; inset:0;
-      display:none;
-      z-index:1;
-    }
-    .world.show{ display:block; }
-
-    /* neon gradient background */
-    .bg{
-      position:fixed; inset:0;
+    /* ======= STARCOURT COLLAGE SCREEN ======= */
+    .starcourt{
+      /* Neon mall vibe */
       background:
-        radial-gradient(circle at 20% 20%, rgba(24,246,255,.25), rgba(0,0,0,0) 45%),
-        radial-gradient(circle at 80% 35%, rgba(255,59,212,.22), rgba(0,0,0,0) 50%),
-        radial-gradient(circle at 45% 80%, rgba(184,255,46,.14), rgba(0,0,0,0) 55%),
-        linear-gradient(180deg, rgba(10,0,25,1), rgba(0,0,0,1));
-      z-index:0;
+        radial-gradient(circle at 30% 20%, rgba(255,0,153,.18), rgba(0,0,0,.85)),
+        radial-gradient(circle at 80% 60%, rgba(0,255,255,.14), rgba(0,0,0,.85));
     }
 
-    /* scanlines + glow */
-    .scanlines{
-      position:fixed; inset:0;
-      background: repeating-linear-gradient(
-        to bottom,
-        rgba(255,255,255,.04),
-        rgba(255,255,255,.04) 1px,
-        rgba(0,0,0,0) 3px,
-        rgba(0,0,0,0) 7px
-      );
-      opacity:.14;
-      mix-blend-mode: overlay;
+    /* animated neon scan */
+    .scan{
+      position:absolute; inset:-40%;
+      background: linear-gradient(120deg,
+        rgba(255,0,153,.0),
+        rgba(255,0,153,.10),
+        rgba(0,255,255,.10),
+        rgba(255,0,153,.0));
+      filter: blur(18px);
+      opacity:.55;
+      animation: scan 7s linear infinite;
       pointer-events:none;
+    }
+    @keyframes scan{
+      0%{ transform: translateX(-18%) translateY(-8%) rotate(6deg); }
+      100%{ transform: translateX(18%) translateY(8%) rotate(6deg); }
+    }
+
+    /* neon tubes frame */
+    .tubes{
+      position:absolute; inset:0;
+      pointer-events:none;
+      opacity:.95;
+    }
+    .tube{
+      position:absolute;
+      border-radius:999px;
+      background: rgba(255,255,255,.08);
+      box-shadow:
+        0 0 12px rgba(255,0,153,.25),
+        0 0 22px rgba(0,255,255,.20);
+      filter: saturate(1.1);
+      animation: flicker 2.6s infinite;
+    }
+    .tube.t1{ left:14px; top:14px; width:160px; height:10px; }
+    .tube.t2{ right:14px; top:14px; width:210px; height:10px; animation-delay:.2s; }
+    .tube.t3{ left:14px; bottom:14px; width:220px; height:10px; animation-delay:.35s; }
+    .tube.t4{ right:14px; bottom:14px; width:160px; height:10px; animation-delay:.1s; }
+    .tube.v1{ left:14px; top:14px; width:10px; height:220px; animation-delay:.45s; }
+    .tube.v2{ right:14px; top:14px; width:10px; height:240px; animation-delay:.15s; }
+
+    @keyframes flicker{
+      0%,100%{ opacity:.9; }
+      45%{ opacity:.75; }
+      55%{ opacity:1; }
+      70%{ opacity:.82; }
+    }
+
+    /* Your big image area (NO "photo" boxes) */
+    .collageWrap{
+      position:absolute;
+      inset:0;
+      padding:72px 16px 20px;
+      display:grid;
+      place-items:center;
+      z-index:10;
+    }
+
+    .collageFrame{
+      width:min(980px, 94vw);
+      height:min(78vh, 640px);
+      border-radius:22px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
+      backdrop-filter: blur(10px);
+      box-shadow:
+        0 0 0 2px rgba(255,0,153,.08),
+        0 0 30px rgba(255,0,153,.14),
+        0 0 24px rgba(0,255,255,.10);
+      position:relative;
+      overflow:hidden;
+    }
+
+    /* Put YOUR designed image as background here later */
+    .collageFrame .yourImage{
+      position:absolute; inset:0;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,.08), rgba(0,0,0,.25));
+      /* ✅ cuando tengas tu imagen: reemplaza por:
+         background-image: url("img/TU_IMAGEN.png");
+         background-size: cover;
+         background-position: center;
+      */
+    }
+
+    .collageTitle{
+      position:absolute;
+      left:16px; top:16px;
+      font-family:'Press Start 2P', monospace;
+      font-size:11px;
+      letter-spacing:.08em;
+      color: rgba(255,255,255,.86);
+      text-transform: uppercase;
+      text-shadow: 0 0 14px rgba(255,0,153,.18);
       z-index:2;
     }
-    .vignette{
-      position:fixed; inset:0;
-      background: radial-gradient(ellipse at center, rgba(0,0,0,.05), rgba(0,0,0,.75));
-      pointer-events:none;
-      z-index:3;
-    }
 
-    /* floating neon dust */
-    canvas#fx{
-      position:fixed; inset:0;
-      pointer-events:none;
-      z-index:4;
+    .collageSub{
+      position:absolute;
+      left:16px; bottom:16px;
+      right:16px;
+      font-family:'Press Start 2P', monospace;
+      font-size:9px;
+      line-height:1.7;
+      letter-spacing:.04em;
+      color: rgba(255,255,255,.80);
+      z-index:2;
       opacity:.9;
     }
 
-    /* top bar */
-    .top{
+    /* Tap FX (little neon spark) */
+    .spark{
       position:fixed;
-      top:14px; left:14px; right:14px;
-      z-index:10;
-      display:flex;
-      gap:10px;
-      justify-content:space-between;
-      align-items:center;
+      width:10px; height:10px;
+      border-radius:50%;
+      background: rgba(255,0,153,.85);
+      box-shadow: 0 0 14px rgba(255,0,153,.75), 0 0 24px rgba(0,255,255,.25);
+      pointer-events:none;
+      transform: translate(-50%,-50%);
+      animation: pop .6s ease-out forwards;
+      z-index:200;
     }
-    .pill{
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.30);
-      backdrop-filter: blur(10px);
-      border-radius:18px;
-      padding:10px 12px;
-      font-family:'Press Start 2P', monospace;
-      font-size:10px;
-      letter-spacing:.06em;
-      text-transform:uppercase;
-      box-shadow: 0 0 26px rgba(255,59,212,.10);
-    }
-    .pillTitle{
-      border-color: rgba(255,59,212,.35);
-      box-shadow: 0 0 0 2px rgba(255,59,212,.10), 0 0 36px rgba(24,246,255,.12);
+    @keyframes pop{
+      from{ opacity:1; transform: translate(-50%,-50%) scale(.7); }
+      to{ opacity:0; transform: translate(-50%,-50%) scale(3.2); }
     }
 
-    .btn{
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.30);
-      backdrop-filter: blur(10px);
-      border-radius:18px;
-      padding:10px 12px;
+    /* Back button */
+    .back{
+      position:fixed;
+      left:14px;
+      top:14px;
+      z-index:70;
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.45);
       color:#fff;
       text-decoration:none;
       font-family:'Press Start 2P', monospace;
       font-size:10px;
       letter-spacing:.06em;
-      text-transform:uppercase;
-      cursor:pointer;
-    }
-    .btn:hover{ filter: brightness(1.07); }
-
-    /* center panel */
-    .panel{
-      position:fixed;
-      left:50%;
-      top:54%;
-      transform: translate(-50%,-50%);
-      width:min(92vw, 900px);
-      z-index:9;
-      border-radius:22px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.35);
-      backdrop-filter: blur(12px);
-      box-shadow:
-        0 0 0 2px rgba(255,59,212,.08),
-        0 0 50px rgba(24,246,255,.10);
-      overflow:hidden;
-    }
-
-    .banner{
-      padding:16px 16px 12px;
-      border-bottom:1px solid rgba(255,255,255,.10);
-    }
-    .banner h1{
-      margin:0;
-      font-family:'Press Start 2P', monospace;
-      font-size:14px;
-      letter-spacing:.08em;
-      text-transform:uppercase;
-      text-shadow: 2px 0 rgba(24,246,255,.18), -2px 0 rgba(255,59,212,.18);
-    }
-    .banner p{
-      margin:10px 0 0;
-      opacity:.82;
-      line-height:1.6;
-      font-size:13px;
-    }
-
-    /* collage grid */
-    .grid{
-      padding:14px;
-      display:grid;
-      gap:12px;
-      grid-template-columns: repeat(2, 1fr);
-    }
-    .tile{
-      position:relative;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.25);
-      overflow:hidden;
-      min-height:140px;
-      cursor:pointer;
-      user-select:none;
-      transform: rotate(var(--rot, -1deg));
-      transition: transform .16s ease, filter .25s ease;
-      box-shadow: 0 0 26px rgba(255,59,212,.08);
-    }
-    .tile:hover{ transform: rotate(0deg) translateY(-1px); }
-    .tile:active{ transform: rotate(0deg) translateY(1px); }
-
-    .tile::before{
-      content:"";
-      position:absolute; inset:-2px;
-      background:
-        linear-gradient(90deg, rgba(255,59,212,.14), rgba(24,246,255,.10), rgba(184,255,46,.10));
-      opacity:.35;
-      filter: blur(12px);
-      pointer-events:none;
-    }
-
-    .tile img{
-      position:absolute; inset:0;
-      width:100%; height:100%;
-      object-fit:cover;
-      opacity:.95;
-      filter: saturate(1.06) contrast(1.06);
-    }
-    .placeholder{
-      position:absolute; inset:0;
-      display:grid;
-      place-items:center;
-      font-family:'Press Start 2P', monospace;
-      font-size:10px;
-      letter-spacing:.06em;
-      opacity:.65;
-      text-transform:uppercase;
-    }
-    .tag{
-      position:absolute;
-      left:10px; bottom:10px;
-      padding:8px 10px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.35);
+      text-transform: uppercase;
       backdrop-filter: blur(8px);
-      font-family:'Press Start 2P', monospace;
-      font-size:9px;
-      letter-spacing:.06em;
-      text-transform:uppercase;
     }
 
-    /* modal viewer */
-    .modal{
-      position:fixed; inset:0;
-      display:none;
-      z-index:50;
-    }
-    .modal.show{ display:block; }
-    .modal .backdrop{
-      position:absolute; inset:0;
-      background: rgba(0,0,0,.70);
-      backdrop-filter: blur(6px);
-    }
-    .modal .box{
-      position:absolute;
-      left:50%; top:50%;
-      transform: translate(-50%,-50%);
-      width:min(92vw, 900px);
-      border-radius:22px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.55);
-      box-shadow: 0 0 40px rgba(255,59,212,.16);
-      overflow:hidden;
-    }
-    .modal img{
-      width:100%;
-      height:auto;
-      display:block;
-    }
-    .modal .close{
-      position:absolute;
-      right:14px; top:14px;
-      padding:10px 12px;
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.35);
-      color:#fff;
-      font-family:'Press Start 2P', monospace;
-      font-size:10px;
-      cursor:pointer;
-    }
-
-    /* responsive */
-    @media (min-width: 900px){
-      .grid{ grid-template-columns: repeat(3, 1fr); }
-      .banner h1{ font-size:16px; }
+    /* make room on small phones */
+    @media (max-width:420px){
+      .collageWrap{ padding-top:64px; }
+      .collageFrame{ height: 72vh; }
     }
   </style>
 </head>
 
 <body>
-  <!-- INTRO -->
-  <section class="intro" id="intro">
-    <div class="introInner">
-      <p class="introTitle">esto es todo</p>
 
+  <!-- ============ INTRO ============ -->
+  <section class="screen intro show" id="screenIntro">
+    <a class="back" href="index.html?v=1000">← VOLVER</a>
+
+    <div class="introWrap">
       <div class="cakeBtn" id="cakeBtn" aria-label="Pastel">
-        <div class="cakeIcon">🎂</div>
+        <div class="cakeEmoji">🎂</div>
       </div>
 
-      <p class="introHint">tócalo otra vez para “abrir”</p>
-      <button class="introClose" id="openBtn" type="button">CERRAR Y ENTRAR</button>
+      <div class="introText">esto es todo</div>
+      <div class="hint">toca el pastel otra vez…</div>
     </div>
   </section>
 
-  <!-- STARCOURT WORLD -->
-  <section class="world" id="world">
-    <div class="bg"></div>
-    <div class="scanlines"></div>
-    <div class="vignette"></div>
-    <canvas id="fx"></canvas>
+  <!-- ============ VIDEO ============ -->
+  <section class="screen videoScreen" id="screenVideo">
+    <button class="closeBtn" id="closeVideo" type="button">CERRAR</button>
 
-    <header class="top">
-      <a class="btn" href="index.html?v=1000">← VOLVER</a>
-      <div class="pill pillTitle">STARCOURT • EDITS</div>
-      <a class="btn" href="hub.html?v=1000">HUB →</a>
-    </header>
-
-    <main class="panel">
-      <div class="banner">
-        <h1>Starcourt Collage</h1>
-        <p>
-          Luces frías. Neón. Azúcar. Y recuerdos como si fueran anuncios de un mall que nunca cierra.
-          <br><br>
-          Toca cualquier foto para abrirla. (Luego tú cambias las imágenes.)
-        </p>
-      </div>
-
-      <div class="grid" id="grid">
-        <!-- Cambia src por tus fotos cuando quieras.
-             Si no tienes foto todavía, deja el placeholder. -->
-        <div class="tile" style="--rot:-2deg" data-img="">
-          <div class="placeholder">foto 01</div>
-          <div class="tag">neon</div>
-        </div>
-
-        <div class="tile" style="--rot:2deg" data-img="">
-          <div class="placeholder">foto 02</div>
-          <div class="tag">arcade</div>
-        </div>
-
-        <div class="tile" style="--rot:-1deg" data-img="">
-          <div class="placeholder">foto 03</div>
-          <div class="tag">mall</div>
-        </div>
-
-        <div class="tile" style="--rot:1deg" data-img="">
-          <div class="placeholder">foto 04</div>
-          <div class="tag">summer</div>
-        </div>
-
-        <div class="tile" style="--rot:-3deg" data-img="">
-          <div class="placeholder">foto 05</div>
-          <div class="tag">glow</div>
-        </div>
-
-        <div class="tile" style="--rot:3deg" data-img="">
-          <div class="placeholder">foto 06</div>
-          <div class="tag">starcourt</div>
-        </div>
-      </div>
-    </main>
-
-    <!-- Modal viewer -->
-    <section class="modal" id="modal">
-      <div class="backdrop"></div>
-      <div class="box">
-        <button class="close" id="closeModal" type="button">CERRAR</button>
-        <img id="modalImg" alt="Preview">
-      </div>
-    </section>
-
-    <!-- Audio: cambia el nombre por tu archivo real cuando lo subas -->
-    <audio id="editsAudio" preload="auto">
-      <source src="edits-audio.mp3" type="audio/mpeg">
-    </audio>
+    <div class="videoWrap">
+      <video id="jamieVid" playsinline controls>
+        <source src="jamie.mov" type="video/mp4">
+      </video>
+    </div>
   </section>
 
+  <!-- ============ STARCOURT COLLAGE ============ -->
+  <section class="screen starcourt" id="screenMall">
+    <a class="back" href="index.html?v=1000">← VOLVER</a>
+
+    <div class="scan"></div>
+    <div class="tubes">
+      <div class="tube t1"></div>
+      <div class="tube t2"></div>
+      <div class="tube t3"></div>
+      <div class="tube t4"></div>
+      <div class="tube v1"></div>
+      <div class="tube v2"></div>
+    </div>
+
+    <div class="collageWrap">
+      <div class="collageFrame" id="collageFrame">
+        <div class="yourImage" id="yourImage"></div>
+
+        <div class="collageTitle">STARCOURT EDITS</div>
+        <div class="collageSub">
+          Toca la pantalla: luces + chispas. (Luego le ponemos canción aquí.)
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AUDIO: 1) trick.mp3  -->
+  <audio id="trick" preload="auto">
+    <source src="trick.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- AUDIO: 2) aquí después pondrás la canción del collage -->
+  <audio id="mallMusic" preload="auto" loop>
+    <!-- <source src="TU_CANCION.mp3" type="audio/mpeg"> -->
+  </audio>
+
   <script>
-    // ===== INTRO flow =====
-    const intro = document.getElementById("intro");
-    const cakeBtn = document.getElementById("cakeBtn");
-    const openBtn = document.getElementById("openBtn");
-    const world = document.getElementById("world");
-    const editsAudio = document.getElementById("editsAudio");
+    const screenIntro = document.getElementById("screenIntro");
+    const screenVideo = document.getElementById("screenVideo");
+    const screenMall  = document.getElementById("screenMall");
 
-    let taps = 0;
-    let audioUnlocked = false;
+    const cakeBtn   = document.getElementById("cakeBtn");
+    const trick     = document.getElementById("trick");
+    const jamieVid  = document.getElementById("jamieVid");
+    const closeVideo= document.getElementById("closeVideo");
 
-    function unlockAudio(){
-      audioUnlocked = true;
-      window.removeEventListener("pointerdown", unlockAudio);
-      window.removeEventListener("touchstart", unlockAudio);
-      window.removeEventListener("click", unlockAudio);
+    const collageFrame = document.getElementById("collageFrame");
+    const mallMusic = document.getElementById("mallMusic");
+
+    let cakeTaps = 0;
+    let trickPlayed = false;
+
+    function show(el){
+      [screenIntro, screenVideo, screenMall].forEach(s => s.classList.remove("show"));
+      el.classList.add("show");
     }
-    window.addEventListener("pointerdown", unlockAudio, {once:true});
-    window.addEventListener("touchstart", unlockAudio, {once:true});
-    window.addEventListener("click", unlockAudio, {once:true});
 
-    cakeBtn.addEventListener("click", ()=>{
-      taps++;
+    // little spark fx
+    function spark(x,y){
+      const s = document.createElement("div");
+      s.className = "spark";
+      s.style.left = x + "px";
+      s.style.top  = y + "px";
+      document.body.appendChild(s);
+      setTimeout(()=>s.remove(), 650);
+    }
 
-      // 1er toque: solo “ok”
-      if(taps === 1){
-        cakeBtn.style.filter = "brightness(1.15)";
-        setTimeout(()=>cakeBtn.style.filter="none", 250);
+    // 1st tap => play trick.mp3 once
+    // 2nd tap => open video + play
+    cakeBtn.addEventListener("click", (e)=>{
+      cakeTaps++;
+      spark(e.clientX, e.clientY);
+
+      if(cakeTaps === 1){
+        // iPhone needs user gesture: this click counts
+        if(!trickPlayed){
+          trick.currentTime = 0;
+          trick.volume = 0.75;
+          trick.play().catch(()=>{});
+          trickPlayed = true;
+        }
         return;
       }
 
-      // 2do toque: reproduce audio (si existe) y muestra botón CERRAR
-      if(taps === 2){
-        if(audioUnlocked && editsAudio){
-          editsAudio.currentTime = 0;
-          editsAudio.volume = 0.7;
-          editsAudio.play().catch(()=>{});
-        }
-        openBtn.classList.add("show");
+      if(cakeTaps >= 2){
+        show(screenVideo);
+        // play video
+        jamieVid.currentTime = 0;
+        jamieVid.play().catch(()=>{});
       }
     });
 
-    openBtn.addEventListener("click", ()=>{
-      intro.style.display = "none";
-      world.classList.add("show");
+    // Close video => go to mall collage
+    closeVideo.addEventListener("click", ()=>{
+      // stop video
+      jamieVid.pause();
+      show(screenMall);
     });
 
-    // ===== Collage modal viewer =====
-    const modal = document.getElementById("modal");
-    const modalImg = document.getElementById("modalImg");
-    const closeModal = document.getElementById("closeModal");
+    // Collage interactions (sparks). Later you'll add song here.
+    // When you add the song, you can start it on first touch.
+    let mallMusicStarted = false;
+    screenMall.addEventListener("pointerdown", (e)=>{
+      spark(e.clientX, e.clientY);
 
-    function openModal(src){
-      if(!src) return;
-      modalImg.src = src;
-      modal.classList.add("show");
-    }
-    function close(){
-      modal.classList.remove("show");
-    }
-    closeModal.addEventListener("click", close);
-    modal.querySelector(".backdrop").addEventListener("click", close);
-
-    // Put images in tiles (if you later add src)
-    document.querySelectorAll(".tile").forEach(tile=>{
-      const src = tile.dataset.img?.trim();
-      if(src){
-        const img = document.createElement("img");
-        img.src = src;
-        tile.appendChild(img);
-        tile.querySelector(".placeholder")?.remove();
+      // (later) start music once you add a source
+      if(!mallMusicStarted){
+        // mallMusic.volume = 0.6;
+        // mallMusic.play().catch(()=>{});
+        mallMusicStarted = true;
       }
-      tile.addEventListener("click", ()=>{
-        // little “neon bounce”
-        tile.style.transform = "rotate(0deg) scale(.99)";
-        setTimeout(()=>tile.style.transform="", 120);
-        openModal(src);
-      });
-    });
+    }, {passive:true});
 
-    // ===== Neon particles =====
-    const canvas = document.getElementById("fx");
-    const ctx = canvas.getContext("2d");
-    let W=0,H=0,dpr=1;
-
-    function resize(){
-      dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
-      W = Math.floor(window.innerWidth);
-      H = Math.floor(window.innerHeight);
-      canvas.width = Math.floor(W*dpr);
-      canvas.height = Math.floor(H*dpr);
-      canvas.style.width = W+"px";
-      canvas.style.height = H+"px";
-      ctx.setTransform(dpr,0,0,dpr,0,0);
-    }
-    window.addEventListener("resize", resize);
-    resize();
-
-    const dots = [];
-    const rand = (a,b)=> a + Math.random()*(b-a);
-    const colors = [
-      "rgba(255,59,212,0.18)",
-      "rgba(24,246,255,0.18)",
-      "rgba(184,255,46,0.16)"
-    ];
-    for(let i=0;i<120;i++){
-      dots.push({
-        x: rand(0,W), y: rand(0,H),
-        r: rand(0.8, 2.6),
-        vx: rand(-0.25, 0.25),
-        vy: rand(-0.15, 0.25),
-        c: colors[Math.floor(Math.random()*colors.length)]
-      });
-    }
-
-    function tick(){
-      ctx.clearRect(0,0,W,H);
-      for(const p of dots){
-        p.x += p.vx; p.y += p.vy;
-        if(p.x < -10) p.x = W+10;
-        if(p.x > W+10) p.x = -10;
-        if(p.y < -10) p.y = H+10;
-        if(p.y > H+10) p.y = -10;
-
-        ctx.beginPath();
-        ctx.fillStyle = p.c;
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-        ctx.fill();
-      }
-      requestAnimationFrame(tick);
-    }
-    tick();
   </script>
 </body>
 </html>
