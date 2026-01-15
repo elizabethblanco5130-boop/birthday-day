@@ -13,7 +13,7 @@
 <body class="landing">
 
   <!-- 🎵 AUDIO DE FONDO (NO CAMBIA NADA MÁS) -->
-  <audio id="bgm" loop>
+  <audio id="bgm" loop preload="auto">
     <source src="bgm.mp3.mp3" type="audio/mpeg">
   </audio>
 
@@ -51,16 +51,19 @@
         <a class="landing-btn" href="story.html?v=1000">Tu historia en Hawkins</a>
         <a class="landing-btn" href="playlist.html?v=1000">Playlist</a>
         <a class="landing-btn" href="facts.html?v=1000">Facts</a>
-        <a class="landing-btn" href="gallery.html?v=1000">Edits</a>
+
+        <!-- ✅ CAMBIO: Edits ahora va a edits.html -->
+        <a class="landing-btn" href="edits.html?v=1000">Edits</a>
+
         <a class="landing-btn big" href="hub.html?v=1000">Entrar al Hawkins Hub</a>
       </div>
 
       <!-- Dock -->
       <div class="dock">
-        <a href="hub.html?v=1000"><img src="img/portal.png" alt=""></a>
-        <a href="will.html?v=1000"><img src="img/lights.png" alt=""></a>
-        <a href="cake.html?v=1000"><img src="img/cake.png" alt=""></a>
-        <a href="story.html?v=1000"><img src="img/tape.png" alt=""></a>
+        <a href="hub.html?v=1000" aria-label="Hub"><img src="img/portal.png" alt=""></a>
+        <a href="will.html?v=1000" aria-label="Will"><img src="img/lights.png" alt=""></a>
+        <a href="cake.html?v=1000" aria-label="Birthday"><img src="img/cake.png" alt=""></a>
+        <a href="story.html?v=1000" aria-label="Story"><img src="img/tape.png" alt=""></a>
       </div>
 
       <div class="tip">Tip: toca el logo 7 veces para un easter egg.</div>
@@ -68,18 +71,22 @@
   </main>
 
   <script>
-    // 🎵 iPhone / Safari FIX: la música se activa al primer toque
+    // 🎵 iPhone / Safari: la música se activa al primer toque
     const bgm = document.getElementById("bgm");
 
     function startMusic() {
+      if(!bgm) return;
       bgm.volume = 0.5;
       bgm.play().catch(()=>{});
-      document.removeEventListener("click", startMusic);
+      document.removeEventListener("pointerdown", startMusic);
       document.removeEventListener("touchstart", startMusic);
+      document.removeEventListener("click", startMusic);
     }
 
-    document.addEventListener("click", startMusic);
-    document.addEventListener("touchstart", startMusic);
+    // usar pointerdown + fallback
+    document.addEventListener("pointerdown", startMusic, { once:true });
+    document.addEventListener("touchstart", startMusic, { once:true });
+    document.addEventListener("click", startMusic, { once:true });
 
     // Easter egg
     const logo = document.querySelector(".st-logo");
