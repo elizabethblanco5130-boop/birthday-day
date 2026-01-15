@@ -5,226 +5,17 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>Hawkins Hub</title>
   <link rel="stylesheet" href="style.css?v=999">
-
-  <!-- Overrides SOLO para HUB (no rompe tu style.css) -->
-  <style>
-    /* ===== Aislar HUB (evita que decoraciones de story “aparezcan” aquí) ===== */
-    body.page-hub .floatArea,
-    body.page-hub .float,
-    body.page-hub .spark,
-    body.page-hub .card,
-    body.page-hub .hud {
-      display:none !important;
-    }
-
-    /* ===== Layout HUB ===== */
-    body.page-hub{
-      margin:0;
-      overflow:hidden;
-    }
-
-    /* Fondo video (si ya lo tienes en style.css, esto no estorba) */
-    #bg{
-      position:fixed;
-      inset:0;
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      z-index:-3;
-    }
-    .hub-vignette{
-      position:fixed;
-      inset:0;
-      background: radial-gradient(ellipse at center, rgba(0,0,0,.05), rgba(0,0,0,.78));
-      z-index:-2;
-      pointer-events:none;
-    }
-
-    /* Top bar */
-    .hub-top{
-      position:fixed;
-      top:14px; left:14px; right:14px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      z-index:10;
-    }
-    .hub-back{
-      width:44px; height:44px;
-      display:grid; place-items:center;
-      text-decoration:none;
-      color:#fff;
-      border:1px solid rgba(255,255,255,.25);
-      border-radius:14px;
-      background: rgba(0,0,0,.35);
-      backdrop-filter: blur(8px);
-    }
-    .hub-title{
-      flex:1;
-      text-align:center;
-      font-weight:900;
-      letter-spacing:.18em;
-      color:#ff3b3b;
-      text-shadow:0 0 18px rgba(255,0,0,.22);
-      user-select:none;
-    }
-    .hub-worldbtn{
-      height:44px;
-      padding:0 14px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.25);
-      background: rgba(0,0,0,.35);
-      color:#fff;
-      backdrop-filter: blur(8px);
-    }
-
-    /* Stage */
-    .hub-stage{
-      position:fixed;
-      inset:0;
-      padding: 80px 14px 120px;
-      z-index:5;
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:14px;
-      align-content:start;
-    }
-
-    /* Tarjeta icono */
-    .hub-icon{
-      display:flex;
-      flex-direction:column;
-      align-items:flex-start;
-      justify-content:space-between;
-      text-decoration:none;
-      border-radius:22px;
-      padding:14px;
-      border:1px solid rgba(255,255,255,.22);
-      background: rgba(0,0,0,.26);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 0 22px rgba(255,0,0,.10);
-      min-height: 128px;
-      position:relative;
-      overflow:hidden;
-      transform: translateZ(0);
-    }
-
-    /* “Float” suave sin montar */
-    .hub-icon::after{
-      content:"";
-      position:absolute;
-      inset:-40%;
-      background: radial-gradient(circle at 30% 20%, rgba(255,0,0,.22), transparent 60%);
-      opacity:.55;
-      transform: rotate(10deg);
-      pointer-events:none;
-    }
-    .hub-icon:active{ transform: translateY(1px); }
-
-    .hub-icon .tag{
-      font-size:12px;
-      opacity:.85;
-      letter-spacing:.08em;
-      text-transform:uppercase;
-      color:#fff;
-      z-index:2;
-    }
-    .hub-icon span{
-      margin-top:8px;
-      font-size:13px;
-      opacity:.95;
-      color:#fff;
-      z-index:2;
-    }
-
-    /* Icon image */
-    .hub-icon img{
-      width:52px;
-      height:52px;
-      object-fit:contain;
-      display:block;
-      margin-top:8px;
-      filter: drop-shadow(0 0 12px rgba(255,0,0,.16));
-      z-index:2;
-    }
-
-    /* Colores por “módulo” */
-    .hub-icon[data-zone="story"]{ box-shadow: 0 0 26px rgba(255,0,0,.16); }
-    .hub-icon[data-zone="lights"]{ box-shadow: 0 0 26px rgba(0,255,255,.10); }
-    .hub-icon[data-zone="mixtape"]{ box-shadow: 0 0 26px rgba(255,255,255,.08); }
-    .hub-icon[data-zone="edits"]{ box-shadow: 0 0 26px rgba(255,0,0,.12); }
-    .hub-icon[data-zone="lab"]{ box-shadow: 0 0 26px rgba(0,255,255,.08); }
-
-    /* Dock de abajo */
-    .hub-dock{
-      position:fixed;
-      left:14px; right:14px; bottom:14px;
-      z-index:10;
-      display:flex;
-      gap:12px;
-      align-items:stretch;
-    }
-
-    .hub-hint{
-      flex:1;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.18);
-      background: rgba(0,0,0,.30);
-      backdrop-filter: blur(10px);
-      color:#fff;
-      padding:12px 14px;
-      font-size:13px;
-      line-height:1.25;
-      opacity:.95;
-    }
-
-    .hub-cake{
-      width:120px;
-      border-radius:18px;
-      border:1px solid rgba(255,0,0,.45);
-      background: rgba(0,0,0,.38);
-      backdrop-filter: blur(10px);
-      text-decoration:none;
-      color:#fff;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      gap:6px;
-      box-shadow: 0 0 22px rgba(255,0,0,.12);
-    }
-    .hub-cake img{ width:46px; height:46px; object-fit:contain; }
-    .hub-cake small{
-      font-size:11px;
-      letter-spacing:.10em;
-      text-transform:uppercase;
-      opacity:.95;
-    }
-
-    /* Desktop: 3 columnas */
-    @media (min-width: 860px){
-      .hub-stage{
-        padding: 92px 22px 120px;
-        grid-template-columns: 1fr 1fr 1fr;
-        gap:18px;
-        max-width: 980px;
-        margin: 0 auto;
-      }
-      .hub-dock{
-        max-width: 980px;
-        margin: 0 auto;
-      }
-    }
-  </style>
 </head>
 
-<body class="page-hub hub-world normal">
+<body class="page-hub normal">
 
   <!-- Fondo -->
   <video autoplay muted loop playsinline id="bg">
     <source src="background.mp4" type="video/mp4">
   </video>
+
+  <!-- Overlay que cambia con WORLD -->
+  <div class="hub-overlay" id="overlay"></div>
   <div class="hub-vignette"></div>
 
   <!-- Barra arriba -->
@@ -234,54 +25,164 @@
     <button class="hub-worldbtn" id="worldBtn" type="button">WORLD: NORMAL</button>
   </header>
 
-  <!-- Iconos ordenados -->
+  <!-- Área flotante -->
   <main class="hub-stage" id="stage">
 
-    <a class="hub-icon" data-zone="story" href="story.html?v=999" data-spark="ink" aria-label="Tu historia">
-      <div class="tag">Tape</div>
+    <a class="hub-icon float f1" href="story.html?v=999" data-spark="ink" aria-label="Tu historia">
       <img src="img/tape.png" alt="Tape">
       <span>Historia</span>
     </a>
 
-    <a class="hub-icon" data-zone="lights" href="will.html?v=999" data-spark="light" aria-label="Will's Wall">
-      <div class="tag">Lights</div>
+    <a class="hub-icon float f2" href="will.html?v=999" data-spark="light" aria-label="Luces">
       <img src="img/lights.png" alt="Lights">
       <span>Luces</span>
     </a>
 
-    <a class="hub-icon" data-zone="mixtape" href="playlist.html?v=999" data-spark="ink" aria-label="Mixtape">
-      <div class="tag">Radio</div>
+    <a class="hub-icon float f3" href="playlist.html?v=999" data-spark="ink" aria-label="Mixtape">
       <img src="img/radio.png" alt="Radio">
       <span>Mixtape</span>
     </a>
 
-    <a class="hub-icon" data-zone="edits" href="gallery.html?v=999" data-spark="ash" aria-label="Edits">
-      <div class="tag">Portal</div>
+    <a class="hub-icon float f4" href="gallery.html?v=999" data-spark="ash" aria-label="Edits">
       <img src="img/portal.png" alt="Portal">
       <span>Edits</span>
     </a>
 
-    <a class="hub-icon" data-zone="lab" href="lab.html?v=999" data-spark="ink" aria-label="Lab">
-      <div class="tag">Lab</div>
+    <a class="hub-icon float f5" href="lab.html?v=999" data-spark="ink" aria-label="Lab">
       <img src="img/lab.png" alt="Lab">
       <span>Lab</span>
     </a>
 
-  </main>
+    <!-- Pastel secreto -->
+    <a class="hub-icon cake float f6" href="cake.html?v=999" data-spark="spark" aria-label="Birthday secret">
+      <img src="img/cake.png" alt="Cake Portal">
+      <span>Birthday</span>
+    </a>
 
-  <!-- Dock abajo: hint + pastel (entrada secreta) -->
-  <section class="hub-dock">
     <div class="hub-hint">
       Toca los iconos. Cambia el mundo arriba.<br>
       <b>Easter:</b> toca 7 veces “WORLD”.
     </div>
 
-    <a class="hub-cake" href="cake.html?v=999" data-spark="spark" aria-label="Birthday secret">
-      <img src="img/cake.png" alt="Cake Portal">
-      <small>Birthday</small>
-    </a>
-  </section>
+  </main>
 
-  <script src="hub.js?v=999"></script>
+  <!-- Linterna + polvo (canvas) -->
+  <div class="flashlight" aria-hidden="true"></div>
+  <canvas id="dust" aria-hidden="true"></canvas>
+
+  <script>
+    // ===== WORLD toggle =====
+    const body = document.body;
+    const worldBtn = document.getElementById("worldBtn");
+    const overlay = document.getElementById("overlay");
+
+    let taps = 0;
+    let tapTimer = null;
+
+    function setWorld(up){
+      body.classList.toggle("upside", up);
+      body.classList.toggle("normal", !up);
+      worldBtn.textContent = up ? "WORLD: UPSIDE DOWN" : "WORLD: NORMAL";
+      overlay.classList.remove("pulse");
+      void overlay.offsetWidth;
+      overlay.classList.add("pulse");
+    }
+
+    worldBtn.addEventListener("click", () => {
+      taps++;
+      clearTimeout(tapTimer);
+      tapTimer = setTimeout(()=>taps=0, 1400);
+
+      setWorld(!body.classList.contains("upside"));
+
+      // easter: 7 taps => modo intenso por 6s
+      if(taps >= 7){
+        taps = 0;
+        body.classList.add("easter");
+        setTimeout(()=>body.classList.remove("easter"), 6000);
+      }
+    });
+
+    setWorld(false);
+
+    // ===== Linterna (mouse/touch) =====
+    function setPointer(x,y){
+      document.documentElement.style.setProperty("--mx", x+"px");
+      document.documentElement.style.setProperty("--my", y+"px");
+    }
+    window.addEventListener("mousemove", e => setPointer(e.clientX, e.clientY), {passive:true});
+    window.addEventListener("touchmove", e => {
+      const t = e.touches[0];
+      if(t) setPointer(t.clientX, t.clientY);
+    }, {passive:true});
+
+    // ===== Partículas =====
+    const canvas = document.getElementById("dust");
+    const ctx = canvas.getContext("2d");
+    let particles = [];
+
+    function resize(){
+      canvas.width = window.innerWidth * devicePixelRatio;
+      canvas.height = window.innerHeight * devicePixelRatio;
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    function makeParticles(n){
+      particles = [];
+      for(let i=0;i<n;i++){
+        particles.push({
+          x: Math.random()*canvas.width,
+          y: Math.random()*canvas.height,
+          r: (Math.random()*1.6+0.6)*devicePixelRatio,
+          s: (Math.random()*0.35+0.06)*devicePixelRatio,
+          a: Math.random()*0.55+0.12,
+          drift: (Math.random()*0.7-0.35)*devicePixelRatio
+        });
+      }
+    }
+    makeParticles(90);
+
+    function draw(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      const up = body.classList.contains("upside");
+
+      for(const p of particles){
+        p.y += p.s;
+        p.x += p.drift*0.15;
+        if(p.y > canvas.height+20) p.y = -20;
+        if(p.x > canvas.width+20) p.x = -20;
+        if(p.x < -20) p.x = canvas.width+20;
+
+        ctx.fillStyle = up
+          ? `rgba(0,255,255,${p.a*0.55})`
+          : `rgba(255,255,255,${p.a*0.30})`;
+
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fill();
+      }
+
+      requestAnimationFrame(draw);
+    }
+    draw();
+
+    // ===== Click FX por icono =====
+    function popFx(x,y,kind){
+      const d = document.createElement("div");
+      d.className = "fx " + kind;
+      d.style.left = x+"px";
+      d.style.top = y+"px";
+      document.body.appendChild(d);
+      setTimeout(()=>d.remove(), 700);
+    }
+
+    document.addEventListener("click", (e)=>{
+      const el = e.target.closest("[data-spark]");
+      if(!el) return;
+      popFx(e.clientX, e.clientY, el.getAttribute("data-spark") || "ink");
+    }, {passive:true});
+  </script>
+
 </body>
 </html>
