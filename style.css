@@ -1,559 +1,402 @@
-/* ===== HUB: Stranger Neocities vibe ===== */
-.hub-world { overflow:hidden; }
-.hub-vignette{
-  position:fixed; inset:0;
-  background: radial-gradient(ellipse at center, rgba(0,0,0,.15), rgba(0,0,0,.82));
-  z-index:-1;
+/* =========================
+   GLOBAL (all pages)
+========================= */
+:root{
+  --red: rgba(255,0,0,.85);
+  --red2: rgba(255,0,0,.55);
+  --glass: rgba(0,0,0,.45);
+  --glass2: rgba(0,0,0,.65);
+  --cyan: rgba(0,255,255,.22);
+  --mag: rgba(255,0,150,.18);
 }
 
-/* Top bar */
-.hub-top{
-  position:fixed; top:14px; left:14px; right:14px;
-  display:flex; align-items:center; justify-content:space-between;
-  z-index:50;
-  gap:10px;
-}
-.hub-back{
-  width:42px; height:42px;
-  display:grid; place-items:center;
-  text-decoration:none;
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  background:#000;
   color:#fff;
-  border:1px solid rgba(255,255,255,.22);
-  background: rgba(0,0,0,.45);
-  border-radius:12px;
-}
-.hub-title{
-  font-weight:800;
-  letter-spacing:.18em;
-  color:#ff1b1b;
-  text-shadow:0 0 14px rgba(255,0,0,.35);
-}
-.hub-worldbtn{
-  padding:10px 12px;
-  border:1px solid rgba(255,255,255,.22);
-  background: rgba(0,0,0,.45);
-  color:#fff;
-  border-radius:12px;
+  font-family: system-ui, -apple-system, Arial;
+  overflow-x:hidden;
 }
 
-/* Stage */
-.hub-stage{
-  position:relative;
-  height:100vh;
-  padding:80px 14px 14px;
-}
-
-/* Icon cards */
-.hub-icon{
-  position:absolute;
-  width:120px;
-  display:grid;
-  gap:8px;
-  justify-items:center;
-  text-decoration:none;
-  color:#fff;
-  background: rgba(0,0,0,.35);
-  border:1px solid rgba(255,255,255,.18);
-  border-radius:18px;
-  padding:12px 10px;
-  backdrop-filter: blur(2px);
-}
-.hub-icon img{
-  width:42px; height:42px;
-  object-fit:contain;
-  filter: drop-shadow(0 0 10px rgba(255,0,0,.18));
-}
-.hub-icon span{ font-size:14px; opacity:.9; }
-
-.hub-icon:hover{
-  border-color: rgba(255,0,0,.55);
-  box-shadow:0 0 22px rgba(255,0,0,.18);
-  transform: translateY(-2px) scale(1.02);
-}
-
-/* Position icons (feel free to move) */
-.float1{ left:18px; top:120px; animation: floaty 3.8s ease-in-out infinite; }
-.float2{ right:18px; top:150px; animation: floaty 4.4s ease-in-out infinite; }
-.float3{ left:22px; bottom:120px; animation: floaty 4.9s ease-in-out infinite; }
-.float4{ right:22px; bottom:140px; animation: floaty 3.6s ease-in-out infinite; }
-.float5{ left:50%; top:52%; transform: translateX(-50%); animation: floaty 4.2s ease-in-out infinite; }
-
-@keyframes floaty{
-  0%,100%{ transform: translateY(0); }
-  50%{ transform: translateY(-10px); }
-}
-
-/* Hint */
-.hub-hint{
+/* full-screen bg video (landing + hub) */
+#bg{
   position:fixed;
-  left:14px; right:14px;
-  bottom:14px;
-  padding:12px;
-  background: rgba(0,0,0,.45);
-  border:1px solid rgba(255,255,255,.18);
-  border-radius:16px;
-  opacity:.85;
-  z-index:40;
+  inset:0;
+  width:100vw;
+  height:100vh;
+  object-fit:cover;
+  z-index:-3;
+  transform: translateZ(0);
 }
 
-/* Worlds */
-.hub-world.normal #bg{ filter: contrast(1.05) saturate(1.05); }
-.hub-world.upside #bg{
-  filter: hue-rotate(160deg) contrast(1.25) saturate(0.85) brightness(0.85);
-  transform: scale(1.02) rotate(180deg);
-}
-.hub-world.will #bg{
-  filter: contrast(1.2) saturate(1.1) brightness(0.9);
-}
-
-/* Sparks */
-.spark{
-  position:absolute;
-  width:10px; height:10px;
-  border-radius:50%;
+/* vignette overlays */
+.landing-vignette,
+.hub-vignette{
+  position:fixed;
+  inset:0;
   pointer-events:none;
-  transform: translate(-50%,-50%);
-  animation: popOut forwards;
+  z-index:-2;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,.10), rgba(0,0,0,.82));
 }
 
-.spark.ink{
-  background: rgba(160,255,240,.9);
-  box-shadow: 0 0 14px rgba(51,255,242,.55);
-}
-.spark.ash{
-  background: rgba(255,255,255,.75);
-  box-shadow: 0 0 12px rgba(255,255,255,.25);
-}
-.spark.light{
-  background: rgba(255,40,40,.9);
-  box-shadow: 0 0 18px rgba(255,0,0,.45);
+/* subtle dust */
+.dust{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:-1;
+  opacity:.18;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
 }
 
-@keyframes popOut{
-  from{ opacity:1; transform: translate(-50%,-50%) scale(1); }
-  to{
-    opacity:0;
-    transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.2);
-  }
-}/* ===== LANDING: menos plano, más webcore ===== */
+/* =========================
+   LANDING (index.html) – like your 2nd screenshot
+========================= */
+body.landing{ overflow:hidden; }
 
-/* panel más pro */
-.landing-panel{
-  background: rgba(0,0,0,.38);
-  border: 1px solid rgba(255,0,0,.30);
-  box-shadow:
-    0 0 0 2px rgba(255,0,0,.10) inset,
-    0 0 40px rgba(255,0,0,.10);
-  backdrop-filter: blur(6px);
-  border-radius: 18px;
+.landing-center{
+  position:relative;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding: 86px 14px 120px;
 }
 
-/* ENTER con glow y “pulse” suave */
-.landing-btn.primary{
-  border-radius: 14px;
-  position: relative;
-  overflow: hidden;
-}
-.landing-btn.primary::after{
-  content:"";
-  position:absolute; inset:-40%;
-  background: radial-gradient(circle, rgba(255,0,0,.22), transparent 60%);
-  animation: glowPulse 2.6s infinite;
-}
-@keyframes glowPulse{
-  0%,100%{ transform: translate(0,0) scale(1); opacity:.55; }
-  50%{ transform: translate(10px,-6px) scale(1.08); opacity:.85; }
-}
-
-/* botones secundarios con hover más “alive” */
-.landing-links a{
-  border-radius: 14px;
-  position: relative;
-  overflow: hidden;
-  transition: transform .15s ease;
-}
-.landing-links a:hover{
-  transform: translateY(-2px);
-  box-shadow: 0 0 22px rgba(255,0,0,.12);
-}
-.landing-links a::after{
-  content:"";
-  position:absolute; inset:0;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,.10), transparent);
-  transform: translateX(-120%);
-  transition: transform .35s ease;
-}
-.landing-links a:hover::after{
-  transform: translateX(120%);
-}
-
-/* icon buttons: más webcore */
-.icon-btn{
-  border-radius: 18px;
-  box-shadow: 0 0 0 2px rgba(255,255,255,.06) inset;
-  transition: transform .15s ease, box-shadow .15s ease;
-}
-.icon-btn:hover{
-  transform: translateY(-3px) rotate(-1deg);
-  box-shadow:
-    0 0 0 2px rgba(255,0,0,.12) inset,
-    0 0 24px rgba(255,0,0,.18);
-}
-
-/* ===== Stickers flotando ===== */
 .stickers{
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 3;
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:1;
 }
 .sticker{
   position:absolute;
-  width: 64px;
-  height: 64px;
-  object-fit: contain;
-  opacity: .9;
-  filter: drop-shadow(0 10px 20px rgba(0,0,0,.35))
-          drop-shadow(0 0 18px rgba(255,0,0,.10));
-  animation: floatSticker 4.6s ease-in-out infinite;
+  width:56px;
+  height:56px;
+  opacity:.95;
+  filter: drop-shadow(0 0 14px rgba(255,0,0,.18));
+  animation: floaty 9s ease-in-out infinite;
 }
-@keyframes floatSticker{
-  0%,100%{ transform: translateY(0) rotate(0deg); }
-  50%{ transform: translateY(-10px) rotate(2deg); }
-}
-
-/* posiciones (ajústalas si quieres) */
-.s1{ left: 18px; top: 110px; animation-duration: 4.2s; }
-.s2{ right: 20px; top: 140px; animation-duration: 5.1s; }
-.s3{ left: 18px; bottom: 160px; animation-duration: 4.7s; }
-.s4{ right: 22px; bottom: 170px; animation-duration: 5.4s; }
-
-/* ===== polvo/partículas sutiles ===== */
-.dust{
-  position:absolute; inset:0;
-  background-image:
-    radial-gradient(rgba(255,255,255,.16) 1px, transparent 2px),
-    radial-gradient(rgba(255,0,0,.10) 1px, transparent 2px);
-  background-size: 120px 120px, 180px 180px;
-  background-position: 0 0, 40px 60px;
-  opacity:.20;
-  animation: drift 12s linear infinite;
-}
-@keyframes drift{
-  from{ transform: translateY(0); }
-  to{ transform: translateY(60px); }
-}
-/* ===============================
-   RESPONSIVE HUB LAYOUT
-   (teléfono + computadora)
-   =============================== */
-
-/* Asegura que el HUB tenga espacio debajo del header */
-.hub-stage{
-  padding: 110px 18px 120px;
-  box-sizing: border-box;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
-  align-content: start;
+.sticker.s2{ animation-duration:12s; opacity:.85; }
+.sticker.s3{ animation-duration:14s; opacity:.80; }
+.sticker.s4{ animation-duration:16s; opacity:.78; }
+@keyframes floaty{
+  0%,100%{ transform: translate(0,0) rotate(0deg); }
+  50%{ transform: translate(12px,-18px) rotate(6deg); }
 }
 
-/* Cada icono como “card” clickeable */
-.hub-icon{
-  position: relative;
-  display: grid;
-  place-items: center;
-  text-decoration: none;
-  color: #fff;
-  border-radius: 22px;
-  border: 1px solid rgba(255,255,255,.18);
-  background: rgba(0,0,0,.25);
-  backdrop-filter: blur(6px);
-  min-height: 140px;
-  overflow: hidden;
-}
-
-/* Imagen del icono */
-.hub-icon img{
-  width: clamp(44px, 9vw, 72px);
-  height: auto;
-  display:block;
-  filter: drop-shadow(0 0 14px rgba(255,0,0,.12));
-}
-
-/* Texto bajo icono */
-.hub-icon span{
-  margin-top: 10px;
-  font-size: clamp(12px, 2.4vw, 16px);
-  opacity: .92;
-}
-
-/* Hint abajo (ocupa todo el ancho) */
-.hub-hint{
-  grid-column: 1 / -1;
-  border-radius: 18px;
-  border: 1px solid rgba(255,255,255,.18);
+.landing-panel{
+  width:min(92vw, 840px);
+  border-radius:22px;
+  border:1px solid var(--red2);
   background: rgba(0,0,0,.35);
-  backdrop-filter: blur(8px);
-  padding: 14px 14px;
-  line-height: 1.35;
+  box-shadow: 0 0 34px rgba(255,0,0,.12);
+  backdrop-filter: blur(10px);
+  padding: 18px 16px 14px;
+  position:relative;
+  z-index:2;
 }
 
-/* Botón back y botón world: que se vean bien en móvil */
+.st-logo{
+  margin: 0 auto 10px;
+  position:relative;
+  width: min(88vw, 760px);
+  text-align:center;
+  line-height: .95;
+  letter-spacing:.12em;
+  text-transform: uppercase;
+}
+.logo-layer{
+  display:block;
+  font-family: "Benguiat", Georgia, serif;
+  font-weight:700;
+  font-size: clamp(44px, 10vw, 92px);
+  color: rgba(255,40,40,.96);
+  text-shadow: 0 0 18px rgba(255,0,0,.22);
+}
+.logo-layer.base{ position:relative; }
+.logo-layer.cyan,
+.logo-layer.mag{
+  position:absolute;
+  left:0; right:0;
+  top:0;
+  opacity:.55;
+  filter: blur(.2px);
+  mix-blend-mode: screen;
+  pointer-events:none;
+}
+.logo-layer.cyan{ color: rgba(0,255,255,.65); transform: translate(-2px,1px); }
+.logo-layer.mag{ color: rgba(255,0,160,.55); transform: translate(2px,-1px); }
+
+@keyframes logoGlitch{
+  0%,100%{ transform: translate(0,0); opacity:.55; }
+  20%{ transform: translate(-3px,1px); opacity:.65; }
+  40%{ transform: translate(2px,-1px); opacity:.45; }
+  60%{ transform: translate(-1px,-2px); opacity:.70; }
+  80%{ transform: translate(3px,1px); opacity:.50; }
+}
+.st-logo:hover .logo-layer.cyan,
+.st-logo:hover .logo-layer.mag{
+  animation: logoGlitch 700ms linear infinite;
+}
+
+.landing-sub{
+  margin: 8px 0 16px;
+  text-align:center;
+  font-size: 15px;
+  opacity:.92;
+  letter-spacing:.02em;
+}
+
+.enterTitle{
+  text-align:center;
+  font-weight:800;
+  letter-spacing:.18em;
+  opacity:.92;
+  margin: 8px 0 14px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.landing-btn{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-decoration:none;
+  color:#fff;
+  padding: 14px 12px;
+  border-radius: 16px;
+  border:1px solid var(--red2);
+  background: rgba(0,0,0,.42);
+  backdrop-filter: blur(8px);
+  text-transform: uppercase;
+  letter-spacing:.06em;
+  font-weight:700;
+}
+.landing-btn:active{ transform: translateY(1px); }
+.landing-btn.big{
+  grid-column: 1 / -1;
+  border:2px solid rgba(255,0,0,.75);
+  box-shadow: 0 0 22px rgba(255,0,0,.14);
+}
+
+.dock{
+  margin-top: 14px;
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+.dock a{
+  width: 58px; height: 58px;
+  border-radius: 16px;
+  border:1px solid rgba(255,255,255,.18);
+  background: rgba(0,0,0,.35);
+  backdrop-filter: blur(10px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.dock img{
+  width:30px; height:30px;
+  opacity:.92;
+}
+
+.tip{
+  margin-top: 12px;
+  text-align:center;
+  font-size: 12px;
+  opacity:.78;
+}
+
+/* =========================
+   HUB (hub.html)
+========================= */
+body.hub-world{ overflow:hidden; }
 .hub-top{
-  position: fixed;
+  position:fixed;
   top: 14px;
   left: 14px;
   right: 14px;
-  z-index: 9999;
-  display: grid;
-  grid-template-columns: 44px 1fr auto;
-  align-items: center;
-  gap: 10px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  z-index:20;
 }
-
 .hub-back{
-  width: 44px;
-  height: 44px;
-  display:grid;
-  place-items:center;
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,.18);
-  background: rgba(0,0,0,.30);
+  width:40px; height:40px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.16);
+  background: rgba(0,0,0,.35);
   color:#fff;
   text-decoration:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  backdrop-filter: blur(10px);
 }
-
 .hub-title{
-  text-align:center;
-  font-weight: 800;
-  letter-spacing: .14em;
-  font-size: clamp(14px, 3vw, 18px);
-  color: #ff3a3a;
-  text-shadow: 0 0 18px rgba(255,0,0,.20);
+  font-family: "Benguiat", Georgia, serif;
+  color: rgba(255,40,40,.96);
+  letter-spacing:.18em;
+  text-transform: uppercase;
+  font-weight:700;
+  text-shadow: 0 0 18px rgba(255,0,0,.18);
 }
-
 .hub-worldbtn{
-  padding: 10px 12px;
-  border-radius: 16px;
-  border: 1px solid rgba(255,255,255,.18);
-  background: rgba(0,0,0,.28);
+  padding: 10px 14px;
+  border-radius: 14px;
+  border:1px solid rgba(255,255,255,.20);
+  background: rgba(0,0,0,.35);
   color:#fff;
-  letter-spacing: .06em;
-  font-size: clamp(12px, 2.2vw, 14px);
+  backdrop-filter: blur(10px);
+  letter-spacing:.05em;
+  text-transform: uppercase;
 }
 
-/* ===============================
-   DESKTOP: más columnas, más aire
-   =============================== */
-@media (min-width: 900px){
-  .hub-stage{
-    padding: 130px 40px 120px;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 22px;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  .hub-icon{
-    min-height: 190px;
-  }
+.hub-stage{
+  position:fixed;
+  inset:0;
+  z-index:10;
+  /* IMPORTANT: keep icons centered on all screens */
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding: 90px 18px 80px;
 }
 
-/* ===============================
-   TABLET: 3 columnas
-   =============================== */
-@media (min-width: 600px) and (max-width: 899px){
-  .hub-stage{
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-/* ===============================
-   NO ENCIMAR “float” viejos
-   (por si quedaron clases floatX)
-   =============================== */
-.hub-icon.float1,
-.hub-icon.float2,
-.hub-icon.float3,
-.hub-icon.float4,
-.hub-icon.float5,
-.hub-icon.float-cake{
-  left:auto !important;
-  top:auto !important;
-  right:auto !important;
-  bottom:auto !important;
-  transform:none !important;
-}
-
-/* Si quieres “flotación” pero sin encimar: animación suave */
+/* icon “cards” */
 .hub-icon{
-  animation: hubFloat 6.5s ease-in-out infinite;
+  position:absolute;
+  width: 128px;
+  height: 150px;
+  border-radius: 22px;
+  border:1px solid rgba(255,255,255,.18);
+  background: rgba(0,0,0,.28);
+  backdrop-filter: blur(10px);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  text-decoration:none;
+  color:#fff;
 }
-.hub-icon:nth-child(2n){ animation-duration: 8s; }
-.hub-icon:nth-child(3n){ animation-duration: 9.5s; }
-
-@keyframes hubFloat{
-  0%,100%{ transform: translateY(0); }
-  50%{ transform: translateY(-8px); }
+.hub-icon img{
+  width:44px; height:44px;
+  opacity:.95;
+  filter: drop-shadow(0 0 14px rgba(255,0,0,.15));
 }
-/* =========================
-   HUB FIX: video full screen + icons centered
-   ========================= */
-
-html, body { height: 100%; }
-body.hub-world { margin: 0; min-height: 100vh; overflow: hidden; background:#000; }
-
-/* VIDEO DE FONDO A PANTALLA COMPLETA */
-#bg{
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
-  object-fit: cover;
-  z-index: -3;
-}
-
-/* OSCURECER/VIÑETA */
-.hub-vignette{
-  position: fixed;
-  inset: 0;
-  z-index: -2;
-  pointer-events: none;
-  background: radial-gradient(ellipse at center,
-    rgba(0,0,0,.05),
-    rgba(0,0,0,.80)
-  );
+.hub-icon span{
+  font-size: 13px;
+  letter-spacing:.03em;
+  opacity:.92;
 }
 
-/* TOP BAR siempre arriba */
-.hub-top{
-  position: fixed;
-  top: 14px;
-  left: 14px;
-  right: 14px;
-  z-index: 50;
+/* positions: centered cluster (mobile + desktop) */
+.float1{ left: 18%; top: 32%; }
+.float2{ left: 72%; top: 32%; }
+.float3{ left: 26%; top: 58%; }
+.float4{ left: 62%; top: 58%; }
+.float5{ left: 44%; top: 46%; }
+.float-cake{ left: 78%; top: 72%; width: 120px; height: 140px; }
+
+@media (min-width: 900px){
+  .hub-icon{ width: 150px; height: 170px; }
+  .hub-icon img{ width:52px; height:52px; }
+  .float1{ left: 28%; top: 34%; }
+  .float2{ left: 64%; top: 34%; }
+  .float3{ left: 34%; top: 62%; }
+  .float4{ left: 58%; top: 62%; }
+  .float5{ left: 46%; top: 48%; }
+  .float-cake{ left: 70%; top: 78%; }
 }
 
-/* EL STAGE: ocupa pantalla y centra */
-.hub-stage{
-  position: fixed;
-  inset: 0;
-  z-index: 10;
-
-  /* centra todo en el medio */
-  display: grid;
-  place-items: center;
-
-  /* deja espacio para el header arriba y el hint abajo */
-  padding: 90px 18px 95px;
-  box-sizing: border-box;
+/* float motion */
+.hub-icon{
+  animation: hubDrift 10s ease-in-out infinite;
+}
+.float2{ animation-duration: 12s; }
+.float3{ animation-duration: 14s; }
+.float4{ animation-duration: 16s; }
+.float5{ animation-duration: 18s; }
+.float-cake{ animation-duration: 13s; }
+@keyframes hubDrift{
+  0%,100%{ transform: translate(0,0) rotate(0deg); }
+  50%{ transform: translate(10px,-16px) rotate(4deg); }
 }
 
-/* GRID de iconos centrado */
-.hub-stage{
-  grid-auto-rows: min-content;
-}
-
-.hub-stage .hub-hint{
-  position: fixed;
+/* hint bar */
+.hub-hint{
+  position:fixed;
   left: 14px;
   right: 14px;
   bottom: 14px;
-  z-index: 60;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border:1px solid rgba(255,255,255,.18);
+  background: rgba(0,0,0,.35);
+  backdrop-filter: blur(10px);
+  z-index:20;
+  font-size: 14px;
+  opacity:.92;
 }
 
-/* Contenedor interno de iconos (si NO existe en tu HTML, igual funciona con los anchors) */
-.hub-stage{
-  --cols: 2;
+/* =========================
+   WORLD MODES (hub.js toggles body class)
+========================= */
+
+/* NORMAL */
+body.normal #bg{ filter: contrast(1) saturate(1); }
+body.normal .hub-vignette{ opacity:1; }
+
+/* UPSIDE DOWN (dark + inverted-ish + fog) */
+body.upside #bg{
+  filter: saturate(.75) contrast(1.05) brightness(.55) hue-rotate(165deg);
+  transform: scaleY(-1);
+}
+body.upside .hub-vignette{
+  background: radial-gradient(ellipse at center, rgba(0,0,0,.30), rgba(0,0,0,.92));
+}
+body.upside .hub-title{ color: rgba(255,80,80,.95); }
+body.upside .hub-icon{ border-color: rgba(0,255,255,.14); }
+body.upside .hub-icon img{ filter: drop-shadow(0 0 14px rgba(0,255,255,.16)); }
+
+/* WILL LIGHTS (warm + cozy) */
+body.will #bg{
+  filter: saturate(1.2) contrast(1.05) brightness(.75) hue-rotate(-10deg);
+}
+body.will .hub-vignette{
+  background: radial-gradient(ellipse at center, rgba(255,120,0,.08), rgba(0,0,0,.88));
 }
 
-/* Todos los iconos: que NO sean absolute y se vean como cards */
-.hub-icon{
-  position: relative !important;
-  left: auto !important;
-  top: auto !important;
-  right: auto !important;
-  bottom: auto !important;
-  transform: none;
-
-  width: min(42vw, 180px);
-  height: 120px;
-
-  display: grid;
-  place-items: center;
-  gap: 8px;
-
-  border-radius: 18px;
-  border: 1px solid rgba(255,255,255,.18);
-  background: rgba(0,0,0,.28);
-  backdrop-filter: blur(8px);
-
-  text-decoration: none;
-  color: #fff;
-  overflow: hidden;
+/* =========================
+   SPARKS (hub.js)
+========================= */
+.spark{
+  position:absolute;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  pointer-events:none;
+  transform: translate(-50%,-50%);
+  animation: sparkPop var(--dur,600ms) ease-out forwards;
 }
+.spark.ink{ background: rgba(255,0,0,.90); box-shadow: 0 0 14px rgba(255,0,0,.7), 0 0 22px rgba(0,255,255,.18); }
+.spark.light{ background: rgba(255,220,0,.95); box-shadow: 0 0 14px rgba(255,220,0,.7); }
+.spark.ash{ background: rgba(200,200,200,.75); box-shadow: 0 0 12px rgba(200,200,200,.35); }
+.spark.spark{ background: rgba(0,255,255,.9); box-shadow: 0 0 16px rgba(0,255,255,.55); }
 
-/* Imagen dentro del icono */
-.hub-icon img{
-  width: 58px;
-  height: auto;
-  display: block;
-  filter: drop-shadow(0 0 14px rgba(255,0,0,.15));
-}
-
-/* Texto */
-.hub-icon span{
-  opacity: .92;
-}
-
-/* PONER ICONOS EN GRID (centrados) */
-.hub-stage{
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-  align-content: center;    /* clave: centra vertical */
-  justify-content: center;
-}
-
-/* Desktop/tablet: más columnas */
-@media (min-width: 700px){
-  .hub-stage{ grid-template-columns: repeat(3, minmax(0, 220px)); }
-  .hub-icon{ height: 150px; }
-}
-@media (min-width: 1000px){
-  .hub-stage{ grid-template-columns: repeat(4, minmax(0, 230px)); }
-}
-
-/* ===== MUNDOS (tu botón WORLD) ===== */
-body.hub-world.upside #bg{
-  filter: saturate(.8) contrast(1.05) brightness(.62);
-}
-body.hub-world.upside .hub-vignette{
-  background: radial-gradient(ellipse at center,
-    rgba(0,0,0,.20),
-    rgba(0,0,0,.92)
-  );
-}
-body.hub-world.will #bg{
-  filter: contrast(1.1) brightness(.75) saturate(1.05);
-}
-
-/* ===== “FLOAT” SUAVE (sin encimar) ===== */
-.hub-icon{ animation: hubFloat 6.8s ease-in-out infinite; }
-.hub-icon:nth-child(2n){ animation-duration: 8.2s; }
-.hub-icon:nth-child(3n){ animation-duration: 9.6s; }
-
-@keyframes hubFloat{
-  0%,100%{ transform: translateY(0); }
-  50%{ transform: translateY(-10px); }
-}
-
-/* ===== PLACEHOLDER flotantes (para que luego agregues stickers encima) =====
-   Cuando quieras, agregamos un <div class="hub-float-layer"> con imágenes.
-*/
-.hub-float-layer{
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 12;
+@keyframes sparkPop{
+  from{ opacity:1; transform: translate(-50%,-50%) translate(0,0) scale(.7); }
+  to{
+    opacity:0;
+    transform: translate(-50%,-50%) translate(var(--dx), var(--dy)) scale(1.9);
+    filter: blur(.2px);
+  }
 }
