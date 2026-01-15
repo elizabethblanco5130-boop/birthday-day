@@ -75,7 +75,14 @@
 
     /* Story floating icons (solo story) */
     .story-decor{ position:fixed; inset:0; pointer-events:none; z-index:3; }
-    .story-float{ position:absolute; width:52px; height:52px; opacity:.95; filter: drop-shadow(0 0 12px rgba(255,0,0,.18)); animation: drift 10s ease-in-out infinite; }
+    .story-float{
+  position:absolute;
+  width:120px;
+  height:auto;
+  opacity:.95;
+  filter: drop-shadow(0 0 18px rgba(255,0,0,.45));
+  animation: drift 10s ease-in-out infinite;
+}
     .story-float.s2{ animation-duration: 13s; opacity:.85; }
     .story-float.s3{ animation-duration: 16s; opacity:.75; }
     @keyframes drift{
