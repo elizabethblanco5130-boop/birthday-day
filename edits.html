@@ -214,16 +214,15 @@
       overflow:hidden;
     }
 
-    /* Put YOUR designed image as background here later */
-    .collageFrame .yourImage{
+    /* ✅ VIDEO collage.MP4 dentro del frame (no tapa el marco) */
+    .collageFrame video{
       position:absolute; inset:0;
-      background:
-        radial-gradient(circle at 50% 50%, rgba(255,255,255,.08), rgba(0,0,0,.25));
-      /* ✅ cuando tengas tu imagen: reemplaza por:
-         background-image: url("img/TU_IMAGEN.png");
-         background-size: cover;
-         background-position: center;
-      */
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      opacity:.95;
+      filter: saturate(1.05) contrast(1.05);
+      pointer-events:none;
     }
 
     .collageTitle{
@@ -266,6 +265,30 @@
     @keyframes pop{
       from{ opacity:1; transform: translate(-50%,-50%) scale(.7); }
       to{ opacity:0; transform: translate(-50%,-50%) scale(3.2); }
+    }
+
+    /* ✅ Star sparkle (follows finger) */
+    .star{
+      position:fixed;
+      transform: translate(-50%,-50%);
+      pointer-events:none;
+      z-index:220;
+      opacity:1;
+      animation: starPop .9s ease-out forwards;
+      filter: drop-shadow(0 0 10px rgba(255,255,255,.45));
+    }
+    .star::before{
+      content:"✦";
+      font-family:'Press Start 2P', monospace;
+      font-size:12px;
+      color: rgba(255,255,255,.95);
+      text-shadow:
+        0 0 10px rgba(0,255,255,.25),
+        0 0 12px rgba(255,0,153,.18);
+    }
+    @keyframes starPop{
+      from{ transform: translate(-50%,-50%) scale(.7); opacity:1; }
+      to{ transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.7); opacity:0; }
     }
 
     /* Back button */
@@ -338,11 +361,15 @@
 
     <div class="collageWrap">
       <div class="collageFrame" id="collageFrame">
-        <div class="yourImage" id="yourImage"></div>
+
+        <!-- ✅ TU “IMAGEN” AHORA ES VIDEO collage.MP4 -->
+        <video id="collageVid" autoplay muted loop playsinline preload="auto">
+          <source src="collage.MP4" type="video/mp4">
+        </video>
 
         <div class="collageTitle">STARCOURT EDITS</div>
         <div class="collageSub">
-          Toca la pantalla: luces + chispas. (Luego le ponemos canción aquí.)
+          Toca y mueve el dedo: destellos ✦ (La música se prende al entrar.)
         </div>
       </div>
     </div>
@@ -353,9 +380,9 @@
     <source src="trick.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- AUDIO: 2) aquí después pondrás la canción del collage -->
+  <!-- ✅ AUDIO: música del collage -->
   <audio id="mallMusic" preload="auto" loop>
-    <!-- <source src="TU_CANCION.mp3" type="audio/mpeg"> -->
+    <source src="louis..mp3" type="audio/mpeg">
   </audio>
 
   <script>
@@ -389,6 +416,33 @@
       setTimeout(()=>s.remove(), 650);
     }
 
+    // ✅ star sparkle for finger move
+    function star(x,y){
+      const s = document.createElement("div");
+      s.className = "star";
+      s.style.left = x + "px";
+      s.style.top  = y + "px";
+
+      // random drift
+      const dx = (Math.random()*22 - 11) + "px";
+      const dy = (Math.random()*26 - 18) + "px";
+      s.style.setProperty("--dx", dx);
+      s.style.setProperty("--dy", dy);
+
+      // random size a bit
+      const size = 10 + Math.floor(Math.random()*6);
+      s.style.fontSize = size + "px";
+
+      document.body.appendChild(s);
+      s.addEventListener("animationend", ()=> s.remove());
+    }
+
+    function startMallMusic(){
+      if(!mallMusic) return;
+      mallMusic.volume = 0.65;
+      mallMusic.play().catch(()=>{});
+    }
+
     // 1st tap => play trick.mp3 once
     // 2nd tap => open video + play
     cakeBtn.addEventListener("click", (e)=>{
@@ -396,7 +450,6 @@
       spark(e.clientX, e.clientY);
 
       if(cakeTaps === 1){
-        // iPhone needs user gesture: this click counts
         if(!trickPlayed){
           trick.currentTime = 0;
           trick.volume = 0.75;
@@ -408,32 +461,57 @@
 
       if(cakeTaps >= 2){
         show(screenVideo);
-        // play video
         jamieVid.currentTime = 0;
         jamieVid.play().catch(()=>{});
       }
     });
 
-    // Close video => go to mall collage
+    // Close video => go to mall collage + start music
     closeVideo.addEventListener("click", ()=>{
-      // stop video
       jamieVid.pause();
       show(screenMall);
+
+      // iPhone gesture-safe: this click starts the audio
+      startMallMusic();
     });
 
-    // Collage interactions (sparks). Later you'll add song here.
-    // When you add the song, you can start it on first touch.
-    let mallMusicStarted = false;
-    screenMall.addEventListener("pointerdown", (e)=>{
-      spark(e.clientX, e.clientY);
+    // Collage interactions:
+    // - spark on tap
+    // - star trail on finger move
+    // - fallback: if music didn't start yet, start on first touch
+    let mallStarted = false;
+    let lastStarAt = 0;
 
-      // (later) start music once you add a source
-      if(!mallMusicStarted){
-        // mallMusic.volume = 0.6;
-        // mallMusic.play().catch(()=>{});
-        mallMusicStarted = true;
+    function onMallDown(e){
+      const x = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
+      const y = e.clientY ?? (e.touches && e.touches[0]?.clientY) ?? 0;
+      spark(x, y);
+
+      if(!mallStarted){
+        startMallMusic();
+        mallStarted = true;
       }
-    }, {passive:true});
+    }
+
+    function onMallMove(e){
+      const now = Date.now();
+      if(now - lastStarAt < 35) return; // throttle
+      lastStarAt = now;
+
+      const x = e.clientX ?? (e.touches && e.touches[0]?.clientX);
+      const y = e.clientY ?? (e.touches && e.touches[0]?.clientY);
+      if(x == null || y == null) return;
+
+      star(x, y);
+    }
+
+    // Pointer events (best)
+    screenMall.addEventListener("pointerdown", onMallDown, {passive:true});
+    screenMall.addEventListener("pointermove", onMallMove, {passive:true});
+
+    // Touch fallback (older Safari)
+    screenMall.addEventListener("touchstart", onMallDown, {passive:true});
+    screenMall.addEventListener("touchmove", onMallMove, {passive:true});
 
   </script>
 </body>
