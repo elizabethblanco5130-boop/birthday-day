@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>Anti-Vecna Mixtape</title>
 
-  <!-- Stranger-ish font -->
   <link href="https://fonts.cdnfonts.com/css/benguiat" rel="stylesheet">
-  <!-- Pixel/arcade for UI -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -44,7 +42,9 @@
       object-fit:cover;
       filter: saturate(0.95) contrast(1.05);
       transform: scale(1.01);
-      cursor: pointer; /* ✅ NUEVO: para que se sienta clickeable */
+      cursor:pointer; /* para los 7 taps */
+      user-select:none;
+      -webkit-user-drag:none;
     }
 
     /* Vignette / mood */
@@ -72,74 +72,31 @@
       filter: drop-shadow(0 0 22px rgba(255,0,0,.18));
     }
 
-    /* Idle darkness when user does nothing */
+    /* ===== IDLE DARK ===== */
     .idleDark{
       position:fixed; inset:0;
-      background: rgba(0,0,0,.0);
       opacity:0;
       pointer-events:none;
       z-index:20;
       transition: opacity .8s ease;
+      background: rgba(0,0,0,.0);
     }
-    body.idle .idleDark{
-      opacity: .55;
-    }
+    body.idle .idleDark{ opacity: .45; }
 
-    /* ===== ✅ NUEVO: STORM LAYER (relámpagos) ===== */
-    .stormLayer{
+    /* ✅ IDLE RED TINT (rojo encima SIN tapar imagen) */
+    .idleRed{
       position:fixed; inset:0;
+      opacity:0;
       pointer-events:none;
-      z-index:21; /* encima de idleDark */
-      opacity:0;
-      transition: opacity .25s ease;
-    }
-    body.idle .stormLayer{ opacity:1; }
-
-    .stormFlash{
-      position:absolute; inset:-20%;
+      z-index:21;
+      transition: opacity .6s ease;
       background:
-        radial-gradient(circle at 70% 30%, rgba(200,255,255,.18), rgba(0,0,0,0) 40%),
-        radial-gradient(circle at 25% 55%, rgba(255,255,255,.10), rgba(0,0,0,0) 45%);
-      opacity:0;
+        radial-gradient(circle at 50% 45%, rgba(255,0,0,.32), rgba(0,0,0,0) 55%),
+        linear-gradient(180deg, rgba(120,0,0,.25), rgba(0,0,0,.35));
       mix-blend-mode: screen;
-      filter: blur(1px);
-      animation: lightning 4.8s infinite;
+      filter: saturate(1.05);
     }
-    @keyframes lightning{
-      0%, 70%, 100% { opacity:0; transform: translate(0,0); }
-      72% { opacity:.15; transform: translate(-8px, 4px); }
-      73% { opacity:0; }
-      76% { opacity:.22; transform: translate(10px, -6px); }
-      77% { opacity:0; }
-      79% { opacity:.12; transform: translate(-6px, 2px); }
-      80% { opacity:0; }
-    }
-
-    /* ✅ NUEVO: vibración global */
-    body.idle .ui,
-    body.stormPulse .ui{
-      animation: shake .22s infinite;
-    }
-    @keyframes shake{
-      0%{ transform: translate(0,0); }
-      25%{ transform: translate(1px,-1px); }
-      50%{ transform: translate(-1px,1px); }
-      75%{ transform: translate(1px,1px); }
-      100%{ transform: translate(0,0); }
-    }
-
-    /* ✅ NUEVO: vibración de cassette al tocar */
-    .track.buzz{
-      animation: buzz .35s ease-in-out;
-    }
-    @keyframes buzz{
-      0%{ transform: translate(0,0); }
-      20%{ transform: translate(1px,-1px); }
-      40%{ transform: translate(-1px,1px); }
-      60%{ transform: translate(1px,1px); }
-      80%{ transform: translate(-1px,-1px); }
-      100%{ transform: translate(0,0); }
-    }
+    body.idle:not(.musicOn) .idleRed{ opacity:1; }
 
     /* ===== PARTICLES CANVAS ===== */
     canvas#fx{
@@ -147,6 +104,59 @@
       z-index:4;
       pointer-events:none;
       opacity:.9;
+    }
+
+    /* ===== LIGHTNING LAYER ===== */
+    .stormLayer{
+      position:fixed; inset:0;
+      pointer-events:none;
+      z-index:22;
+      opacity:.0;
+      transition: opacity .25s ease;
+    }
+    body.idle .stormLayer{ opacity:1; }
+
+    .stormFlash{
+      position:absolute; inset:-20%;
+      opacity:0;
+      mix-blend-mode: screen;
+      filter: blur(1px);
+      animation: lightning 4.8s infinite;
+    }
+
+    /* ✅ por defecto (IDLE): relámpagos ROJOS */
+    body.idle:not(.musicOn) .stormFlash{
+      background:
+        radial-gradient(circle at 70% 30%, rgba(255,0,0,.18), rgba(0,0,0,0) 42%),
+        radial-gradient(circle at 25% 55%, rgba(255,80,80,.12), rgba(0,0,0,0) 45%);
+    }
+
+    /* ✅ cuando suena música: relámpagos BLANCOS */
+    body.musicOn .stormLayer{ opacity:1; }
+    body.musicOn .stormFlash{
+      background:
+        radial-gradient(circle at 70% 30%, rgba(255,255,255,.20), rgba(0,0,0,0) 42%),
+        radial-gradient(circle at 25% 55%, rgba(210,255,255,.14), rgba(0,0,0,0) 45%);
+    }
+
+    @keyframes lightning{
+      0%, 70%, 100% { opacity:0; transform: translate(0,0); }
+      72% { opacity:.14; transform: translate(-8px, 4px); }
+      73% { opacity:0; }
+      76% { opacity:.22; transform: translate(10px, -6px); }
+      77% { opacity:0; }
+      79% { opacity:.12; transform: translate(-6px, 2px); }
+      80% { opacity:0; }
+    }
+
+    /* vibración cuando idle */
+    body.idle .ui{ animation: shake .22s infinite; }
+    @keyframes shake{
+      0%{ transform: translate(0,0); }
+      25%{ transform: translate(1px,-1px); }
+      50%{ transform: translate(-1px,1px); }
+      75%{ transform: translate(1px,1px); }
+      100%{ transform: translate(0,0); }
     }
 
     /* ===== TOP WHISPER ===== */
@@ -175,7 +185,7 @@
       transform: translateX(-50%) translateY(0);
     }
 
-    /* ===== ✅ NUEVO: RED ALERT OVERLAY ===== */
+    /* ✅ RED ALERT (7 taps) */
     .redAlert{
       position:fixed; inset:0;
       display:flex;
@@ -191,7 +201,6 @@
       transition: opacity .18s ease;
     }
     .redAlert.show{ opacity:1; }
-
     .redAlert .msg{
       font-family: 'Press Start 2P', monospace;
       font-size: 12px;
@@ -201,8 +210,30 @@
       color: rgba(255,255,255,.95);
       text-shadow: 0 0 18px rgba(255,0,0,.35);
     }
-    @media(min-width:900px){
-      .redAlert .msg{ font-size: 14px; }
+
+    /* ✅ GOOD CHOICE toast */
+    .toast{
+      position:fixed;
+      right:16px;
+      bottom:16px;
+      z-index:90;
+      opacity:0;
+      transform: translateY(6px);
+      pointer-events:none;
+      transition: opacity .25s ease, transform .25s ease;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(0,255,255,.25);
+      background: rgba(0,0,0,.35);
+      backdrop-filter: blur(10px);
+      font-family:'Press Start 2P', monospace;
+      font-size:10px;
+      letter-spacing:.06em;
+      text-transform: uppercase;
+    }
+    .toast.show{
+      opacity:1;
+      transform: translateY(0);
     }
 
     /* ===== UI PANEL (bottom-left; doesn't cover her) ===== */
@@ -232,7 +263,6 @@
       position:relative;
     }
 
-    /* Glitch logo */
     .logo{
       margin:0;
       font-family: 'Benguiat', serif;
@@ -250,7 +280,6 @@
     }
     .subtitle{
       margin:10px 0 0;
-      font-family: system-ui, -apple-system, Arial;
       color: rgba(255,255,255,.82);
       font-size: 14px;
       line-height: 1.35;
@@ -316,10 +345,19 @@
       text-transform: uppercase;
     }
 
-    /* "Playing" state */
     .track.playing{
       border-color: rgba(0,255,255,.40);
       box-shadow: 0 0 0 2px rgba(0,255,255,.10), 0 0 26px rgba(255,0,0,.14);
+    }
+
+    .track.buzz{ animation: buzz .35s ease-in-out; }
+    @keyframes buzz{
+      0%{ transform: translate(0,0); }
+      20%{ transform: translate(1px,-1px); }
+      40%{ transform: translate(-1px,1px); }
+      60%{ transform: translate(1px,1px); }
+      80%{ transform: translate(-1px,-1px); }
+      100%{ transform: translate(0,0); }
     }
 
     /* ===== FOOTER CONTROLS ===== */
@@ -355,7 +393,7 @@
       box-shadow: 0 0 18px rgba(255,0,0,.18);
     }
 
-    /* ===== FLOATING OBJECTS (interactive) ===== */
+    /* ===== FLOATING OBJECTS (reubicados para NO tapar a ella) ===== */
     .objects{
       position:fixed; inset:0;
       z-index:40;
@@ -364,7 +402,7 @@
 
     .obj{
       position:absolute;
-      width:74px; height:74px;
+      width:66px; height:66px;
       border-radius:18px;
       border:1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.18);
@@ -378,6 +416,7 @@
       place-items:center;
       overflow:hidden;
       transition: transform .16s ease, filter .25s ease, opacity .25s ease;
+      opacity:.92;
     }
     .obj:active{ transform: rotate(-6deg) scale(.98); }
 
@@ -398,10 +437,11 @@
       color: rgba(255,255,255,.82);
     }
 
-    .obj.clock{ left:18px; top:110px; }
-    .obj.walkie{ left:18px; top:200px; transform: rotate(7deg); }
-    .obj.bag{ left:18px; top:290px; transform: rotate(-12deg); }
-    .obj.vecna{ right:18px; top:130px; transform: rotate(10deg); opacity:.55; }
+    /* ✅ dispersados en bordes */
+    .obj.clock{ left:14px; top:92px; transform: rotate(-10deg); }
+    .obj.walkie{ left:14px; bottom:150px; transform: rotate(7deg); }
+    .obj.bag{ right:14px; top:220px; transform: rotate(-12deg); }
+    .obj.vecna{ right:14px; bottom:140px; transform: rotate(10deg); opacity:.55; }
     .obj.vecna:hover{ opacity:.85; }
 
     /* ===== SECRET MESSAGE MODAL ===== */
@@ -444,20 +484,20 @@
       width:100%;
     }
 
-    /* ===== RESPONSIVE (desktop) ===== */
     @media (min-width: 900px){
       .ui{ left:26px; bottom:26px; width: 440px; }
       .logo{ font-size: 40px; }
       .playlist{ grid-template-columns: 1fr 1fr; }
-      .obj{ width:84px; height:84px; }
+      .obj{ width:80px; height:80px; }
+      .obj.clock{ top:110px; }
     }
   </style>
 </head>
 
 <body>
-  <!-- background -->
   <div class="bg">
-    <img id="maxImg" src="img/max.png" alt="Max moment">
+    <!-- ✅ TU IMAGEN (no se quita): -->
+    <img id="maxImg" src="img/max.PNG" alt="Max moment">
   </div>
 
   <div class="vignette"></div>
@@ -465,20 +505,20 @@
   <canvas id="fx"></canvas>
 
   <div class="idleDark"></div>
+  <div class="idleRed"></div>
 
-  <!-- ✅ NUEVO: relámpagos -->
   <div class="stormLayer" aria-hidden="true">
     <div class="stormFlash"></div>
   </div>
 
-  <!-- ✅ NUEVO: red alert -->
   <div class="redAlert" id="redAlert" aria-hidden="true">
     <div class="msg">YOU ALMOST LOST HER.</div>
   </div>
 
+  <div class="toast" id="toast">GOOD CHOICE.</div>
+
   <div class="whisper" id="whisper">Running won’t save you…</div>
 
-  <!-- Floating objects -->
   <div class="objects" id="objects">
     <div class="obj clock" data-obj="clock" title="Reloj roto">
       <div class="icon">🕰️</div>
@@ -498,7 +538,6 @@
     </div>
   </div>
 
-  <!-- UI bottom-left -->
   <div class="ui">
     <section class="panel">
       <div class="header">
@@ -558,7 +597,13 @@
     </section>
   </div>
 
+  <!-- previews (opcional) -->
   <audio id="player" preload="auto"></audio>
+
+  <!-- ✅ sonido de relámpagos/rojo en idle -->
+  <audio id="stormSfx" preload="auto" loop>
+    <source src="efectosr.mp3" type="audio/mpeg">
+  </audio>
 
   <div class="modal" id="modal">
     <div class="backdrop"></div>
@@ -571,7 +616,21 @@
 
   <script>
     // =========================
-    // PARTICLES (ash/red dust)
+    // AUDIO unlock (iPhone)
+    // =========================
+    let audioUnlocked = false;
+    function unlockAudio(){
+      audioUnlocked = true;
+      window.removeEventListener("pointerdown", unlockAudio);
+      window.removeEventListener("touchstart", unlockAudio);
+      window.removeEventListener("click", unlockAudio);
+    }
+    window.addEventListener("pointerdown", unlockAudio, { once:true });
+    window.addEventListener("touchstart", unlockAudio, { once:true });
+    window.addEventListener("click", unlockAudio, { once:true });
+
+    // =========================
+    // PARTICLES
     // =========================
     const canvas = document.getElementById("fx");
     const ctx = canvas.getContext("2d");
@@ -592,7 +651,6 @@
 
     const particles = [];
     const COUNT = 110;
-
     function rand(a,b){ return a + Math.random()*(b-a); }
 
     for(let i=0;i<COUNT;i++){
@@ -632,10 +690,11 @@
     tick();
 
     // =========================
-    // IDLE “Vecna” pressure
+    // Whisper + Toast
     // =========================
-    let idleTimer = null;
     const whisper = document.getElementById("whisper");
+    const toast = document.getElementById("toast");
+    let toastTimer = null;
 
     function showWhisper(msg){
       whisper.textContent = msg;
@@ -643,8 +702,35 @@
       setTimeout(()=>whisper.classList.remove("show"), 1800);
     }
 
+    function showToast(txt="GOOD CHOICE."){
+      toast.textContent = txt;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(()=>toast.classList.remove("show"), 1100);
+    }
+
+    // =========================
+    // Idle + storm sound
+    // =========================
+    let idleTimer = null;
+    const stormSfx = document.getElementById("stormSfx");
+
     function setIdle(on){
       document.body.classList.toggle("idle", on);
+      if(on){
+        // solo suena si NO hay música y ya hubo interacción
+        if(audioUnlocked && !document.body.classList.contains("musicOn")){
+          try{
+            stormSfx.volume = 0.55;
+            stormSfx.play().catch(()=>{});
+          }catch(e){}
+        }
+      }else{
+        try{
+          stormSfx.pause();
+          stormSfx.currentTime = 0;
+        }catch(e){}
+      }
     }
 
     function resetIdle(){
@@ -668,11 +754,19 @@
     const player = document.getElementById("player");
     const panicBtn = document.getElementById("panicBtn");
 
-    let protection = 0; // 0..10
+    let protection = 0;
     let playingIndex = -1;
 
     function setProtected(on){
       document.body.classList.toggle("protected", on);
+    }
+    function setMusicOn(on){
+      document.body.classList.toggle("musicOn", on);
+      if(on){
+        // al empezar música: quitar idle rojo + parar efectos
+        setIdle(false);
+        try{ stormSfx.pause(); stormSfx.currentTime = 0; }catch(e){}
+      }
     }
 
     function bumpProtection(){
@@ -690,24 +784,19 @@
       playingIndex = i;
     }
 
-    function stormPulse(){
-      document.body.classList.add("stormPulse");
-      setTimeout(()=>document.body.classList.remove("stormPulse"), 650);
-    }
-
     function playTrack(el){
-      const src = el.dataset.src?.trim();
+      const src = (el.dataset.src || "").trim();
       bumpProtection();
       setPlaying(Number(el.dataset.index));
 
-      // ✅ NUEVO: vibración + relámpago al tocar cassette
-      el.classList.remove("buzz");
-      void el.offsetWidth;
-      el.classList.add("buzz");
-      stormPulse();
+      // ✅ al “reproducir” -> Good Choice + relámpagos blancos
+      showToast("GOOD CHOICE.");
+      setMusicOn(true);
 
-      showWhisper("💿 CANCIONES QUE SE DEFENDEN");
+      // vibra el cassette
+      el.classList.remove("buzz"); void el.offsetWidth; el.classList.add("buzz");
 
+      // si no hay audio todavía, solo FX, igual se siente vivo
       if(src){
         player.src = src;
         player.currentTime = 0;
@@ -725,15 +814,17 @@
 
     panicBtn.addEventListener("click", ()=>{
       resetIdle();
-      stormPulse(); // ✅ NUEVO
       const i = Math.floor(Math.random()*tracks.length);
       playTrack(tracks[i]);
     });
 
-    player.addEventListener("ended", ()=> setPlaying(-1));
+    player.addEventListener("ended", ()=>{
+      setPlaying(-1);
+      setMusicOn(false);
+    });
 
     // =========================
-    // OBJECTS interactions
+    // OBJECTS modal
     // =========================
     const modal = document.getElementById("modal");
     const modalTitle = document.getElementById("modalTitle");
@@ -752,23 +843,12 @@
     modal.querySelector(".backdrop").addEventListener("click", close);
 
     const objMessages = {
-      clock: {
-        title: "RELOJ ROTO",
-        text: "El tiempo aquí no avanza… se repite. Si te quedas quieta, él te encuentra."
-      },
-      walkie: {
-        title: "WALKIE",
-        text: "📡 ‘Day… ¿me copias? Si escuchas estática, no apagues. RESPONDE con música.’"
-      },
-      bag: {
-        title: "MOCHILA",
-        text: "Dentro hay cosas pequeñas que pesan mucho: recuerdos, rutas, y una canción que siempre vuelve."
-      }
+      clock: { title: "RELOJ ROTO", text: "El tiempo aquí no avanza… se repite. Si te quedas quieta, él te encuentra." },
+      walkie:{ title: "WALKIE", text: "📡 ‘Day… ¿me copias? Si escuchas estática, no apagues. RESPONDE con música.’" },
+      bag:  { title: "MOCHILA", text: "Dentro hay cosas pequeñas que pesan mucho: recuerdos, rutas, y una canción que siempre vuelve." }
     };
 
-    let logoTaps = 0;
     let vecnaTaps = 0;
-
     document.querySelectorAll(".obj").forEach(o=>{
       o.addEventListener("click", ()=>{
         resetIdle();
@@ -791,8 +871,9 @@
     });
 
     // =========================
-    // EASTER EGGS (logo)
+    // 7 taps en LOGO (ya lo tenías)
     // =========================
+    let logoTaps = 0;
     const logo = document.getElementById("logo");
     logo.addEventListener("click", ()=>{
       resetIdle();
@@ -805,7 +886,7 @@
     });
 
     // =========================
-    // ✅ NUEVO: 7 taps en la IMAGEN de ella (pantalla roja + texto)
+    // ✅ 7 taps en la IMAGEN (ella)
     // =========================
     const maxImg = document.getElementById("maxImg");
     const redAlert = document.getElementById("redAlert");
@@ -814,11 +895,11 @@
 
     function triggerRedAlert(){
       redAlert.classList.add("show");
-      showWhisper("…");
+      setIdle(false); // para que sea “limpio” el flash
+      try{ stormSfx.pause(); stormSfx.currentTime = 0; }catch(e){}
 
       setTimeout(()=>{
         redAlert.classList.remove("show");
-        // vuelve normal + mensaje de “defensa”
         showWhisper("1. 💿 CANCIONES QUE SE DEFENDEN");
       }, 900);
     }
@@ -827,14 +908,12 @@
       maxImg.addEventListener("click", ()=>{
         resetIdle();
         imgTaps++;
-
         clearTimeout(imgTapTimer);
         imgTapTimer = setTimeout(()=>{ imgTaps = 0; }, 1400);
 
         if(imgTaps >= 7){
           imgTaps = 0;
           triggerRedAlert();
-          stormPulse(); // vibra/flash también
         }
       });
     }
