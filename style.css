@@ -396,3 +396,164 @@
   0%,100%{ transform: translateY(0); }
   50%{ transform: translateY(-8px); }
 }
+/* =========================
+   HUB FIX: video full screen + icons centered
+   ========================= */
+
+html, body { height: 100%; }
+body.hub-world { margin: 0; min-height: 100vh; overflow: hidden; background:#000; }
+
+/* VIDEO DE FONDO A PANTALLA COMPLETA */
+#bg{
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  z-index: -3;
+}
+
+/* OSCURECER/VIÑETA */
+.hub-vignette{
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center,
+    rgba(0,0,0,.05),
+    rgba(0,0,0,.80)
+  );
+}
+
+/* TOP BAR siempre arriba */
+.hub-top{
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  z-index: 50;
+}
+
+/* EL STAGE: ocupa pantalla y centra */
+.hub-stage{
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+
+  /* centra todo en el medio */
+  display: grid;
+  place-items: center;
+
+  /* deja espacio para el header arriba y el hint abajo */
+  padding: 90px 18px 95px;
+  box-sizing: border-box;
+}
+
+/* GRID de iconos centrado */
+.hub-stage{
+  grid-auto-rows: min-content;
+}
+
+.hub-stage .hub-hint{
+  position: fixed;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  z-index: 60;
+}
+
+/* Contenedor interno de iconos (si NO existe en tu HTML, igual funciona con los anchors) */
+.hub-stage{
+  --cols: 2;
+}
+
+/* Todos los iconos: que NO sean absolute y se vean como cards */
+.hub-icon{
+  position: relative !important;
+  left: auto !important;
+  top: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  transform: none;
+
+  width: min(42vw, 180px);
+  height: 120px;
+
+  display: grid;
+  place-items: center;
+  gap: 8px;
+
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(0,0,0,.28);
+  backdrop-filter: blur(8px);
+
+  text-decoration: none;
+  color: #fff;
+  overflow: hidden;
+}
+
+/* Imagen dentro del icono */
+.hub-icon img{
+  width: 58px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 0 14px rgba(255,0,0,.15));
+}
+
+/* Texto */
+.hub-icon span{
+  opacity: .92;
+}
+
+/* PONER ICONOS EN GRID (centrados) */
+.hub-stage{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  align-content: center;    /* clave: centra vertical */
+  justify-content: center;
+}
+
+/* Desktop/tablet: más columnas */
+@media (min-width: 700px){
+  .hub-stage{ grid-template-columns: repeat(3, minmax(0, 220px)); }
+  .hub-icon{ height: 150px; }
+}
+@media (min-width: 1000px){
+  .hub-stage{ grid-template-columns: repeat(4, minmax(0, 230px)); }
+}
+
+/* ===== MUNDOS (tu botón WORLD) ===== */
+body.hub-world.upside #bg{
+  filter: saturate(.8) contrast(1.05) brightness(.62);
+}
+body.hub-world.upside .hub-vignette{
+  background: radial-gradient(ellipse at center,
+    rgba(0,0,0,.20),
+    rgba(0,0,0,.92)
+  );
+}
+body.hub-world.will #bg{
+  filter: contrast(1.1) brightness(.75) saturate(1.05);
+}
+
+/* ===== “FLOAT” SUAVE (sin encimar) ===== */
+.hub-icon{ animation: hubFloat 6.8s ease-in-out infinite; }
+.hub-icon:nth-child(2n){ animation-duration: 8.2s; }
+.hub-icon:nth-child(3n){ animation-duration: 9.6s; }
+
+@keyframes hubFloat{
+  0%,100%{ transform: translateY(0); }
+  50%{ transform: translateY(-10px); }
+}
+
+/* ===== PLACEHOLDER flotantes (para que luego agregues stickers encima) =====
+   Cuando quieras, agregamos un <div class="hub-float-layer"> con imágenes.
+*/
+.hub-float-layer{
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 12;
+}
