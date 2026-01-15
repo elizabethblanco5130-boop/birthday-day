@@ -349,3 +349,11 @@ function hitEnemy(){
   const hearts = document.getElementById('hearts');
   hearts.textContent = Math.max(0, Number(hearts.textContent) - 1);
 }
+function hitEnemy(){
+  const hearts = document.getElementById('hearts');
+  let current = Number(hearts.textContent);
+
+  if(current > 0){
+    hearts.textContent = current - 1;
+  }
+}
