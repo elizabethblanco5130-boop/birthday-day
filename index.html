@@ -3,82 +3,77 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>STRANGER BIRTHDAY // Day</title>
+  <title>STRANGER BIRTHDAY</title>
 
-  <!-- Fuente vibe Stranger -->
+  <!-- Fuente tipo Stranger -->
   <link href="https://fonts.cdnfonts.com/css/benguiat" rel="stylesheet">
-
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=1000">
 </head>
+
 <body class="landing">
 
-<!-- Video fondo -->
-<video autoplay muted loop playsinline id="bg">
-  <source src="background.mp4" type="video/mp4">
-</video>
-
-<!-- Oscurece para lectura -->
-<div class="landing-vignette"></div>
-
-<main class="landing-center">
-<!-- stickers/decor -->
-<div class="stickers">
-  <img class="sticker s1" src="img/compass.png" alt="">
-  <img class="sticker s2" src="img/vhs.png" alt="">
-  <img class="sticker s3" src="img/dice.png" alt="">
-  <img class="sticker s4" src="img/walkie.png" alt="">
+  <!-- Fondo -->
+  <video autoplay muted loop playsinline id="bg">
+    <source src="background.mp4" type="video/mp4">
+  </video>
+  <div class="landing-vignette"></div>
   <div class="dust"></div>
-</div>
-  <!-- LOGO Stranger + glitch colores -->
-  <h1 class="st-logo" id="stTitle" aria-label="Stranger Birthday">
-    <span class="logo-layer base">STRANGER<br>BIRTHDAY</span>
-    <span class="logo-layer cyan" aria-hidden="true">STRANGER<br>BIRTHDAY</span>
-    <span class="logo-layer mag" aria-hidden="true">STRANGER<br>BIRTHDAY</span>
-  </h1>
 
-  <p class="landing-sub">Para Day — 02/02/2005. Hawkins te está mirando.</p>
-
-  <!-- Botón principal -->
-  <div class="landing-panel">
-    <a class="landing-btn primary" href="hub.html">✦ ENTER ✦</a>
-
-    <!-- accesos rápidos -->
-    <div class="landing-links">
-      <a href="story.html">Tu historia en Hawkins</a>
-      <a href="playlist.html">Playlist</a>
-      <a href="facts.html">Facts</a>
-      <a href="gallery.html">Edits</a>
-    </div>
+  <!-- Decor flotando (tú luego reemplazas PNGs) -->
+  <div class="stickers">
+    <img class="sticker s1" src="img/compass.png" style="left:10%; top:18%;" alt="">
+    <img class="sticker s2" src="img/vhs.png" style="left:78%; top:22%;" alt="">
+    <img class="sticker s3" src="img/dice.png" style="left:12%; top:72%;" alt="">
+    <img class="sticker s4" src="img/walkie.png" style="left:82%; top:70%;" alt="">
   </div>
 
-  <!-- ICONOS PNG -->
-  <div class="st-icons">
-    <a class="icon-btn" href="story.html" title="Tu historia">
-      <img src="img/tape.png" alt="Tape">
-    </a>
+  <main class="landing-center">
+    <section class="landing-panel">
 
-    <a class="icon-btn" href="facts.html" title="Facts">
-      <img src="img/lights.png" alt="Lights">
-    </a>
+      <!-- Logo glitch -->
+      <h1 class="st-logo" aria-label="Stranger Birthday">
+        <span class="logo-layer base">STRANGER<br>BIRTHDAY</span>
+        <span class="logo-layer cyan" aria-hidden="true">STRANGER<br>BIRTHDAY</span>
+        <span class="logo-layer mag" aria-hidden="true">STRANGER<br>BIRTHDAY</span>
+      </h1>
 
-    <a class="icon-btn" href="playlist.html" title="Playlist">
-      <img src="img/radio.png" alt="Radio">
-    </a>
+      <p class="landing-sub">Para Day — 02/02/2005. Hawkins te está mirando.</p>
 
-    <a class="icon-btn" href="gallery.html" title="Edits">
-      <img src="img/portal.png" alt="Portal">
-    </a>
+      <div class="enterTitle">✦ ENTER ✦</div>
 
-    <a class="icon-btn" href="hub.html" title="Mapa">
-      <img src="img/map.png" alt="Map">
-    </a>
-  </div>
+      <!-- Botones -->
+      <div class="grid">
+        <a class="landing-btn" href="story.html?v=1000">Tu historia en Hawkins</a>
+        <a class="landing-btn" href="playlist.html?v=1000">Playlist</a>
+        <a class="landing-btn" href="facts.html?v=1000">Facts</a>
+        <a class="landing-btn" href="gallery.html?v=1000">Edits</a>
+        <a class="landing-btn big" href="hub.html?v=1000">Entrar al Hawkins Hub</a>
+      </div>
 
-  <p class="tiny-note">Tip: toca el logo 7 veces para un easter egg.</p>
-</main>
+      <!-- Dock de iconos (decor) -->
+      <div class="dock">
+        <a href="hub.html?v=1000" aria-label="Hub"><img src="img/portal.png" alt=""></a>
+        <a href="will.html?v=1000" aria-label="Will"><img src="img/lights.png" alt=""></a>
+        <a href="cake.html?v=1000" aria-label="Birthday"><img src="img/cake.png" alt=""></a>
+        <a href="story.html?v=1000" aria-label="Story"><img src="img/tape.png" alt=""></a>
+      </div>
 
-<script src="landing.js"></script>
-  <!-- Background Music -->
-<audio id="bgm" src="bgm.mp3.mp3" loop></audio>
+      <div class="tip">Tip: toca el logo 7 veces para un easter egg.</div>
+    </section>
+  </main>
+
+  <script>
+    // Easter egg: 7 taps en el logo
+    const logo = document.querySelector(".st-logo");
+    let taps = 0;
+    logo.addEventListener("click", () => {
+      taps++;
+      if(taps >= 7){
+        taps = 0;
+        alert("📡 Señal encontrada. Hawkins te responde.");
+      }
+    });
+  </script>
+
 </body>
 </html>
