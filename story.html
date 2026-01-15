@@ -75,7 +75,7 @@
       backdrop-filter: blur(8px);
       box-shadow: 0 0 28px rgba(255,0,0,.14);
       padding:18px 16px;
-      z-index:55;
+      z-index:55; /* arriba del decor */
     }
 
     .glitchTitle{
@@ -118,11 +118,11 @@
     /* ===== DECOR flotante (NO bloquea clicks del juego) ===== */
     .story-decor{
       position:fixed; inset:0;
-      pointer-events:none;
+      pointer-events:none; /* IMPORTANTÍSIMO */
       z-index:20;
     }
 
-    /* bike atrás */
+    /* bike atrás (decor) */
     .story-final{
       position:absolute;
       left:50%;
@@ -154,7 +154,7 @@
       50%{ transform: translate(10px,-18px) rotate(6deg); }
     }
 
-    /* ✅ Slot "?" (bate adentro) — FIX: flex centra el bate SIEMPRE */
+    /* ✅ Slot "?" (el bate va DENTRO) */
     .qslot{
       position:absolute;
       left:18%;
@@ -168,31 +168,30 @@
       transform: rotate(-6deg);
       z-index:24;
       pointer-events:none;
-
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      overflow:hidden;
     }
     .qslot img{
-      width:85%;
-      height:85%;
+      width:72%;
+      height:72%;
       object-fit:contain;
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform:translate(-50%,-50%);
       filter: drop-shadow(0 0 14px rgba(255,0,0,.25));
       opacity:.95;
     }
 
     /* ✅ Demogorgon clickeable */
     .enemigo{
-      position:fixed;
+      position:fixed; /* fuera del decor */
       left:78%;
       top:22%;
       width:90px;
       height:auto;
       opacity:.90;
-      pointer-events:auto;
+      pointer-events:auto; /* clickable */
       cursor:pointer;
-      z-index:70;
+      z-index:70; /* arriba de todo */
       filter: drop-shadow(0 0 20px rgba(255,0,0,.35));
       user-select:none;
     }
@@ -253,18 +252,18 @@
   <div class="noise"></div>
   <div class="vignette"></div>
 
-  <!-- Decor SOLO de story -->
+  <!-- ✅ Decor SOLO de story -->
   <div class="story-decor" aria-hidden="true">
     <img class="story-final" src="img/bike.png" alt="Bike final">
     <img class="story-float" src="img/personaje.png" style="left:10%; top:18%;" alt="Personaje Hawkins">
 
-    <!-- Slot con bate adentro -->
+    <!-- ✅ Slot con bate adentro -->
     <div class="qslot">
       <img src="img/Bate.png" alt="Bate">
     </div>
   </div>
 
-  <!-- Demogorgon clickeable -->
+  <!-- ✅ Demogorgon clickeable -->
   <img class="enemigo"
     src="img/Demogorgon.png"
     onclick="window.hitEnemy && window.hitEnemy()"
