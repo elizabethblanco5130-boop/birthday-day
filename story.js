@@ -345,3 +345,7 @@ if(musicBtn){
 updateMusicBtn();
 setMode("HAWKINS");
 renderNode("start");
+function hitEnemy(){
+  const hearts = document.getElementById('hearts');
+  hearts.textContent = Math.max(0, Number(hearts.textContent) - 1);
+}
