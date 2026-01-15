@@ -189,7 +189,7 @@
       70%{ opacity:.82; }
     }
 
-    /* Your big image area (NO "photo" boxes) */
+    /* Your big image area */
     .collageWrap{
       position:absolute;
       inset:0;
@@ -209,12 +209,12 @@
       box-shadow:
         0 0 0 2px rgba(255,0,153,.08),
         0 0 30px rgba(255,0,153,.14),
-        0 0 24px rgba(0,255,255,.10);
+        0 0 24px rgba(0,0,255,255,.10);
       position:relative;
       overflow:hidden;
     }
 
-    /* ✅ VIDEO collage.MP4 dentro del frame (no tapa el marco) */
+    /* VIDEO collage.MP4 dentro del frame */
     .collageFrame video{
       position:absolute; inset:0;
       width:100%;
@@ -250,7 +250,7 @@
       opacity:.9;
     }
 
-    /* Tap FX (little neon spark) */
+    /* Tap FX */
     .spark{
       position:fixed;
       width:10px; height:10px;
@@ -267,7 +267,7 @@
       to{ opacity:0; transform: translate(-50%,-50%) scale(3.2); }
     }
 
-    /* ✅ Star sparkle (follows finger) */
+    /* Star sparkle */
     .star{
       position:fixed;
       transform: translate(-50%,-50%);
@@ -314,6 +314,42 @@
     @media (max-width:420px){
       .collageWrap{ padding-top:64px; }
       .collageFrame{ height: 72vh; }
+    }
+
+    /* ==========================================================
+       ✅ ADD-ON: COMPATIBLE PHONE + DESKTOP + SCROLL + FULL VIDEO
+       (SOLO PARA STARCOURT / NO TOCA LO DEMÁS)
+       ========================================================== */
+
+    body.mallScroll{
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    body.mallScroll .collageWrap{
+      min-height: 100vh;
+      place-items: start center;
+      padding: 72px 16px 28px;
+    }
+
+    /* horizontal fijo para tu collage */
+    body.mallScroll .collageFrame{
+      height: auto;
+      min-height: 70vh;
+      max-height: none;
+      aspect-ratio: 16 / 9;
+    }
+
+    /* muestra TODO el video (sin recortar) */
+    body.mallScroll .collageFrame video{
+      object-fit: contain;
+      background: #000;
+    }
+
+    @media (max-width:420px){
+      body.mallScroll .collageFrame{
+        min-height: 62vh;
+      }
     }
   </style>
 </head>
@@ -362,7 +398,6 @@
     <div class="collageWrap">
       <div class="collageFrame" id="collageFrame">
 
-        <!-- ✅ TU “IMAGEN” AHORA ES VIDEO collage.MP4 -->
         <video id="collageVid" autoplay muted loop playsinline preload="auto">
           <source src="collage.MP4" type="video/mp4">
         </video>
@@ -380,7 +415,7 @@
     <source src="trick.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- ✅ AUDIO: música del collage (CORREGIDO) -->
+  <!-- AUDIO: música del collage -->
   <audio id="mallMusic" preload="auto" loop>
     <source src="louis.mp3" type="audio/mpeg">
   </audio>
@@ -404,6 +439,13 @@
     function show(el){
       [screenIntro, screenVideo, screenMall].forEach(s => s.classList.remove("show"));
       el.classList.add("show");
+
+      /* ✅ ADD-ON: scroll solo en Starcourt */
+      if(el === screenMall){
+        document.body.classList.add("mallScroll");
+      }else{
+        document.body.classList.remove("mallScroll");
+      }
     }
 
     // little spark fx
@@ -416,20 +458,18 @@
       setTimeout(()=>s.remove(), 650);
     }
 
-    // ✅ star sparkle for finger move
+    // star sparkle for finger move
     function star(x,y){
       const s = document.createElement("div");
       s.className = "star";
       s.style.left = x + "px";
       s.style.top  = y + "px";
 
-      // random drift
       const dx = (Math.random()*22 - 11) + "px";
       const dy = (Math.random()*26 - 18) + "px";
       s.style.setProperty("--dx", dx);
       s.style.setProperty("--dy", dy);
 
-      // random size a bit
       const size = 10 + Math.floor(Math.random()*6);
       s.style.fontSize = size + "px";
 
@@ -470,15 +510,10 @@
     closeVideo.addEventListener("click", ()=>{
       jamieVid.pause();
       show(screenMall);
-
-      // iPhone gesture-safe: this click starts the audio
       startMallMusic();
     });
 
-    // Collage interactions:
-    // - spark on tap
-    // - star trail on finger move
-    // - fallback: if music didn't start yet, start on first touch
+    // Collage interactions
     let mallStarted = false;
     let lastStarAt = 0;
 
@@ -495,7 +530,7 @@
 
     function onMallMove(e){
       const now = Date.now();
-      if(now - lastStarAt < 35) return; // throttle
+      if(now - lastStarAt < 35) return;
       lastStarAt = now;
 
       const x = e.clientX ?? (e.touches && e.touches[0]?.clientX);
@@ -505,14 +540,10 @@
       star(x, y);
     }
 
-    // Pointer events (best)
     screenMall.addEventListener("pointerdown", onMallDown, {passive:true});
     screenMall.addEventListener("pointermove", onMallMove, {passive:true});
-
-    // Touch fallback (older Safari)
     screenMall.addEventListener("touchstart", onMallDown, {passive:true});
     screenMall.addEventListener("touchmove", onMallMove, {passive:true});
-
   </script>
 </body>
 </html>
