@@ -1,20 +1,19 @@
-// ===== HUB MUSIC (iPhone: solo suena después de un toque) =====
+// ===== HUB MUSIC (iPhone compatible) =====
 const hubMusic = document.getElementById("hubMusic");
 let hubMusicStarted = false;
 
 function startHubMusic(){
-  if(!hubMusic) return;
-  if(!hubMusicStarted){
-    hubMusic.volume = 0.35;
-    hubMusicStarted = true;
-  }
+  if(!hubMusic || hubMusicStarted) return;
+  hubMusic.volume = 0.35;
   hubMusic.play().catch(()=>{});
+  hubMusicStarted = true;
 }
 
-// Primer toque en la página => empieza la música (una sola vez)
-window.addEventListener("pointerdown", () => {
-  startHubMusic();
-}, { once:true });
+// iPhone / Safari necesita interacción real
+window.addEventListener("pointerdown", startHubMusic, { once:true });
+
+
+// ===== WORLD SWITCH =====
 const body = document.body;
 const worldBtn = document.getElementById("worldBtn");
 const stage = document.getElementById("stage");
@@ -47,7 +46,8 @@ worldBtn.addEventListener("click", () => {
 
 setWorld(0);
 
-// ===== Sparks (Upside Down style) =====
+
+// ===== SPARKS =====
 function spawnSparkBurst(x, y, mode="ink"){
   const count = 18;
   for(let i=0;i<count;i++){
@@ -70,24 +70,8 @@ function spawnSparkBurst(x, y, mode="ink"){
   }
 }
 
-// Click anywhere: sparks (subtle)
 stage.addEventListener("click", (e) => {
   const target = e.target.closest("[data-spark]");
   const mode = target?.dataset?.spark || "ash";
   spawnSparkBurst(e.clientX, e.clientY, mode);
 });
-const hubMusic = document.getElementById("hubMusic");
-let hubMusicStarted = false;
-
-function startHubMusic(){
-  if (!hubMusic || hubMusicStarted) return;
-  hubMusic.volume = 0.35;
-  hubMusic.play().catch(()=>{});
-  hubMusicStarted = true;
-
-  document.removeEventListener("click", startHubMusic);
-  document.removeEventListener("touchstart", startHubMusic);
-}
-
-document.addEventListener("click", startHubMusic);
-document.addEventListener("touchstart", startHubMusic);
