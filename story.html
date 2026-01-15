@@ -75,7 +75,7 @@
       backdrop-filter: blur(8px);
       box-shadow: 0 0 28px rgba(255,0,0,.14);
       padding:18px 16px;
-      z-index:55; /* arriba de decor */
+      z-index:55;
     }
 
     .glitchTitle{
@@ -118,7 +118,7 @@
     /* ===== DECOR flotante (NO bloquea clicks del juego) ===== */
     .story-decor{
       position:fixed; inset:0;
-      pointer-events:none; /* importantísimo */
+      pointer-events:none;
       z-index:20;
     }
 
@@ -130,9 +130,9 @@
       transform:translate(-50%,-50%);
       width:280px;
       max-width:84vw;
-      opacity:.33;                 /* atrás */
+      opacity:.33;
       pointer-events:none;
-      z-index:21;                  /* decor */
+      z-index:21;
       filter: drop-shadow(0 0 18px rgba(255,0,0,.15));
     }
 
@@ -156,7 +156,7 @@
       50%{ transform: translate(10px,-18px) rotate(6deg); }
     }
 
-    /* ✅ cuadro estilo "?" para meter el bate dentro */
+    /* ✅ Slot "?" (el bate va DENTRO) */
     .qslot{
       position:absolute;
       left:18%;
@@ -183,17 +183,17 @@
       opacity:.95;
     }
 
-    /* ✅ Demogorgon: ÚNICO clickeable */
+    /* ✅ Demogorgon clickeable */
     .enemigo{
-      position:absolute;
+      position:fixed; /* IMPORTANTE: fixed para que no “dependa” del contenedor */
       left:78%;
       top:22%;
       width:90px;
       height:auto;
       opacity:.90;
-      pointer-events:auto !important; /* clickable aunque el contenedor no */
+      pointer-events:auto;
       cursor:pointer;
-      z-index:70; /* por encima de todo */
+      z-index:70;
       filter: drop-shadow(0 0 20px rgba(255,0,0,.35));
       user-select:none;
     }
@@ -254,21 +254,18 @@
   <div class="noise"></div>
   <div class="vignette"></div>
 
-  <!-- ✅ Decor SOLO de story (no bloquea botones) -->
+  <!-- ✅ Decor SOLO de story -->
   <div class="story-decor" aria-hidden="true">
-    <!-- bike atrás -->
     <img class="story-final" src="img/bike.png" alt="Bike final">
-
-    <!-- personaje -->
     <img class="story-float s1" src="img/personaje.png" style="left:10%; top:18%;" alt="Personaje Hawkins">
 
-    <!-- ✅ bate dentro del cuadrito -->
+    <!-- ✅ Slot con bate adentro -->
     <div class="qslot">
       <img src="img/Bate.png" alt="Bate">
     </div>
   </div>
 
-  <!-- ✅ Demogorgon clickeable (fuera del contenedor con pointer-events:none) -->
+  <!-- ✅ Demogorgon clickeable -->
   <img class="enemigo"
     src="img/Demogorgon.png"
     onclick="window.hitEnemy && window.hitEnemy()"
