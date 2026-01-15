@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Anti-Vecna Mixtape</title>
+
+  <!-- Stranger-ish font -->
+  <link href="https://fonts.cdnfonts.com/css/benguiat" rel="stylesheet">
+  <!-- Pixel/arcade for UI -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --red: rgba(255,0,0,.75);
+      --red2: rgba(255,0,0,.35);
+      --glass: rgba(0,0,0,.45);
+      --glass2: rgba(0,0,0,.25);
+      --cyan: rgba(0,255,255,.20);
+      --txt: rgba(255,255,255,.92);
+    }
+
+    *{ box-sizing:border-box; }
+    html, body { height:100%; }
+    body{
+      margin:0;
+      background:#000;
+      color:#fff;
+      overflow:hidden;
+      font-family: system-ui, -apple-system, Arial;
+    }
+
+    /* ===== BACKGROUND IMAGE ===== */
+    .bg{
+      position:fixed; inset:0;
+      background:#000;
+      z-index:0;
+    }
+    .bg img{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      object-fit:cover;
+      filter: saturate(0.95) contrast(1.05);
+      transform: scale(1.01);
+    }
+
+    /* Vignette / mood */
+    .vignette{
+      position:fixed; inset:0;
+      background:
+        radial-gradient(ellipse at 40% 35%, rgba(0,0,0,.02), rgba(0,0,0,.70)),
+        radial-gradient(ellipse at 70% 30%, rgba(0,0,0,.10), rgba(0,0,0,.85));
+      pointer-events:none;
+      z-index:2;
+    }
+
+    /* Extra tint that increases when "protected" */
+    .shieldTint{
+      position:fixed; inset:0;
+      background: radial-gradient(circle at 22% 72%, rgba(255,0,0,.10), rgba(0,0,0,0));
+      opacity:.15;
+      pointer-events:none;
+      z-index:3;
+      transition: opacity .6s ease, filter .6s ease;
+      filter: none;
+    }
+    body.protected .shieldTint{
+      opacity:.40;
+      filter: drop-shadow(0 0 22px rgba(255,0,0,.18));
+    }
+
+    /* Idle darkness when user does nothing */
+    .idleDark{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.0);
+      opacity:0;
+      pointer-events:none;
+      z-index:20;
+      transition: opacity .8s ease;
+    }
+    body.idle .idleDark{
+      opacity: .55;
+    }
+
+    /* ===== PARTICLES CANVAS ===== */
+    canvas#fx{
+      position:fixed; inset:0;
+      z-index:4;
+      pointer-events:none;
+      opacity:.9;
+    }
+
+    /* ===== TOP WHISPER ===== */
+    .whisper{
+      position:fixed;
+      top:14px; left:50%;
+      transform: translateX(-50%);
+      max-width:min(92vw, 740px);
+      padding:10px 14px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.25);
+      backdrop-filter: blur(8px);
+      color: rgba(255,255,255,.85);
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      letter-spacing: .06em;
+      opacity:0;
+      z-index:60;
+      transition: opacity .35s ease, transform .35s ease;
+      pointer-events:none;
+      text-align:center;
+    }
+    .whisper.show{
+      opacity:1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ===== UI PANEL (bottom-left; doesn't cover her) ===== */
+    .ui{
+      position:fixed;
+      left:16px;
+      bottom:16px;
+      width:min(420px, calc(100vw - 32px));
+      z-index:50;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .panel{
+      border-radius:20px;
+      border:1px solid rgba(255,0,0,.55);
+      background: rgba(0,0,0,.45);
+      box-shadow: 0 0 32px rgba(255,0,0,.12);
+      backdrop-filter: blur(10px);
+      overflow:hidden;
+    }
+
+    .header{
+      padding:14px 14px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      position:relative;
+    }
+
+    /* Glitch logo */
+    .logo{
+      margin:0;
+      font-family: 'Benguiat', serif;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      font-size: 34px;
+      line-height: .95;
+      color: rgba(255,255,255,.92);
+      text-shadow:
+        0 0 18px rgba(255,0,0,.25),
+        2px 0 rgba(0,255,255,.18),
+        -2px 0 rgba(255,0,0,.18);
+      user-select:none;
+      cursor:pointer;
+    }
+    .subtitle{
+      margin:10px 0 0;
+      font-family: system-ui, -apple-system, Arial;
+      color: rgba(255,255,255,.82);
+      font-size: 14px;
+      line-height: 1.35;
+    }
+    .quote{
+      margin:10px 0 0;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      color: rgba(255,255,255,.88);
+      letter-spacing: .04em;
+      line-height: 1.6;
+    }
+
+    /* ===== PLAYLIST GRID (10 slots) ===== */
+    .playlist{
+      padding:14px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+
+    .track{
+      position:relative;
+      padding:12px 12px 12px;
+      border-radius:16px;
+      border:1px solid rgba(255,0,0,.55);
+      background: rgba(0,0,0,.38);
+      backdrop-filter: blur(8px);
+      cursor:pointer;
+      user-select:none;
+      overflow:hidden;
+      min-height:64px;
+      transition: transform .12s ease, box-shadow .35s ease, border-color .35s ease;
+    }
+    .track:hover{ transform: translateY(-1px); }
+    .track:active{ transform: translateY(1px); }
+
+    .track::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background:
+        linear-gradient(90deg, rgba(255,0,0,.10), rgba(0,255,255,.06), rgba(255,0,0,.10));
+      opacity:.22;
+      filter: blur(10px);
+      pointer-events:none;
+    }
+
+    .track .tag{
+      font-family: 'Press Start 2P', monospace;
+      font-size: 9px;
+      opacity:.85;
+      letter-spacing:.06em;
+      color: rgba(255,255,255,.78);
+      text-transform: uppercase;
+    }
+    .track .name{
+      margin-top:8px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      line-height:1.5;
+      color: rgba(255,255,255,.92);
+      letter-spacing:.04em;
+      text-transform: uppercase;
+    }
+
+    /* "Playing" state */
+    .track.playing{
+      border-color: rgba(0,255,255,.40);
+      box-shadow: 0 0 0 2px rgba(0,255,255,.10), 0 0 26px rgba(255,0,0,.14);
+    }
+
+    /* ===== FOOTER CONTROLS ===== */
+    .controls{
+      padding:12px 14px;
+      border-top: 1px solid rgba(255,255,255,.08);
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      flex:1;
+      min-width: 140px;
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid rgba(255,0,0,.60);
+      background: rgba(0,0,0,.45);
+      color:#fff;
+      font-family:'Press Start 2P', monospace;
+      font-size:10px;
+      letter-spacing:.06em;
+      text-transform: uppercase;
+      text-decoration:none;
+      text-align:center;
+      cursor:pointer;
+      backdrop-filter: blur(8px);
+    }
+    .btn.main{
+      border:2px solid rgba(255,0,0,.75);
+      box-shadow: 0 0 18px rgba(255,0,0,.18);
+    }
+
+    /* ===== FLOATING OBJECTS (interactive) ===== */
+    .objects{
+      position:fixed; inset:0;
+      z-index:40;
+      pointer-events:none; /* default, but objects themselves can be clickable */
+    }
+
+    .obj{
+      position:absolute;
+      width:74px; height:74px;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      backdrop-filter: blur(6px);
+      box-shadow: inset 0 0 0 1px rgba(255,0,0,.12);
+      transform: rotate(-6deg);
+      pointer-events:auto;
+      cursor:pointer;
+      user-select:none;
+      display:grid;
+      place-items:center;
+      overflow:hidden;
+      transition: transform .16s ease, filter .25s ease, opacity .25s ease;
+    }
+    .obj:active{ transform: rotate(-6deg) scale(.98); }
+
+    .obj .icon{
+      font-size: 22px;
+      filter: drop-shadow(0 0 12px rgba(255,0,0,.20));
+      opacity:.95;
+    }
+    .obj .label{
+      position:absolute;
+      bottom:8px; left:10px; right:10px;
+      font-family:'Press Start 2P', monospace;
+      font-size:8px;
+      letter-spacing:.06em;
+      opacity:.82;
+      text-transform: uppercase;
+      text-align:center;
+      color: rgba(255,255,255,.82);
+    }
+
+    /* place objects away from the subject: top-left-ish / far edges */
+    .obj.clock{ left:18px; top:110px; }
+    .obj.walkie{ left:18px; top:200px; transform: rotate(7deg); }
+    .obj.bag{ left:18px; top:290px; transform: rotate(-12deg); }
+    .obj.vecna{ right:18px; top:130px; transform: rotate(10deg); opacity:.55; }
+    .obj.vecna:hover{ opacity:.85; }
+
+    /* ===== SECRET MESSAGE MODAL ===== */
+    .modal{
+      position:fixed; inset:0;
+      display:none;
+      z-index:80;
+    }
+    .modal.show{ display:block; }
+    .modal .backdrop{
+      position:absolute; inset:0;
+      background: rgba(0,0,0,.65);
+      backdrop-filter: blur(4px);
+    }
+    .modal .box{
+      position:absolute;
+      left:50%; top:50%;
+      transform: translate(-50%,-50%);
+      width:min(92vw, 520px);
+      border-radius:18px;
+      border:1px solid rgba(255,0,0,.55);
+      background: rgba(0,0,0,.55);
+      box-shadow: 0 0 30px rgba(255,0,0,.18);
+      padding:16px;
+    }
+    .modal .box h3{
+      margin:0 0 10px;
+      font-family:'Press Start 2P', monospace;
+      font-size:12px;
+      letter-spacing:.06em;
+      text-transform: uppercase;
+    }
+    .modal .box p{
+      margin:0;
+      line-height:1.6;
+      color: rgba(255,255,255,.88);
+    }
+    .modal .box .close{
+      margin-top:12px;
+      width:100%;
+    }
+
+    /* ===== RESPONSIVE (desktop: keep UI bottom-left; image stays center) ===== */
+    @media (min-width: 900px){
+      .ui{ left:26px; bottom:26px; width: 440px; }
+      .logo{ font-size: 40px; }
+      .playlist{ grid-template-columns: 1fr 1fr; }
+      .obj{ width:84px; height:84px; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- background -->
+  <div class="bg">
+    <!-- CAMBIA ESTA RUTA SI QUIERES -->
+    <img src="img/max.png" alt="Max moment">
+  </div>
+
+  <div class="vignette"></div>
+  <div class="shieldTint"></div>
+  <canvas id="fx"></canvas>
+
+  <div class="idleDark"></div>
+  <div class="whisper" id="whisper">Running won’t save you…</div>
+
+  <!-- Floating objects -->
+  <div class="objects" id="objects">
+    <div class="obj clock" data-obj="clock" title="Reloj roto">
+      <div class="icon">🕰️</div>
+      <div class="label">clock</div>
+    </div>
+    <div class="obj walkie" data-obj="walkie" title="Walkie">
+      <div class="icon">📻</div>
+      <div class="label">walkie</div>
+    </div>
+    <div class="obj bag" data-obj="bag" title="Mochila">
+      <div class="icon">🎒</div>
+      <div class="label">bag</div>
+    </div>
+    <div class="obj vecna" data-obj="vecna" title="¿Lo viste?">
+      <div class="icon">🕳️</div>
+      <div class="label">???</div>
+    </div>
+  </div>
+
+  <!-- UI bottom-left -->
+  <div class="ui">
+    <section class="panel">
+      <div class="header">
+        <h1 class="logo" id="logo">ANTI-VECNA<br> MIXTAPE</h1>
+        <div class="subtitle">Estas canciones la mantienen a salvo. No son nostalgia. Son supervivencia.</div>
+        <div class="quote">“When the noise gets too loud, this is what brings her back.”</div>
+      </div>
+
+      <!-- 10 placeholders -->
+      <div class="playlist" id="playlist">
+        <!-- Deja estos 10: solo cambia TITLE/ARTIST y luego pones data-src si quieres previews -->
+        <div class="track" data-index="0" data-src="" data-title="Song 01" data-artist="Artist">
+          <div class="tag">Cassette 01</div>
+          <div class="name">Song 01 — Artist</div>
+        </div>
+        <div class="track" data-index="1" data-src="" data-title="Song 02" data-artist="Artist">
+          <div class="tag">Cassette 02</div>
+          <div class="name">Song 02 — Artist</div>
+        </div>
+        <div class="track" data-index="2" data-src="" data-title="Song 03" data-artist="Artist">
+          <div class="tag">Cassette 03</div>
+          <div class="name">Song 03 — Artist</div>
+        </div>
+        <div class="track" data-index="3" data-src="" data-title="Song 04" data-artist="Artist">
+          <div class="tag">Cassette 04</div>
+          <div class="name">Song 04 — Artist</div>
+        </div>
+        <div class="track" data-index="4" data-src="" data-title="Song 05" data-artist="Artist">
+          <div class="tag">Cassette 05</div>
+          <div class="name">Song 05 — Artist</div>
+        </div>
+        <div class="track" data-index="5" data-src="" data-title="Song 06" data-artist="Artist">
+          <div class="tag">Cassette 06</div>
+          <div class="name">Song 06 — Artist</div>
+        </div>
+        <div class="track" data-index="6" data-src="" data-title="Song 07" data-artist="Artist">
+          <div class="tag">Cassette 07</div>
+          <div class="name">Song 07 — Artist</div>
+        </div>
+        <div class="track" data-index="7" data-src="" data-title="Song 08" data-artist="Artist">
+          <div class="tag">Cassette 08</div>
+          <div class="name">Song 08 — Artist</div>
+        </div>
+        <div class="track" data-index="8" data-src="" data-title="Song 09" data-artist="Artist">
+          <div class="tag">Cassette 09</div>
+          <div class="name">Song 09 — Artist</div>
+        </div>
+        <div class="track" data-index="9" data-src="" data-title="Song 10" data-artist="Artist">
+          <div class="tag">Cassette 10</div>
+          <div class="name">Song 10 — Artist</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <a class="btn" href="index.html?v=1000">← VOLVER</a>
+        <button class="btn main" id="panicBtn" type="button">PRESS PLAY</button>
+        <a class="btn" href="hub.html?v=1000">HUB →</a>
+      </div>
+    </section>
+  </div>
+
+  <!-- Audio element (optional previews; you can also use one bg music later) -->
+  <audio id="player" preload="auto"></audio>
+
+  <!-- Modal for secrets -->
+  <div class="modal" id="modal">
+    <div class="backdrop"></div>
+    <div class="box">
+      <h3 id="modalTitle">SEÑAL</h3>
+      <p id="modalText">...</p>
+      <button class="btn close" id="closeModal" type="button">CERRAR</button>
+    </div>
+  </div>
+
+  <script>
+    // =========================
+    // PARTICLES (ash/red dust)
+    // =========================
+    const canvas = document.getElementById("fx");
+    const ctx = canvas.getContext("2d");
+    let W=0,H=0, dpr=1;
+
+    function resize(){
+      dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+      W = Math.floor(window.innerWidth);
+      H = Math.floor(window.innerHeight);
+      canvas.width = Math.floor(W*dpr);
+      canvas.height = Math.floor(H*dpr);
+      canvas.style.width = W+"px";
+      canvas.style.height = H+"px";
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    const particles = [];
+    const COUNT = 110;
+
+    function rand(a,b){ return a + Math.random()*(b-a); }
+
+    for(let i=0;i<COUNT;i++){
+      particles.push({
+        x: rand(0,W),
+        y: rand(0,H),
+        r: rand(0.8, 2.2),
+        vx: rand(-0.18, 0.22),
+        vy: rand(-0.35, 0.15),
+        a: rand(0.05, 0.22)
+      });
+    }
+
+    function tick(){
+      ctx.clearRect(0,0,W,H);
+      for(const p of particles){
+        p.x += p.vx; p.y += p.vy;
+        if(p.x < -10) p.x = W+10;
+        if(p.x > W+10) p.x = -10;
+        if(p.y < -10) p.y = H+10;
+        if(p.y > H+10) p.y = -10;
+
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(255,255,255,${p.a})`;
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+        ctx.fill();
+
+        // tiny ember red occasionally
+        if(Math.random() < 0.006){
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(255,0,0,${rand(0.10,0.25)})`;
+          ctx.arc(p.x+rand(-3,3), p.y+rand(-3,3), p.r+rand(1,2), 0, Math.PI*2);
+          ctx.fill();
+        }
+      }
+      requestAnimationFrame(tick);
+    }
+    tick();
+
+    // =========================
+    // IDLE “Vecna” pressure
+    // =========================
+    let idleTimer = null;
+    const whisper = document.getElementById("whisper");
+    const idleDark = document.querySelector(".idleDark");
+
+    function showWhisper(msg){
+      whisper.textContent = msg;
+      whisper.classList.add("show");
+      setTimeout(()=>whisper.classList.remove("show"), 1800);
+    }
+
+    function setIdle(on){
+      document.body.classList.toggle("idle", on);
+    }
+
+    function resetIdle(){
+      setIdle(false);
+      clearTimeout(idleTimer);
+      idleTimer = setTimeout(()=>{
+        setIdle(true);
+        showWhisper("Running won’t save you…");
+      }, 6500);
+    }
+
+    ["pointerdown","mousemove","touchstart","keydown","scroll"].forEach(ev=>{
+      window.addEventListener(ev, resetIdle, {passive:true});
+    });
+    resetIdle();
+
+    // =========================
+    // MUSIC / “Protection”
+    // =========================
+    const tracks = [...document.querySelectorAll(".track")];
+    const player = document.getElementById("player");
+    const panicBtn = document.getElementById("panicBtn");
+
+    let protection = 0; // 0..10
+    let playingIndex = -1;
+
+    function setProtected(on){
+      document.body.classList.toggle("protected", on);
+    }
+
+    function bumpProtection(){
+      protection = Math.min(10, protection + 1);
+      setProtected(true);
+      showWhisper("Good. You chose music.");
+      setTimeout(()=>{
+        if(protection <= 1) setProtected(false);
+      }, 1500);
+    }
+
+    function setPlaying(i){
+      tracks.forEach(t => t.classList.remove("playing"));
+      if(i >= 0) tracks[i].classList.add("playing");
+      playingIndex = i;
+    }
+
+    function playTrack(el){
+      const src = el.dataset.src?.trim();
+      const title = el.dataset.title || "Song";
+      // If user hasn't set src yet, do only FX (still feels alive)
+      bumpProtection();
+      setPlaying(Number(el.dataset.index));
+
+      // optional preview: you can later set data-src="audio/song01.mp3"
+      if(src){
+        player.src = src;
+        player.currentTime = 0;
+        player.volume = 0.55;
+        player.play().catch(()=>{});
+      }
+    }
+
+    tracks.forEach(el=>{
+      el.addEventListener("click", ()=>{
+        resetIdle();
+        playTrack(el);
+      });
+    });
+
+    // Big “PRESS PLAY” button: picks a random track
+    panicBtn.addEventListener("click", ()=>{
+      resetIdle();
+      const i = Math.floor(Math.random()*tracks.length);
+      playTrack(tracks[i]);
+    });
+
+    // If music ends (preview), remove playing highlight
+    player.addEventListener("ended", ()=> setPlaying(-1));
+
+    // =========================
+    // OBJECTS interactions
+    // =========================
+    const modal = document.getElementById("modal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalText = document.getElementById("modalText");
+    const closeModal = document.getElementById("closeModal");
+
+    function openModal(title, text){
+      modalTitle.textContent = title;
+      modalText.textContent = text;
+      modal.classList.add("show");
+    }
+    function close(){
+      modal.classList.remove("show");
+    }
+    closeModal.addEventListener("click", close);
+    modal.querySelector(".backdrop").addEventListener("click", close);
+
+    const objMessages = {
+      clock: {
+        title: "RELOJ ROTO",
+        text: "El tiempo aquí no avanza… se repite. Si te quedas quieta, él te encuentra."
+      },
+      walkie: {
+        title: "WALKIE",
+        text: "📡 ‘Day… ¿me copias? Si escuchas estática, no apagues. RESPONDE con música.’"
+      },
+      bag: {
+        title: "MOCHILA",
+        text: "Dentro hay cosas pequeñas que pesan mucho: recuerdos, rutas, y una canción que siempre vuelve."
+      }
+    };
+
+    document.querySelectorAll(".obj").forEach(o=>{
+      o.addEventListener("click", (e)=>{
+        resetIdle();
+        const k = o.dataset.obj;
+        if(k === "vecna"){
+          vecnaTaps++;
+          if(vecnaTaps >= 3){
+            vecnaTaps = 0;
+            openModal("¿LO VISTE?", "No lo mires por mucho tiempo. Presiona PLAY. Mantente aquí.");
+            showWhisper("Don’t stop listening…");
+            setIdle(true);
+          }else{
+            showWhisper("…");
+          }
+          return;
+        }
+        const m = objMessages[k];
+        if(m) openModal(m.title, m.text);
+      });
+    });
+
+    // =========================
+    // EASTER EGGS
+    // =========================
+    let logoTaps = 0;
+    let vecnaTaps = 0;
+
+    const logo = document.getElementById("logo");
+    logo.addEventListener("click", ()=>{
+      resetIdle();
+      logoTaps++;
+      if(logoTaps >= 7){
+        logoTaps = 0;
+        openModal("SEÑAL ENCONTRADA", "Hawkins responde. El ruido baja… por ahora.");
+        bumpProtection();
+      }
+    });
+  </script>
+</body>
+</html>
