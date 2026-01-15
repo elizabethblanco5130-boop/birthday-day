@@ -59,3 +59,18 @@ stage.addEventListener("click", (e) => {
   const mode = target?.dataset?.spark || "ash";
   spawnSparkBurst(e.clientX, e.clientY, mode);
 });
+const hubMusic = document.getElementById("hubMusic");
+let hubMusicStarted = false;
+
+function startHubMusic(){
+  if (!hubMusic || hubMusicStarted) return;
+  hubMusic.volume = 0.35;
+  hubMusic.play().catch(()=>{});
+  hubMusicStarted = true;
+
+  document.removeEventListener("click", startHubMusic);
+  document.removeEventListener("touchstart", startHubMusic);
+}
+
+document.addEventListener("click", startHubMusic);
+document.addEventListener("touchstart", startHubMusic);
