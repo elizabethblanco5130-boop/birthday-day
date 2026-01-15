@@ -12,6 +12,11 @@
 
 <body class="landing">
 
+  <!-- 🎵 AUDIO DE FONDO (NO CAMBIA NADA MÁS) -->
+  <audio id="bgm" loop>
+    <source src="bgm.mp3.mp3" type="audio/mpeg">
+  </audio>
+
   <!-- Fondo -->
   <video autoplay muted loop playsinline id="bg">
     <source src="background.mp4" type="video/mp4">
@@ -19,7 +24,7 @@
   <div class="landing-vignette"></div>
   <div class="dust"></div>
 
-  <!-- Decor flotando (tú luego reemplazas PNGs) -->
+  <!-- Decor flotando -->
   <div class="stickers">
     <img class="sticker s1" src="img/compass.png" style="left:10%; top:18%;" alt="">
     <img class="sticker s2" src="img/vhs.png" style="left:78%; top:22%;" alt="">
@@ -50,12 +55,12 @@
         <a class="landing-btn big" href="hub.html?v=1000">Entrar al Hawkins Hub</a>
       </div>
 
-      <!-- Dock de iconos (decor) -->
+      <!-- Dock -->
       <div class="dock">
-        <a href="hub.html?v=1000" aria-label="Hub"><img src="img/portal.png" alt=""></a>
-        <a href="will.html?v=1000" aria-label="Will"><img src="img/lights.png" alt=""></a>
-        <a href="cake.html?v=1000" aria-label="Birthday"><img src="img/cake.png" alt=""></a>
-        <a href="story.html?v=1000" aria-label="Story"><img src="img/tape.png" alt=""></a>
+        <a href="hub.html?v=1000"><img src="img/portal.png" alt=""></a>
+        <a href="will.html?v=1000"><img src="img/lights.png" alt=""></a>
+        <a href="cake.html?v=1000"><img src="img/cake.png" alt=""></a>
+        <a href="story.html?v=1000"><img src="img/tape.png" alt=""></a>
       </div>
 
       <div class="tip">Tip: toca el logo 7 veces para un easter egg.</div>
@@ -63,12 +68,25 @@
   </main>
 
   <script>
-    // Easter egg: 7 taps en el logo
+    // 🎵 iPhone / Safari FIX: la música se activa al primer toque
+    const bgm = document.getElementById("bgm");
+
+    function startMusic() {
+      bgm.volume = 0.5;
+      bgm.play().catch(()=>{});
+      document.removeEventListener("click", startMusic);
+      document.removeEventListener("touchstart", startMusic);
+    }
+
+    document.addEventListener("click", startMusic);
+    document.addEventListener("touchstart", startMusic);
+
+    // Easter egg
     const logo = document.querySelector(".st-logo");
     let taps = 0;
     logo.addEventListener("click", () => {
       taps++;
-      if(taps >= 7){
+      if (taps >= 7) {
         taps = 0;
         alert("📡 Señal encontrada. Hawkins te responde.");
       }
