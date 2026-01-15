@@ -4,73 +4,57 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>Hawkins Hub</title>
-  <link rel="stylesheet" href="style.css?v=999">
+  <link rel="stylesheet" href="style.css?v=20">
 </head>
+<body class="hub-world normal">
 
-<body class="page-hub hub-world normal">
+<video autoplay muted loop playsinline id="bg">
+  <source src="background.mp4" type="video/mp4">
+</video>
+<div class="hub-vignette"></div>
 
-  <!-- Fondo -->
-  <video autoplay muted loop playsinline id="bg">
-    <source src="background.mp4" type="video/mp4">
-  </video>
-  <div class="hub-vignette"></div>
+<!-- Barra arriba -->
+<header class="hub-top">
+  <a class="hub-back" href="index.html">←</a>
+  <div class="hub-title">HAWKINS HUB</div>
+  <button class="hub-worldbtn" id="worldBtn">WORLD: NORMAL</button>
+</header>
 
-  <!-- Barra arriba -->
-  <header class="hub-top">
-    <a class="hub-back" href="index.html?v=999" aria-label="Volver">←</a>
-    <div class="hub-title">HAWKINS HUB</div>
-    <button class="hub-worldbtn" id="worldBtn" type="button">WORLD: NORMAL</button>
-  </header>
+<!-- Área de iconos -->
+<main class="hub-stage" id="stage">
 
-  <!-- Iconos ordenados -->
-  <main class="hub-stage" id="stage">
+  <!-- ICONOS (PNG) -->
+  <a class="hub-icon float1" href="story.html" data-spark="ink" aria-label="Tu historia">
+    <img src="img/tape.png" alt="Tape">
+    <span>Historia</span>
+  </a>
 
-    <a class="hub-icon" data-zone="story" href="story.html?v=999" data-spark="ink" aria-label="Tu historia">
-      <div class="tag">Tape</div>
-      <img src="img/tape.png" alt="Tape">
-      <span>Historia</span>
-    </a>
+  <a class="hub-icon float2" href="facts.html" data-spark="light" aria-label="Luces">
+    <img src="img/lights.png" alt="Lights">
+    <span>Luces</span>
+  </a>
 
-    <a class="hub-icon" data-zone="lights" href="will.html?v=999" data-spark="light" aria-label="Will's Wall">
-      <div class="tag">Lights</div>
-      <img src="img/lights.png" alt="Lights">
-      <span>Luces</span>
-    </a>
+  <a class="hub-icon float3" href="playlist.html" data-spark="ink" aria-label="Playlist">
+    <img src="img/radio.png" alt="Radio">
+    <span>Mixtape</span>
+  </a>
 
-    <a class="hub-icon" data-zone="mixtape" href="playlist.html?v=999" data-spark="ink" aria-label="Mixtape">
-      <div class="tag">Radio</div>
-      <img src="img/radio.png" alt="Radio">
-      <span>Mixtape</span>
-    </a>
+  <a class="hub-icon float4" href="gallery.html" data-spark="ash" aria-label="Edits">
+    <img src="img/portal.png" alt="Portal">
+    <span>Edits</span>
+  </a>
 
-    <a class="hub-icon" data-zone="edits" href="gallery.html?v=999" data-spark="ash" aria-label="Edits">
-      <div class="tag">Portal</div>
-      <img src="img/portal.png" alt="Portal">
-      <span>Edits</span>
-    </a>
+  <a class="hub-icon float5" href="lab.html" data-spark="ink" aria-label="Lab">
+    <img src="img/lab.png" alt="Lab">
+    <span>Lab</span>
+  </a>
 
-    <a class="hub-icon" data-zone="lab" href="lab.html?v=999" data-spark="ink" aria-label="Lab">
-      <div class="tag">Lab</div>
-      <img src="img/lab.png" alt="Lab">
-      <span>Lab</span>
-    </a>
+  <div class="hub-hint">
+    Toca los iconos. Cambia el mundo arriba.  
+    <b>Easter:</b> toca 7 veces “WORLD”.
+  </div>
+</main>
 
-  </main>
-
-  <!-- Dock abajo -->
-  <section class="hub-dock">
-    <div class="hub-hint">
-      Toca los iconos. Cambia el mundo arriba.<br>
-      <b>Easter:</b> toca 7 veces “WORLD”.
-    </div>
-
-    <a class="hub-cake" href="cake.html?v=999" data-spark="spark" aria-label="Birthday secret">
-      <img src="img/cake.png" alt="Cake Portal">
-      <small>Birthday</small>
-    </a>
-  </section>
-
-  <!-- JS -->
-  <script src="hub.js?v=999"></script>
+<script src="hub.js?v=20"></script>
 </body>
 </html>
