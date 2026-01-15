@@ -244,3 +244,111 @@ body.glitch-shake{ animation: hubshake 260ms linear; }
   60%{ transform: translate(-1px,1px); filter: drop-shadow(-2px 0 rgba(0,255,255,.28)) drop-shadow(2px 0 rgba(255,0,0,.20)); }
   100%{ transform:none; filter:none; }
 }
+/* ===== LANDING: menos plano, más webcore ===== */
+
+/* panel más pro */
+.landing-panel{
+  background: rgba(0,0,0,.38);
+  border: 1px solid rgba(255,0,0,.30);
+  box-shadow:
+    0 0 0 2px rgba(255,0,0,.10) inset,
+    0 0 40px rgba(255,0,0,.10);
+  backdrop-filter: blur(6px);
+  border-radius: 18px;
+}
+
+/* ENTER con glow y “pulse” suave */
+.landing-btn.primary{
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.landing-btn.primary::after{
+  content:"";
+  position:absolute; inset:-40%;
+  background: radial-gradient(circle, rgba(255,0,0,.22), transparent 60%);
+  animation: glowPulse 2.6s infinite;
+}
+@keyframes glowPulse{
+  0%,100%{ transform: translate(0,0) scale(1); opacity:.55; }
+  50%{ transform: translate(10px,-6px) scale(1.08); opacity:.85; }
+}
+
+/* botones secundarios con hover más “alive” */
+.landing-links a{
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+  transition: transform .15s ease;
+}
+.landing-links a:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 0 22px rgba(255,0,0,.12);
+}
+.landing-links a::after{
+  content:"";
+  position:absolute; inset:0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.10), transparent);
+  transform: translateX(-120%);
+  transition: transform .35s ease;
+}
+.landing-links a:hover::after{
+  transform: translateX(120%);
+}
+
+/* icon buttons: más webcore */
+.icon-btn{
+  border-radius: 18px;
+  box-shadow: 0 0 0 2px rgba(255,255,255,.06) inset;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.icon-btn:hover{
+  transform: translateY(-3px) rotate(-1deg);
+  box-shadow:
+    0 0 0 2px rgba(255,0,0,.12) inset,
+    0 0 24px rgba(255,0,0,.18);
+}
+
+/* ===== Stickers flotando ===== */
+.stickers{
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+.sticker{
+  position:absolute;
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  opacity: .9;
+  filter: drop-shadow(0 10px 20px rgba(0,0,0,.35))
+          drop-shadow(0 0 18px rgba(255,0,0,.10));
+  animation: floatSticker 4.6s ease-in-out infinite;
+}
+@keyframes floatSticker{
+  0%,100%{ transform: translateY(0) rotate(0deg); }
+  50%{ transform: translateY(-10px) rotate(2deg); }
+}
+
+/* posiciones (ajústalas si quieres) */
+.s1{ left: 18px; top: 110px; animation-duration: 4.2s; }
+.s2{ right: 20px; top: 140px; animation-duration: 5.1s; }
+.s3{ left: 18px; bottom: 160px; animation-duration: 4.7s; }
+.s4{ right: 22px; bottom: 170px; animation-duration: 5.4s; }
+
+/* ===== polvo/partículas sutiles ===== */
+.dust{
+  position:absolute; inset:0;
+  background-image:
+    radial-gradient(rgba(255,255,255,.16) 1px, transparent 2px),
+    radial-gradient(rgba(255,0,0,.10) 1px, transparent 2px);
+  background-size: 120px 120px, 180px 180px;
+  background-position: 0 0, 40px 60px;
+  opacity:.20;
+  animation: drift 12s linear infinite;
+}
+@keyframes drift{
+  from{ transform: translateY(0); }
+  to{ transform: translateY(60px); }
+}
