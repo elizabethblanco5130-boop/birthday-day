@@ -243,3 +243,156 @@
   from{ transform: translateY(0); }
   to{ transform: translateY(60px); }
 }
+/* ===============================
+   RESPONSIVE HUB LAYOUT
+   (teléfono + computadora)
+   =============================== */
+
+/* Asegura que el HUB tenga espacio debajo del header */
+.hub-stage{
+  padding: 110px 18px 120px;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  align-content: start;
+}
+
+/* Cada icono como “card” clickeable */
+.hub-icon{
+  position: relative;
+  display: grid;
+  place-items: center;
+  text-decoration: none;
+  color: #fff;
+  border-radius: 22px;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(0,0,0,.25);
+  backdrop-filter: blur(6px);
+  min-height: 140px;
+  overflow: hidden;
+}
+
+/* Imagen del icono */
+.hub-icon img{
+  width: clamp(44px, 9vw, 72px);
+  height: auto;
+  display:block;
+  filter: drop-shadow(0 0 14px rgba(255,0,0,.12));
+}
+
+/* Texto bajo icono */
+.hub-icon span{
+  margin-top: 10px;
+  font-size: clamp(12px, 2.4vw, 16px);
+  opacity: .92;
+}
+
+/* Hint abajo (ocupa todo el ancho) */
+.hub-hint{
+  grid-column: 1 / -1;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(0,0,0,.35);
+  backdrop-filter: blur(8px);
+  padding: 14px 14px;
+  line-height: 1.35;
+}
+
+/* Botón back y botón world: que se vean bien en móvil */
+.hub-top{
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  z-index: 9999;
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.hub-back{
+  width: 44px;
+  height: 44px;
+  display:grid;
+  place-items:center;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(0,0,0,.30);
+  color:#fff;
+  text-decoration:none;
+}
+
+.hub-title{
+  text-align:center;
+  font-weight: 800;
+  letter-spacing: .14em;
+  font-size: clamp(14px, 3vw, 18px);
+  color: #ff3a3a;
+  text-shadow: 0 0 18px rgba(255,0,0,.20);
+}
+
+.hub-worldbtn{
+  padding: 10px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(0,0,0,.28);
+  color:#fff;
+  letter-spacing: .06em;
+  font-size: clamp(12px, 2.2vw, 14px);
+}
+
+/* ===============================
+   DESKTOP: más columnas, más aire
+   =============================== */
+@media (min-width: 900px){
+  .hub-stage{
+    padding: 130px 40px 120px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 22px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .hub-icon{
+    min-height: 190px;
+  }
+}
+
+/* ===============================
+   TABLET: 3 columnas
+   =============================== */
+@media (min-width: 600px) and (max-width: 899px){
+  .hub-stage{
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* ===============================
+   NO ENCIMAR “float” viejos
+   (por si quedaron clases floatX)
+   =============================== */
+.hub-icon.float1,
+.hub-icon.float2,
+.hub-icon.float3,
+.hub-icon.float4,
+.hub-icon.float5,
+.hub-icon.float-cake{
+  left:auto !important;
+  top:auto !important;
+  right:auto !important;
+  bottom:auto !important;
+  transform:none !important;
+}
+
+/* Si quieres “flotación” pero sin encimar: animación suave */
+.hub-icon{
+  animation: hubFloat 6.5s ease-in-out infinite;
+}
+.hub-icon:nth-child(2n){ animation-duration: 8s; }
+.hub-icon:nth-child(3n){ animation-duration: 9.5s; }
+
+@keyframes hubFloat{
+  0%,100%{ transform: translateY(0); }
+  50%{ transform: translateY(-8px); }
+}
