@@ -7,15 +7,12 @@
   <link rel="stylesheet" href="style.css?v=999">
 </head>
 
-<body class="page-hub normal">
+<body class="page-hub hub-world normal">
 
   <!-- Fondo -->
   <video autoplay muted loop playsinline id="bg">
     <source src="background.mp4" type="video/mp4">
   </video>
-
-  <!-- Overlay que cambia con WORLD -->
-  <div class="hub-overlay" id="overlay"></div>
   <div class="hub-vignette"></div>
 
   <!-- Barra arriba -->
@@ -25,164 +22,55 @@
     <button class="hub-worldbtn" id="worldBtn" type="button">WORLD: NORMAL</button>
   </header>
 
-  <!-- Área flotante -->
+  <!-- Iconos ordenados -->
   <main class="hub-stage" id="stage">
 
-    <a class="hub-icon float f1" href="story.html?v=999" data-spark="ink" aria-label="Tu historia">
+    <a class="hub-icon" data-zone="story" href="story.html?v=999" data-spark="ink" aria-label="Tu historia">
+      <div class="tag">Tape</div>
       <img src="img/tape.png" alt="Tape">
       <span>Historia</span>
     </a>
 
-    <a class="hub-icon float f2" href="will.html?v=999" data-spark="light" aria-label="Luces">
+    <a class="hub-icon" data-zone="lights" href="will.html?v=999" data-spark="light" aria-label="Will's Wall">
+      <div class="tag">Lights</div>
       <img src="img/lights.png" alt="Lights">
       <span>Luces</span>
     </a>
 
-    <a class="hub-icon float f3" href="playlist.html?v=999" data-spark="ink" aria-label="Mixtape">
+    <a class="hub-icon" data-zone="mixtape" href="playlist.html?v=999" data-spark="ink" aria-label="Mixtape">
+      <div class="tag">Radio</div>
       <img src="img/radio.png" alt="Radio">
       <span>Mixtape</span>
     </a>
 
-    <a class="hub-icon float f4" href="gallery.html?v=999" data-spark="ash" aria-label="Edits">
+    <a class="hub-icon" data-zone="edits" href="gallery.html?v=999" data-spark="ash" aria-label="Edits">
+      <div class="tag">Portal</div>
       <img src="img/portal.png" alt="Portal">
       <span>Edits</span>
     </a>
 
-    <a class="hub-icon float f5" href="lab.html?v=999" data-spark="ink" aria-label="Lab">
+    <a class="hub-icon" data-zone="lab" href="lab.html?v=999" data-spark="ink" aria-label="Lab">
+      <div class="tag">Lab</div>
       <img src="img/lab.png" alt="Lab">
       <span>Lab</span>
     </a>
 
-    <!-- Pastel secreto -->
-    <a class="hub-icon cake float f6" href="cake.html?v=999" data-spark="spark" aria-label="Birthday secret">
-      <img src="img/cake.png" alt="Cake Portal">
-      <span>Birthday</span>
-    </a>
+  </main>
 
+  <!-- Dock abajo -->
+  <section class="hub-dock">
     <div class="hub-hint">
       Toca los iconos. Cambia el mundo arriba.<br>
       <b>Easter:</b> toca 7 veces “WORLD”.
     </div>
 
-  </main>
+    <a class="hub-cake" href="cake.html?v=999" data-spark="spark" aria-label="Birthday secret">
+      <img src="img/cake.png" alt="Cake Portal">
+      <small>Birthday</small>
+    </a>
+  </section>
 
-  <!-- Linterna + polvo (canvas) -->
-  <div class="flashlight" aria-hidden="true"></div>
-  <canvas id="dust" aria-hidden="true"></canvas>
-
-  <script>
-    // ===== WORLD toggle =====
-    const body = document.body;
-    const worldBtn = document.getElementById("worldBtn");
-    const overlay = document.getElementById("overlay");
-
-    let taps = 0;
-    let tapTimer = null;
-
-    function setWorld(up){
-      body.classList.toggle("upside", up);
-      body.classList.toggle("normal", !up);
-      worldBtn.textContent = up ? "WORLD: UPSIDE DOWN" : "WORLD: NORMAL";
-      overlay.classList.remove("pulse");
-      void overlay.offsetWidth;
-      overlay.classList.add("pulse");
-    }
-
-    worldBtn.addEventListener("click", () => {
-      taps++;
-      clearTimeout(tapTimer);
-      tapTimer = setTimeout(()=>taps=0, 1400);
-
-      setWorld(!body.classList.contains("upside"));
-
-      // easter: 7 taps => modo intenso por 6s
-      if(taps >= 7){
-        taps = 0;
-        body.classList.add("easter");
-        setTimeout(()=>body.classList.remove("easter"), 6000);
-      }
-    });
-
-    setWorld(false);
-
-    // ===== Linterna (mouse/touch) =====
-    function setPointer(x,y){
-      document.documentElement.style.setProperty("--mx", x+"px");
-      document.documentElement.style.setProperty("--my", y+"px");
-    }
-    window.addEventListener("mousemove", e => setPointer(e.clientX, e.clientY), {passive:true});
-    window.addEventListener("touchmove", e => {
-      const t = e.touches[0];
-      if(t) setPointer(t.clientX, t.clientY);
-    }, {passive:true});
-
-    // ===== Partículas =====
-    const canvas = document.getElementById("dust");
-    const ctx = canvas.getContext("2d");
-    let particles = [];
-
-    function resize(){
-      canvas.width = window.innerWidth * devicePixelRatio;
-      canvas.height = window.innerHeight * devicePixelRatio;
-    }
-    window.addEventListener("resize", resize);
-    resize();
-
-    function makeParticles(n){
-      particles = [];
-      for(let i=0;i<n;i++){
-        particles.push({
-          x: Math.random()*canvas.width,
-          y: Math.random()*canvas.height,
-          r: (Math.random()*1.6+0.6)*devicePixelRatio,
-          s: (Math.random()*0.35+0.06)*devicePixelRatio,
-          a: Math.random()*0.55+0.12,
-          drift: (Math.random()*0.7-0.35)*devicePixelRatio
-        });
-      }
-    }
-    makeParticles(90);
-
-    function draw(){
-      ctx.clearRect(0,0,canvas.width,canvas.height);
-      const up = body.classList.contains("upside");
-
-      for(const p of particles){
-        p.y += p.s;
-        p.x += p.drift*0.15;
-        if(p.y > canvas.height+20) p.y = -20;
-        if(p.x > canvas.width+20) p.x = -20;
-        if(p.x < -20) p.x = canvas.width+20;
-
-        ctx.fillStyle = up
-          ? `rgba(0,255,255,${p.a*0.55})`
-          : `rgba(255,255,255,${p.a*0.30})`;
-
-        ctx.beginPath();
-        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-        ctx.fill();
-      }
-
-      requestAnimationFrame(draw);
-    }
-    draw();
-
-    // ===== Click FX por icono =====
-    function popFx(x,y,kind){
-      const d = document.createElement("div");
-      d.className = "fx " + kind;
-      d.style.left = x+"px";
-      d.style.top = y+"px";
-      document.body.appendChild(d);
-      setTimeout(()=>d.remove(), 700);
-    }
-
-    document.addEventListener("click", (e)=>{
-      const el = e.target.closest("[data-spark]");
-      if(!el) return;
-      popFx(e.clientX, e.clientY, el.getAttribute("data-spark") || "ink");
-    }, {passive:true});
-  </script>
-
+  <!-- JS -->
+  <script src="hub.js?v=999"></script>
 </body>
 </html>
