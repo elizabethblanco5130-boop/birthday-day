@@ -27,7 +27,6 @@
       font-family: system-ui, -apple-system, Arial;
     }
 
-    /* ===== BACKGROUND IMAGE ===== */
     .bg{ position:fixed; inset:0; background:#000; z-index:0; }
     .bg img{
       position:absolute; inset:0;
@@ -57,7 +56,6 @@
       transition: opacity .6s ease, filter .6s ease;
     }
 
-    /* ===== IDLE DARK/RED ===== */
     .idleDark{
       position:fixed; inset:0;
       opacity:0;
@@ -81,7 +79,6 @@
     }
     body.idle .idleRed{ opacity:1; }
 
-    /* ===== LIGHTNING (rojo) ===== */
     .stormLayer{
       position:fixed; inset:0;
       pointer-events:none;
@@ -111,7 +108,6 @@
       80% { opacity:0; }
     }
 
-    /* vibración de UI en idle */
     body.idle .ui{ animation: shake .22s infinite; }
     @keyframes shake{
       0%{ transform: translate(0,0); }
@@ -121,7 +117,6 @@
       100%{ transform: translate(0,0); }
     }
 
-    /* ===== PARTICLES CANVAS ===== */
     canvas#fx{
       position:fixed; inset:0;
       z-index:4;
@@ -129,7 +124,6 @@
       opacity:.9;
     }
 
-    /* ===== TOP WHISPER ===== */
     .whisper{
       position:fixed;
       top:14px; left:50%;
@@ -155,7 +149,6 @@
       transform: translateX(-50%) translateY(0);
     }
 
-    /* ===== UI PANEL (bottom-left) ===== */
     .ui{
       position:fixed;
       left:16px;
@@ -211,7 +204,6 @@
       line-height: 1.6;
     }
 
-    /* ===== PLAYLIST GRID (10 slots) ===== */
     .playlist{
       padding:14px;
       display:grid;
@@ -253,7 +245,6 @@
       text-transform: uppercase;
     }
 
-    /* ===== FOOTER CONTROLS ===== */
     .controls{
       padding:12px 14px;
       border-top: 1px solid rgba(255,255,255,.08);
@@ -286,7 +277,6 @@
       box-shadow: 0 0 18px rgba(255,0,0,.18);
     }
 
-    /* ===== HIDDEN OBJECTS ===== */
     .objects{
       position:fixed; inset:0;
       z-index:40;
@@ -327,14 +317,12 @@
       color: rgba(255,255,255,.82);
     }
 
-    /* Posiciones: dispersos, pegados a bordes, evitando el centro */
     .obj.clock{ left:14px; top:110px; }
     .obj.walkie{ left:16px; top:250px; transform: rotate(7deg); }
     .obj.bag{ right:16px; bottom:140px; transform: rotate(10deg); }
     .obj.vecna{ right:16px; top:140px; transform: rotate(10deg); opacity:.45; }
     .obj.vecna:hover{ opacity:.85; }
 
-    /* ===== SECRET MODAL ===== */
     .modal{
       position:fixed; inset:0;
       display:none;
@@ -384,7 +372,6 @@
 
 <body>
   <div class="bg">
-    <!-- ✅ OJO: tu archivo se llama max.PNG (mayúsculas) -->
     <img id="maxImg" src="img/max.PNG" alt="Max moment">
   </div>
 
@@ -401,7 +388,6 @@
 
   <div class="whisper" id="whisper">Running won’t save you…</div>
 
-  <!-- ✅ Objetos ocultos -->
   <div class="objects" id="objects">
     <div class="obj clock" data-obj="clock" title="Reloj roto">
       <div class="icon">🕰️</div>
@@ -421,7 +407,6 @@
     </div>
   </div>
 
-  <!-- UI -->
   <div class="ui">
     <section class="panel">
       <div class="header">
@@ -432,44 +417,34 @@
 
       <div class="playlist" id="playlist">
         <div class="track" data-index="0" data-src="" data-title="Song 01" data-artist="Artist">
-          <div class="tag">Cassette 01</div>
-          <div class="name">Song 01 — Artist</div>
+          <div class="tag">Cassette 01</div><div class="name">Song 01 — Artist</div>
         </div>
         <div class="track" data-index="1" data-src="" data-title="Song 02" data-artist="Artist">
-          <div class="tag">Cassette 02</div>
-          <div class="name">Song 02 — Artist</div>
+          <div class="tag">Cassette 02</div><div class="name">Song 02 — Artist</div>
         </div>
         <div class="track" data-index="2" data-src="" data-title="Song 03" data-artist="Artist">
-          <div class="tag">Cassette 03</div>
-          <div class="name">Song 03 — Artist</div>
+          <div class="tag">Cassette 03</div><div class="name">Song 03 — Artist</div>
         </div>
         <div class="track" data-index="3" data-src="" data-title="Song 04" data-artist="Artist">
-          <div class="tag">Cassette 04</div>
-          <div class="name">Song 04 — Artist</div>
+          <div class="tag">Cassette 04</div><div class="name">Song 04 — Artist</div>
         </div>
         <div class="track" data-index="4" data-src="" data-title="Song 05" data-artist="Artist">
-          <div class="tag">Cassette 05</div>
-          <div class="name">Song 05 — Artist</div>
+          <div class="tag">Cassette 05</div><div class="name">Song 05 — Artist</div>
         </div>
         <div class="track" data-index="5" data-src="" data-title="Song 06" data-artist="Artist">
-          <div class="tag">Cassette 06</div>
-          <div class="name">Song 06 — Artist</div>
+          <div class="tag">Cassette 06</div><div class="name">Song 06 — Artist</div>
         </div>
         <div class="track" data-index="6" data-src="" data-title="Song 07" data-artist="Artist">
-          <div class="tag">Cassette 07</div>
-          <div class="name">Song 07 — Artist</div>
+          <div class="tag">Cassette 07</div><div class="name">Song 07 — Artist</div>
         </div>
         <div class="track" data-index="7" data-src="" data-title="Song 08" data-artist="Artist">
-          <div class="tag">Cassette 08</div>
-          <div class="name">Song 08 — Artist</div>
+          <div class="tag">Cassette 08</div><div class="name">Song 08 — Artist</div>
         </div>
         <div class="track" data-index="8" data-src="" data-title="Song 09" data-artist="Artist">
-          <div class="tag">Cassette 09</div>
-          <div class="name">Song 09 — Artist</div>
+          <div class="tag">Cassette 09</div><div class="name">Song 09 — Artist</div>
         </div>
         <div class="track" data-index="9" data-src="" data-title="Song 10" data-artist="Artist">
-          <div class="tag">Cassette 10</div>
-          <div class="name">Song 10 — Artist</div>
+          <div class="tag">Cassette 10</div><div class="name">Song 10 — Artist</div>
         </div>
       </div>
 
@@ -491,7 +466,6 @@
     <source src="vecna.wav" type="audio/wav">
   </audio>
 
-  <!-- Modal -->
   <div class="modal" id="modal">
     <div class="backdrop"></div>
     <div class="box">
@@ -503,7 +477,7 @@
 
   <script>
     // =========================
-    // FX particles (simple ash)
+    // PARTICLES
     // =========================
     const canvas = document.getElementById("fx");
     const ctx = canvas.getContext("2d");
@@ -565,7 +539,7 @@
     }
 
     // =========================
-    // Modal objects
+    // Modal
     // =========================
     const modal = document.getElementById("modal");
     const modalTitle = document.getElementById("modalTitle");
@@ -629,8 +603,7 @@
 
     // =========================
     // IDLE + 2 audios
-    // - underw: loop
-    // - vecna: suena 1 vez y nunca se repite
+    // ✅ vecna: 1 vez por entrada (por load)
     // =========================
     const aUnderw = document.getElementById("underw");
     const aVecna  = document.getElementById("vecnaAudio");
@@ -638,7 +611,10 @@
     let idleTimer = null;
     let vecnaDelayTimer = null;
     let inIdle = false;
-    let vecnaHasPlayedEver = false; // ✅ NO vuelve a sonar nunca
+
+    // ✅ bandera SOLO para esta sesión de página
+    // (si recargas, vuelve a false automáticamente)
+    let vecnaHasPlayedThisVisit = false;
 
     function stopIdleAudio(){
       clearTimeout(vecnaDelayTimer);
@@ -647,7 +623,6 @@
       if(aUnderw){
         try{ aUnderw.pause(); aUnderw.currentTime = 0; }catch(e){}
       }
-      // si vecna estaba sonando, lo paramos al salir del idle
       if(aVecna){
         try{ aVecna.pause(); aVecna.currentTime = 0; }catch(e){}
       }
@@ -665,22 +640,23 @@
         }catch(e){}
       }
 
-      // 7 segundos después, vecna UNA sola vez (si nunca sonó)
+      // 7 segundos después, vecna UNA sola vez por entrada
       vecnaDelayTimer = setTimeout(()=>{
         if(!inIdle) return;
-        if(vecnaHasPlayedEver) return;
+        if(vecnaHasPlayedThisVisit) return;
 
         if(aVecna){
           try{
             aVecna.loop = false;
             aVecna.volume = 0.75;
             aVecna.currentTime = 0;
+
             aVecna.play().then(()=>{
-              vecnaHasPlayedEver = true;
+              vecnaHasPlayedThisVisit = true; // ✅ ya se usó en esta visita
             }).catch(()=>{});
           }catch(e){}
         } else {
-          vecnaHasPlayedEver = true;
+          vecnaHasPlayedThisVisit = true;
         }
       }, 7000);
     }
@@ -700,9 +676,7 @@
     function resetIdle(){
       setIdle(false);
       clearTimeout(idleTimer);
-      idleTimer = setTimeout(()=>{
-        setIdle(true);
-      }, 6500);
+      idleTimer = setTimeout(()=> setIdle(true), 6500);
     }
 
     ["pointerdown","mousemove","touchstart","keydown","scroll"].forEach(ev=>{
@@ -730,9 +704,7 @@
       }
     }
 
-    tracks.forEach(el=>{
-      el.addEventListener("click", ()=> playTrack(el));
-    });
+    tracks.forEach(el=> el.addEventListener("click", ()=> playTrack(el)));
 
     panicBtn.addEventListener("click", ()=>{
       resetIdle();
