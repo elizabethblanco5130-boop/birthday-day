@@ -221,7 +221,7 @@ const elMode = document.getElementById("mode");
 const elBg = document.getElementById("bg");
 const musicBtn = document.getElementById("musicBtn");
 
-// Chispas solo cuando presionan botones del juego o MUSIC
+// FX simple
 function clickFx(x,y){
   const s = document.createElement("div");
   s.className = "spark";
@@ -307,7 +307,6 @@ function renderNode(id){
     b.textContent = c.label;
 
     b.addEventListener("click", (ev)=>{
-      // Música: comienza con el primer click real del juego
       if(!musicOn) startMusic();
       clickFx(ev.clientX, ev.clientY);
 
@@ -342,10 +341,26 @@ if(musicBtn){
   });
 }
 
+// ===== Demogorgon click (SAFE + visible) =====
+window.hitEnemy = function(){
+  // chispa donde está el enemigo aprox (arriba derecha)
+  clickFx(window.innerWidth * 0.8, window.innerHeight * 0.25);
+
+  // baja vida 1 (sin ir debajo de 0)
+  if(state.hearts > 0){
+    state.hearts = Math.max(0, state.hearts - 1);
+    elHearts.textContent = state.hearts;
+  }
+
+  // mini “feedback” si se quedó sin vidas
+  if(state.hearts === 0){
+    // si quieres: reiniciar automáticamente o mostrar mensaje
+    // por ahora solo vibra visual (chispas extra)
+    clickFx(window.innerWidth * 0.75, window.innerHeight * 0.30);
+    clickFx(window.innerWidth * 0.82, window.innerHeight * 0.22);
+  }
+};
+
 updateMusicBtn();
 setMode("HAWKINS");
 renderNode("start");
-window.hitEnemy = function(){
-  state.hearts = Math.max(0, state.hearts - 1);
-  elHearts.textContent = state.hearts;
-};
