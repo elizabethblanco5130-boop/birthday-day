@@ -1,19 +1,26 @@
-// ===== HUB MUSIC (iPhone compatible) =====
+// ===== HUB MUSIC (iPhone: solo suena después de un toque real) =====
 const hubMusic = document.getElementById("hubMusic");
 let hubMusicStarted = false;
 
 function startHubMusic(){
-  if(!hubMusic || hubMusicStarted) return;
+  if(!hubMusic) return;
+
   hubMusic.volume = 0.35;
-  hubMusic.play().catch(()=>{});
-  hubMusicStarted = true;
+
+  hubMusic.play()
+    .then(()=>{ hubMusicStarted = true; })
+    .catch(()=>{});
 }
 
-// iPhone / Safari necesita interacción real
-window.addEventListener("pointerdown", startHubMusic, { once:true });
+// iPhone: intenta arrancar con cualquier interacción real
+["touchstart","click","pointerdown"].forEach(evt=>{
+  window.addEventListener(evt, () => {
+    if(!hubMusicStarted) startHubMusic();
+  }, { passive:true });
+});
 
 
-// ===== WORLD SWITCH =====
+// ===== WORLDS =====
 const body = document.body;
 const worldBtn = document.getElementById("worldBtn");
 const stage = document.getElementById("stage");
@@ -34,6 +41,8 @@ function setWorld(i){
 }
 
 worldBtn.addEventListener("click", () => {
+  if(!hubMusicStarted) startHubMusic();
+
   w = (w + 1) % worlds.length;
   setWorld(w);
 
@@ -71,6 +80,8 @@ function spawnSparkBurst(x, y, mode="ink"){
 }
 
 stage.addEventListener("click", (e) => {
+  if(!hubMusicStarted) startHubMusic();
+
   const target = e.target.closest("[data-spark]");
   const mode = target?.dataset?.spark || "ash";
   spawnSparkBurst(e.clientX, e.clientY, mode);
