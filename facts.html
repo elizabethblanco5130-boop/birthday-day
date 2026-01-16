@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>FACTS — Hawkins Arcade</title>
 
-  <!-- Fonts -->
   <link href="https://fonts.cdnfonts.com/css/benguiat" rel="stylesheet">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,14 +12,12 @@
 
   <style>
     :root{
-      --bg: #06040a;
+      --bg:#06040a;
       --ink: rgba(255,255,255,.92);
       --muted: rgba(255,255,255,.72);
       --red: rgba(255,0,72,.85);
-      --red2: rgba(255,0,72,.35);
       --cyan: rgba(0,255,255,.35);
       --glass: rgba(0,0,0,.48);
-      --glass2: rgba(0,0,0,.28);
     }
 
     *{ box-sizing:border-box; }
@@ -33,7 +30,6 @@
       overflow-x:hidden;
     }
 
-    /* Background placeholder (you can change later) */
     .bg{
       position:fixed; inset:0;
       background:
@@ -59,7 +55,6 @@
       0%{ transform: translateX(-18%) translateY(-8%) rotate(6deg); }
       100%{ transform: translateX(18%) translateY(8%) rotate(6deg); }
     }
-
     .vignette{
       position:fixed; inset:0;
       background:
@@ -69,24 +64,12 @@
       z-index:2;
     }
 
-    /* FX layers */
-    canvas#fx{
-      position:fixed; inset:0;
-      z-index:3;
-      pointer-events:none;
-      opacity:.95;
-    }
+    canvas#fx{ position:fixed; inset:0; z-index:3; pointer-events:none; opacity:.95; }
 
-    /* Top bar */
     header.top{
-      position:sticky;
-      top:0;
-      z-index:40;
+      position:sticky; top:0; z-index:40;
       padding:12px 12px 10px;
-      display:flex;
-      gap:10px;
-      align-items:center;
-      justify-content:space-between;
+      display:flex; gap:10px; align-items:center; justify-content:space-between;
       background: linear-gradient(180deg, rgba(0,0,0,.62), rgba(0,0,0,0));
       backdrop-filter: blur(8px);
     }
@@ -97,40 +80,27 @@
       padding:12px 14px;
       backdrop-filter: blur(10px);
       box-shadow: 0 0 18px rgba(255,0,72,.10);
-      display:flex;
-      align-items:center;
-      gap:10px;
+      display:flex; align-items:center; gap:10px;
       min-height:44px;
     }
     .back{
-      text-decoration:none;
-      color:#fff;
+      text-decoration:none; color:#fff;
       font-family:'Press Start 2P', monospace;
-      font-size:10px;
-      letter-spacing:.06em;
-      text-transform:uppercase;
-      white-space:nowrap;
+      font-size:10px; letter-spacing:.06em;
+      text-transform:uppercase; white-space:nowrap;
     }
     .title{
-      flex:1;
-      text-align:center;
+      flex:1; text-align:center;
       font-family:'Benguiat', serif;
-      letter-spacing:.12em;
-      text-transform:uppercase;
+      letter-spacing:.12em; text-transform:uppercase;
       color: var(--ink);
-      text-shadow:
-        0 0 18px rgba(255,0,72,.22),
-        2px 0 rgba(0,255,255,.12),
-        -2px 0 rgba(255,0,72,.12);
+      text-shadow: 0 0 18px rgba(255,0,72,.22), 2px 0 rgba(0,255,255,.12), -2px 0 rgba(255,0,72,.12);
       font-size:18px;
     }
     .musicBtn{
-      cursor:pointer;
-      user-select:none;
+      cursor:pointer; user-select:none;
       font-family:'Press Start 2P', monospace;
-      font-size:10px;
-      letter-spacing:.06em;
-      text-transform:uppercase;
+      font-size:10px; letter-spacing:.06em; text-transform:uppercase;
       color: var(--ink);
       border:1px solid rgba(255,0,72,.55);
       background: rgba(0,0,0,.42);
@@ -141,71 +111,48 @@
     }
     .musicBtn:active{ transform: translateY(1px); }
 
-    /* Main layout */
     main{
-      position:relative;
-      z-index:10;
+      position:relative; z-index:10;
       padding: 10px 14px 18px;
       max-width: 1100px;
       margin: 0 auto;
     }
 
-    /* Arcade cabinet */
     .cabinet{
       border-radius:24px;
       border:1px solid rgba(255,0,72,.55);
       background: rgba(0,0,0,.40);
-      box-shadow:
-        0 0 0 2px rgba(255,0,72,.08),
-        0 0 40px rgba(255,0,72,.12),
-        0 0 28px rgba(0,255,255,.08);
+      box-shadow: 0 0 0 2px rgba(255,0,72,.08), 0 0 40px rgba(255,0,72,.12), 0 0 28px rgba(0,255,255,.08);
       overflow:hidden;
       backdrop-filter: blur(10px);
     }
-
     .cabHeader{
       padding:16px 16px 12px;
       border-bottom: 1px solid rgba(255,255,255,.10);
-      display:flex;
-      flex-direction:column;
-      gap:10px;
+      display:flex; flex-direction:column; gap:10px;
     }
-
     .logo{
       font-family:'Benguiat', serif;
-      letter-spacing:.12em;
-      text-transform:uppercase;
-      font-size:34px;
-      line-height:1;
-      margin:0;
+      letter-spacing:.12em; text-transform:uppercase;
+      font-size:34px; line-height:1; margin:0;
       color: rgba(255,255,255,.92);
-      text-shadow:
-        0 0 22px rgba(255,0,72,.25),
-        2px 0 rgba(0,255,255,.16),
-        -2px 0 rgba(255,0,72,.16);
+      text-shadow: 0 0 22px rgba(255,0,72,.25), 2px 0 rgba(0,255,255,.16), -2px 0 rgba(255,0,72,.16);
       user-select:none;
     }
     .sub{
       font-family:'Press Start 2P', monospace;
-      font-size:10px;
-      letter-spacing:.06em;
+      font-size:10px; letter-spacing:.06em;
       line-height:1.6;
       color: rgba(255,255,255,.80);
       margin:0;
     }
 
-    .screen{
-      position:relative;
-      padding:14px;
-      min-height: 520px;
-    }
+    .screen{ position:relative; padding:14px; min-height: 560px; }
 
-    /* Start screen */
+    /* START */
     .startScreen{
-      display:grid;
-      place-items:center;
-      gap:14px;
-      text-align:center;
+      display:grid; place-items:center;
+      gap:14px; text-align:center;
       padding: 22px 14px 22px;
     }
     .startBadge{
@@ -218,16 +165,14 @@
     }
     .startBadge .line1{
       font-family:'Press Start 2P', monospace;
-      font-size:11px;
-      letter-spacing:.08em;
+      font-size:11px; letter-spacing:.08em;
       color: rgba(255,255,255,.86);
       text-transform:uppercase;
       margin-bottom:10px;
     }
     .startBadge .player{
       font-family:'Press Start 2P', monospace;
-      font-size:12px;
-      letter-spacing:.08em;
+      font-size:12px; letter-spacing:.08em;
       color: rgba(255,255,255,.92);
       text-transform:uppercase;
       margin-top:10px;
@@ -240,24 +185,15 @@
       background: rgba(0,0,0,.45);
       color:#fff;
       font-family:'Press Start 2P', monospace;
-      font-size:12px;
-      letter-spacing:.08em;
+      font-size:12px; letter-spacing:.08em;
       text-transform:uppercase;
       cursor:pointer;
-      box-shadow:
-        0 0 22px rgba(255,0,72,.18),
-        0 0 28px rgba(0,255,255,.08);
+      box-shadow: 0 0 22px rgba(255,0,72,.18), 0 0 28px rgba(0,255,255,.08);
     }
     .startBtn:active{ transform: translateY(1px); }
 
-    /* Game HUD */
-    .hud{
-      display:flex;
-      gap:12px;
-      flex-wrap:wrap;
-      align-items:stretch;
-      margin-bottom:12px;
-    }
+    /* HUD */
+    .hud{ display:flex; gap:12px; flex-wrap:wrap; align-items:stretch; margin-bottom:12px; }
     .hudCard{
       flex:1;
       min-width: 240px;
@@ -266,33 +202,21 @@
       background: rgba(0,0,0,.30);
       padding:12px 12px;
     }
-    .hudRow{
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      align-items:center;
-      margin-bottom:10px;
-    }
+    .hudRow{ display:flex; justify-content:space-between; gap:12px; align-items:center; margin-bottom:10px; }
     .hudLabel{
       font-family:'Press Start 2P', monospace;
-      font-size:10px;
-      letter-spacing:.06em;
-      text-transform:uppercase;
+      font-size:10px; letter-spacing:.06em; text-transform:uppercase;
       color: rgba(255,255,255,.82);
       white-space:nowrap;
     }
     .hudValue{
       font-family:'Press Start 2P', monospace;
-      font-size:10px;
-      letter-spacing:.06em;
-      text-transform:uppercase;
+      font-size:10px; letter-spacing:.06em; text-transform:uppercase;
       color: rgba(255,255,255,.92);
       white-space:nowrap;
     }
-
     .bar{
-      height:12px;
-      border-radius:999px;
+      height:12px; border-radius:999px;
       border:1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.30);
       overflow:hidden;
@@ -312,22 +236,19 @@
       border:1px solid rgba(255,0,72,.45);
       background: rgba(0,0,0,.25);
       overflow:hidden;
-      min-height: 340px;
+      min-height: 360px;
       box-shadow: inset 0 0 0 1px rgba(255,0,72,.08);
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 16px 16px 14px;
     }
 
-    .neonFrame{
-      position:absolute; inset:0;
-      pointer-events:none;
-      opacity:.95;
-    }
+    .neonFrame{ position:absolute; inset:0; pointer-events:none; opacity:.95; }
     .tube{
-      position:absolute;
-      border-radius:999px;
+      position:absolute; border-radius:999px;
       background: rgba(255,255,255,.08);
-      box-shadow:
-        0 0 14px rgba(255,0,72,.22),
-        0 0 26px rgba(0,255,255,.18);
+      box-shadow: 0 0 14px rgba(255,0,72,.22), 0 0 26px rgba(0,255,255,.18);
       animation: flicker 2.7s infinite;
     }
     .tube.t1{ left:12px; top:12px; width:180px; height:10px; }
@@ -343,45 +264,56 @@
       70%{ opacity:.82; }
     }
 
-    /* Characters */
-    .char{
-      position:absolute;
-      bottom: 10px;
-      width: min(42vw, 340px);
-      height:auto;
-      filter: drop-shadow(0 0 22px rgba(255,0,72,.18));
-      user-select:none;
-      pointer-events:none;
+    .col{
+      position:relative;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      overflow:hidden;
+      min-height: 300px;
     }
-    .hero{ left: 12px; }
-    .enemy{ right: 12px; width: min(38vw, 300px); opacity:.98; }
-    .enemy.small{ width:min(34vw, 260px); opacity:.92; }
 
-    .floating{
+    .msgBox{
       position:absolute;
-      top: 14px;
-      left: 14px;
-      right: 14px;
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      pointer-events:none;
-    }
-    .floating .msg{
-      max-width: 72%;
-      padding:10px 12px;
+      left:12px; right:12px; top:12px;
       border-radius:16px;
       border:1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.28);
       backdrop-filter: blur(8px);
+      padding:10px 12px;
       font-family:'Press Start 2P', monospace;
       font-size:9px;
       letter-spacing:.05em;
       line-height:1.55;
       color: rgba(255,255,255,.86);
       text-transform:uppercase;
+      z-index:5;
     }
-    .floating .msg strong{ color: rgba(0,255,255,.85); }
+    .msgBox strong{ color: rgba(0,255,255,.85); }
+
+    .sprite{
+      position:absolute;
+      left:50%;
+      bottom: 10px;
+      transform: translateX(-50%);
+      width: min(42vw, 320px);
+      max-width: 92%;
+      height:auto;
+      user-select:none;
+      pointer-events:none;
+      filter: drop-shadow(0 0 22px rgba(255,0,72,.18));
+      z-index:4;
+    }
+
+    .enemySprite{
+      width: min(34vw, 260px);
+      opacity:.98;
+      animation: floaty 3.2s ease-in-out infinite;
+    }
+    @keyframes floaty{
+      0%,100%{ transform: translateX(-50%) translateY(0); }
+      50%{ transform: translateX(-50%) translateY(-10px); }
+    }
 
     /* Controls */
     .controls{
@@ -411,14 +343,34 @@
     }
     .btn.main{
       border:2px solid rgba(255,0,72,.78);
-      box-shadow:
-        0 0 26px rgba(255,0,72,.18),
-        0 0 26px rgba(0,255,255,.08);
+      box-shadow: 0 0 26px rgba(255,0,72,.18), 0 0 26px rgba(0,255,255,.08);
     }
     .btn:active{ transform: translateY(1px); }
     .btn[disabled]{ opacity:.45; cursor:not-allowed; }
 
-    /* Toast */
+    /* Potions */
+    .potionRow{
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin-top:12px;
+      align-items:center;
+    }
+    .potionBtn{
+      min-width: 180px;
+      padding:12px 14px;
+      border-radius:18px;
+      border:1px solid rgba(0,255,255,.22);
+      background: rgba(0,0,0,.35);
+      color:#fff;
+      font-family:'Press Start 2P', monospace;
+      font-size:10px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      cursor:pointer;
+      box-shadow: 0 0 18px rgba(0,255,255,.08);
+    }
+    .potionBtn:active{ transform: translateY(1px); }
+    .potionBtn[disabled]{ opacity:.45; cursor:not-allowed; }
+
     .toast{
       position:fixed;
       left:50%;
@@ -447,7 +399,6 @@
     }
     .toast .good{ color: rgba(0,255,255,.92); }
 
-    /* Overlays */
     .overlay{
       position:fixed; inset:0;
       display:none;
@@ -484,15 +435,10 @@
       text-transform:uppercase;
       font-size:26px;
       color: rgba(255,255,255,.92);
-      text-shadow:
-        0 0 22px rgba(255,0,72,.25),
-        2px 0 rgba(0,255,255,.16),
-        -2px 0 rgba(255,0,72,.16);
+      text-shadow: 0 0 22px rgba(255,0,72,.25), 2px 0 rgba(0,255,255,.16), -2px 0 rgba(255,0,72,.16);
       margin:0;
     }
-    .overlay .body{
-      padding:14px;
-    }
+    .overlay .body{ padding:14px; }
 
     .unlockBtn{
       width:100%;
@@ -506,13 +452,10 @@
       letter-spacing:.10em;
       text-transform:uppercase;
       cursor:pointer;
-      box-shadow:
-        0 0 26px rgba(0,255,255,.14),
-        0 0 26px rgba(255,0,72,.12);
+      box-shadow: 0 0 26px rgba(0,255,255,.14), 0 0 26px rgba(255,0,72,.12);
     }
     .unlockBtn:active{ transform: translateY(1px); }
 
-    /* Defeat video overlay */
     .defeatVideo{
       position:relative;
       width:100%;
@@ -535,14 +478,10 @@
       text-transform:uppercase;
       font-size:28px;
       color: rgba(255,255,255,.92);
-      text-shadow:
-        0 0 26px rgba(255,0,72,.35),
-        2px 0 rgba(0,255,255,.14),
-        -2px 0 rgba(255,0,72,.14);
+      text-shadow: 0 0 26px rgba(255,0,72,.35), 2px 0 rgba(0,255,255,.14), -2px 0 rgba(255,0,72,.14);
       pointer-events:none;
     }
 
-    /* Shake + glitch */
     .shake{ animation: shake .35s ease-in-out; }
     @keyframes shake{
       0%,100%{ transform: translate(0,0); }
@@ -552,21 +491,17 @@
       80%{ transform: translate(3px, 2px); }
     }
 
-    /* Responsive tweaks */
-    @media (max-width: 720px){
-      .logo{ font-size:28px; }
-      .screen{ min-height: 540px; }
-      .title{ font-size:16px; }
-      .hudCard{ min-width: 100%; }
-      .char{ width: min(52vw, 320px); }
-      .enemy{ width: min(44vw, 280px); }
-      .floating .msg{ max-width: 100%; }
+    /* Mobile: stack columns */
+    @media (max-width: 820px){
+      .arena{ grid-template-columns: 1fr; }
+      .col{ min-height: 320px; }
+      .sprite{ width: min(70vw, 340px); }
+      .enemySprite{ width: min(55vw, 300px); }
     }
     @media (max-width: 420px){
       .logo{ font-size:24px; }
       .title{ font-size:14px; }
       .btn{ min-width: 140px; font-size:10px; }
-      .enemy{ opacity:.95; }
     }
   </style>
 </head>
@@ -593,7 +528,6 @@
       </div>
 
       <div class="screen" id="screen">
-        <!-- START -->
         <div class="startScreen" id="startScreen">
           <div class="startBadge">
             <div class="line1">INSERT COIN • PRESS START</div>
@@ -604,17 +538,16 @@
           </div>
           <button class="startBtn" id="startBtn" type="button">START GAME</button>
           <div class="sub" style="max-width: 760px;">
-            Tip: Use <b>ATTACK</b> + <b>DEFEND</b>. If you lose… he plays your ending.
+            Tip: Use <b>ATTACK</b>, <b>DEFEND</b>, and <b>POTION</b>. (Intermediate difficulty)
           </div>
         </div>
 
-        <!-- GAME -->
         <div id="gameUI" style="display:none;">
           <div class="hud">
             <div class="hudCard">
               <div class="hudRow">
                 <div class="hudLabel">PLAYER</div>
-                <div class="hudValue" id="playerName">DAYANARA</div>
+                <div class="hudValue">DAYANARA</div>
               </div>
               <div class="hudRow">
                 <div class="hudLabel">HP</div>
@@ -642,27 +575,30 @@
               <div class="tube v1"></div><div class="tube v2"></div>
             </div>
 
-            <div class="floating">
-              <div class="msg" id="battleMsg">
-                <strong>Quest:</strong> Survive the dungeon. <br>
-                Pick your move.
+            <!-- HERO COLUMN -->
+            <div class="col" id="heroCol">
+              <div class="msgBox" id="battleMsg">
+                <strong>Quest:</strong> Survive the dungeon.<br>Pick your move.
               </div>
-              <div class="msg" id="vecnaMsg" style="text-align:right; opacity:.88;">
-                ...
-              </div>
+              <img class="sprite" id="heroImg" src="img/warrior.PNG" alt="Dayanara Warrior">
             </div>
 
-            <!-- hero -->
-            <img class="char hero" id="heroImg" src="img/warrior.PNG" alt="Dayanara Warrior">
-
-            <!-- enemy (swapped in JS) -->
-            <img class="char enemy small" id="enemyImg" src="img/demobat.png" alt="Enemy">
+            <!-- ENEMY COLUMN -->
+            <div class="col" id="enemyCol">
+              <div class="msgBox" id="vecnaMsg" style="text-align:right;">THEY HEAR YOUR HEARTBEAT.</div>
+              <img class="sprite enemySprite" id="enemyImg" src="img/demobat.png" alt="Enemy">
+            </div>
           </div>
 
           <div class="controls">
             <button class="btn main" id="attackBtn" type="button">ATTACK ⚔️</button>
             <button class="btn" id="defendBtn" type="button">DEFEND 🛡️</button>
             <button class="btn" id="resetBtn" type="button">RESET</button>
+          </div>
+
+          <div class="potionRow">
+            <button class="potionBtn" id="potionBtn" type="button">POTION +25 (x<span id="potsLeft">3</span>)</button>
+            <div class="sub" style="color: rgba(255,255,255,.72);">Boss fight is meant to be winnable.</div>
           </div>
         </div>
       </div>
@@ -671,12 +607,10 @@
 
   <div class="toast" id="toast"></div>
 
-  <!-- MUSIC -->
   <audio id="bgm" preload="auto" loop>
     <source src="runaway.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- DEFEAT OVERLAY -->
   <section class="overlay" id="defeatOverlay" aria-hidden="true">
     <div class="backdrop"></div>
     <div class="box">
@@ -685,20 +619,17 @@
         <button class="btn" id="tryAgainBtn" type="button" style="min-width:180px;">TRY AGAIN</button>
       </div>
       <div class="defeatVideo">
-        <video id="defeatVid" playsinline preload="auto">
+        <video id="defeatVid" playsinline preload="auto" controls>
           <source src="vecna-got-you.mp4" type="video/mp4">
         </video>
         <div class="defeatText">VECNA GOT YOU</div>
       </div>
       <div class="body">
-        <div class="sub" style="color: rgba(255,255,255,.82);">
-          PRESS START… and don’t look away.
-        </div>
+        <div class="sub" style="color: rgba(255,255,255,.82);">PRESS START… and don’t look away.</div>
       </div>
     </div>
   </section>
 
-  <!-- VICTORY OVERLAY -->
   <section class="overlay" id="winOverlay" aria-hidden="true">
     <div class="backdrop"></div>
     <div class="box">
@@ -711,36 +642,27 @@
           The noise fades. The arcade lights flicker back to life.
         </div>
         <button class="unlockBtn" id="unlockBtn" type="button">UNLOCK FILE 🔓</button>
-        <div class="sub" style="margin-top:12px; color: rgba(255,255,255,.70);">
-          (Opens your Drive video.)
-        </div>
+        <div class="sub" style="margin-top:12px; color: rgba(255,255,255,.70);">(Opens your Drive video.)</div>
       </div>
     </div>
   </section>
 
   <script>
-    // =========================
-    // CONFIG
-    // =========================
+    // ===== Drive link
     const DRIVE_LINK = "https://drive.google.com/file/d/1PNAnsFPvncZiq-sJuf-fGuq8tRrIi2w6/view?usp=drivesdk";
 
-    // =========================
-    // MUSIC (iPhone-safe)
-    // =========================
+    // ===== Music (iPhone rule: needs a gesture; we start on first touch anywhere)
     const bgm = document.getElementById("bgm");
     const musicBtn = document.getElementById("musicBtn");
-    let musicOn = false;
-    let musicStartedOnce = false;
+    let musicOn=false, startedOnce=false;
 
-    function updateMusicBtn(){
-      musicBtn.textContent = musicOn ? "MUSIC: ON" : "MUSIC: OFF";
-    }
+    function updateMusicBtn(){ musicBtn.textContent = musicOn ? "MUSIC: ON" : "MUSIC: OFF"; }
 
     function startMusic(){
       if(!bgm) return;
-      if(!musicStartedOnce){
+      if(!startedOnce){
         bgm.volume = 0.55;
-        musicStartedOnce = true;
+        startedOnce = true;
       }
       bgm.play().catch(()=>{});
       musicOn = true;
@@ -750,27 +672,22 @@
     function stopMusic(){
       if(!bgm) return;
       bgm.pause();
-      musicOn = false;
+      musicOn=false;
       updateMusicBtn();
     }
 
-    musicBtn.addEventListener("click", ()=>{
-      if(!musicOn) startMusic();
-      else stopMusic();
-    });
+    // Try "auto" (won’t work on iPhone, but harmless)
+    window.addEventListener("load", ()=>{ startMusic(); });
 
-    // Start music on first real interaction (helps iPhone)
+    // Guaranteed: first real gesture
     ["pointerdown","touchstart","click"].forEach(evt=>{
-      window.addEventListener(evt, ()=>{
-        if(!musicOn) startMusic();
-      }, { passive:true, once:true });
+      window.addEventListener(evt, ()=>{ if(!musicOn) startMusic(); }, { passive:true, once:true });
     });
 
+    musicBtn.addEventListener("click", ()=>{ if(!musicOn) startMusic(); else stopMusic(); });
     updateMusicBtn();
 
-    // =========================
-    // FX CANVAS (sparks + lightning)
-    // =========================
+    // ===== FX canvas (sparks + lightning)
     const canvas = document.getElementById("fx");
     const ctx = canvas.getContext("2d");
     let W=0,H=0,dpr=1;
@@ -788,33 +705,33 @@
     window.addEventListener("resize", resize);
     resize();
 
-    const sparks = [];
     function rand(a,b){ return a + Math.random()*(b-a); }
 
-    function spawnSparks(x,y, n=26){
+    const sparks=[];
+    function spawnSparks(x,y,n=24){
       for(let i=0;i<n;i++){
         sparks.push({
           x,y,
-          vx: rand(-3.8,3.8),
-          vy: rand(-4.8, -1.2),
+          vx: rand(-3.6,3.6),
+          vy: rand(-4.6,-1.0),
           life: rand(16, 28),
-          r: rand(1.2, 2.6),
+          r: rand(1.1, 2.6),
           a: rand(0.55, 0.95),
           c: Math.random() < 0.35 ? "cyan" : "red"
         });
       }
     }
 
-    // simple lightning stroke
-    const bolts = [];
-    function spawnBolt(x0,y0,x1,y1, color="red"){
-      const pts = [];
-      const steps = 12;
+    const bolts=[];
+    function spawnBolt(x0,y0,x1,y1,color="red"){
+      const pts=[];
+      const steps=12;
       for(let i=0;i<=steps;i++){
-        const t = i/steps;
-        const x = x0 + (x1-x0)*t + rand(-10,10);
-        const y = y0 + (y1-y0)*t + rand(-12,12);
-        pts.push({x,y});
+        const t=i/steps;
+        pts.push({
+          x: x0 + (x1-x0)*t + rand(-10,10),
+          y: y0 + (y1-y0)*t + rand(-12,12)
+        });
       }
       bolts.push({pts, life: 10, color});
     }
@@ -822,54 +739,48 @@
     function draw(){
       ctx.clearRect(0,0,W,H);
 
-      // bolts
       for(let i=bolts.length-1;i>=0;i--){
-        const b = bolts[i];
+        const b=bolts[i];
         b.life--;
-        const alpha = Math.max(0, b.life/10);
-        ctx.lineWidth = 2.2;
-        ctx.strokeStyle = b.color === "cyan"
-          ? `rgba(0,255,255,${0.35*alpha})`
-          : `rgba(255,0,72,${0.45*alpha})`;
+        const a=Math.max(0,b.life/10);
 
+        ctx.lineWidth=2.2;
+        ctx.strokeStyle = b.color==="cyan"
+          ? `rgba(0,255,255,${0.35*a})`
+          : `rgba(255,0,72,${0.45*a})`;
         ctx.beginPath();
-        b.pts.forEach((p,idx)=>{
-          if(idx===0) ctx.moveTo(p.x,p.y);
-          else ctx.lineTo(p.x,p.y);
-        });
+        b.pts.forEach((p,idx)=> idx?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));
         ctx.stroke();
 
-        // glow
-        ctx.lineWidth = 5.5;
-        ctx.strokeStyle = b.color === "cyan"
-          ? `rgba(0,255,255,${0.10*alpha})`
-          : `rgba(255,0,72,${0.12*alpha})`;
+        ctx.lineWidth=5.5;
+        ctx.strokeStyle = b.color==="cyan"
+          ? `rgba(0,255,255,${0.10*a})`
+          : `rgba(255,0,72,${0.12*a})`;
         ctx.stroke();
 
         if(b.life<=0) bolts.splice(i,1);
       }
 
-      // sparks
       for(let i=sparks.length-1;i>=0;i--){
-        const s = sparks[i];
+        const s=sparks[i];
         s.life--;
-        s.x += s.vx;
-        s.y += s.vy;
-        s.vy += 0.18;
+        s.x+=s.vx; s.y+=s.vy;
+        s.vy+=0.18;
 
-        const alpha = Math.max(0, s.life/28) * s.a;
+        const a=Math.max(0,s.life/28)*s.a;
+
         ctx.beginPath();
-        ctx.fillStyle = s.c === "cyan"
-          ? `rgba(0,255,255,${0.35*alpha})`
-          : `rgba(255,255,255,${0.25*alpha})`;
-        ctx.arc(s.x, s.y, s.r+1.2, 0, Math.PI*2);
+        ctx.fillStyle = s.c==="cyan"
+          ? `rgba(0,255,255,${0.35*a})`
+          : `rgba(255,255,255,${0.25*a})`;
+        ctx.arc(s.x,s.y,s.r+1.2,0,Math.PI*2);
         ctx.fill();
 
         ctx.beginPath();
-        ctx.fillStyle = s.c === "cyan"
-          ? `rgba(0,255,255,${0.75*alpha})`
-          : `rgba(255,0,72,${0.65*alpha})`;
-        ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+        ctx.fillStyle = s.c==="cyan"
+          ? `rgba(0,255,255,${0.75*a})`
+          : `rgba(255,0,72,${0.65*a})`;
+        ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
         ctx.fill();
 
         if(s.life<=0) sparks.splice(i,1);
@@ -883,7 +794,6 @@
       const r = el.getBoundingClientRect();
       return { x: r.left + r.width/2, y: r.top + r.height/2 };
     }
-
     function shake(el){
       el.classList.remove("shake");
       void el.offsetWidth;
@@ -891,9 +801,7 @@
       setTimeout(()=> el.classList.remove("shake"), 380);
     }
 
-    // =========================
-    // GAME LOGIC
-    // =========================
+    // ===== Game
     const startScreen = document.getElementById("startScreen");
     const gameUI = document.getElementById("gameUI");
     const startBtn = document.getElementById("startBtn");
@@ -917,6 +825,9 @@
     const vecnaMsg = document.getElementById("vecnaMsg");
     const toast = document.getElementById("toast");
 
+    const potionBtn = document.getElementById("potionBtn");
+    const potsLeftEl = document.getElementById("potsLeft");
+
     const defeatOverlay = document.getElementById("defeatOverlay");
     const defeatVid = document.getElementById("defeatVid");
     const tryAgainBtn = document.getElementById("tryAgainBtn");
@@ -926,8 +837,8 @@
     const closeWinBtn = document.getElementById("closeWinBtn");
 
     const ENEMIES = [
-      { key:"DEMOBATS", hp: 60, img:"img/demobat.png", cls:"small" },
-      { key:"VECNA", hp: 120, img:"img/enemigo2.png", cls:"" }
+      { key:"DEMOBATS", hp: 70, img:"img/demobat.png", msg:"THEY HEAR YOUR HEARTBEAT." },
+      { key:"VECNA", hp: 120, img:"img/enemigo2.png", msg:"YOU CAN'T OUTRUN ME." }
     ];
 
     let state = null;
@@ -941,7 +852,6 @@
     function setBars(){
       pHP.textContent = state.p.hp;
       pBar.style.width = Math.max(0, (state.p.hp/state.p.max)*100) + "%";
-
       eHP.textContent = state.e.hp;
       eBar.style.width = Math.max(0, (state.e.hp/state.e.max)*100) + "%";
     }
@@ -952,42 +862,35 @@
       state.e.name = e.key;
       state.e.max = e.hp;
       state.e.hp = e.hp;
-
       enemyName.textContent = e.key;
       eMax.textContent = e.hp;
-
       enemyImg.src = e.img;
-      enemyImg.classList.remove("small");
-      if(e.cls) enemyImg.classList.add(e.cls);
-
-      vecnaMsg.textContent = (e.key === "VECNA")
-        ? "YOU CAN'T OUTRUN ME."
-        : "THEY HEAR YOUR HEARTBEAT.";
-
+      vecnaMsg.textContent = e.msg;
       setBars();
     }
 
     function resetGame(){
       state = {
         p: { hp:100, max:100, defend:false },
-        e: { index:0, name:"DEMOBATS", hp:60, max:60 },
-        locked: true,
-        over: false
+        e: { index:0, name:"DEMOBATS", hp:70, max:70 },
+        pots: 3,
+        over:false
       };
+
       setEnemy(0);
 
       battleMsg.innerHTML = "<strong>Quest:</strong> Survive the dungeon.<br>Pick your move.";
       attackBtn.disabled = false;
       defendBtn.disabled = false;
 
-      // stop defeat video if playing
+      potionBtn.disabled = false;
+      potsLeftEl.textContent = state.pots;
+
       defeatVid.pause();
       defeatVid.currentTime = 0;
       defeatOverlay.classList.remove("show");
-      defeatOverlay.setAttribute("aria-hidden","true");
 
       winOverlay.classList.remove("show");
-      winOverlay.setAttribute("aria-hidden","true");
 
       setBars();
     }
@@ -996,58 +899,47 @@
       startScreen.style.display = "none";
       gameUI.style.display = "block";
       resetGame();
-
-      // also start music on Start (gesture-safe)
       if(!musicOn) startMusic();
     }
 
+    // Intermediate tuning (winnable)
     function enemyTurn(){
       if(state.over) return;
 
-      // enemy attack (random)
-      const base = state.e.name === "VECNA" ? rand(10,18) : rand(7,14);
+      // reduced enemy damage
+      const base = state.e.name === "VECNA" ? rand(7,12) : rand(5,10);
       let dmg = Math.round(base);
 
-      if(state.p.defend){
-        dmg = Math.max(1, Math.round(dmg * 0.45));
-      }
+      if(state.p.defend) dmg = Math.max(1, Math.round(dmg * 0.45));
 
       state.p.hp = Math.max(0, state.p.hp - dmg);
       state.p.defend = false;
 
-      // FX
       const A = centerOf(enemyImg);
       const Hc = centerOf(heroImg);
-      spawnSparks(Hc.x, Hc.y, 18);
+      spawnSparks(Hc.x, Hc.y, 16);
       spawnBolt(A.x, A.y, Hc.x, Hc.y, "red");
       shake(arena);
 
-      vecnaMsg.textContent = (state.e.name === "VECNA")
-        ? "WEAK."
-        : "SCREEE—";
-
+      vecnaMsg.textContent = (state.e.name === "VECNA") ? "WEAK." : "SCREEE—";
       battleMsg.innerHTML = "<strong>Enemy:</strong> " + state.e.name + " hits for <strong>" + dmg + "</strong>.";
 
       setBars();
-
-      if(state.p.hp <= 0){
-        lose();
-      }
+      if(state.p.hp <= 0) lose();
     }
 
     function attack(){
       if(state.over) return;
 
-      // player damage
-      const base = state.e.name === "VECNA" ? rand(10,18) : rand(12,20);
+      // slightly buff player damage
+      const base = state.e.name === "VECNA" ? rand(12,18) : rand(13,21);
       const dmg = Math.round(base);
 
       state.e.hp = Math.max(0, state.e.hp - dmg);
 
-      // FX
       const Hc = centerOf(heroImg);
       const Ec = centerOf(enemyImg);
-      spawnSparks(Ec.x, Ec.y, 28);
+      spawnSparks(Ec.x, Ec.y, 26);
       spawnBolt(Hc.x, Hc.y, Ec.x, Ec.y, (Math.random()<0.35 ? "cyan" : "red"));
       shake(arena);
 
@@ -1057,22 +949,19 @@
       setBars();
 
       if(state.e.hp <= 0){
-        // next enemy or win
         if(state.e.index < ENEMIES.length - 1){
-          // stage clear
           showToast('<span class="good">STAGE CLEAR</span> • NEXT BOSS');
           setTimeout(()=>{
             setEnemy(state.e.index + 1);
             battleMsg.innerHTML = "<strong>Boss:</strong> VECNA appears. Don’t blink.";
             vecnaMsg.textContent = "WELCOME BACK.";
-          }, 600);
+          }, 650);
         } else {
           win();
         }
         return;
       }
 
-      // enemy responds shortly
       setTimeout(enemyTurn, 650);
     }
 
@@ -1081,13 +970,36 @@
       state.p.defend = true;
 
       const Hc = centerOf(heroImg);
-      spawnSparks(Hc.x, Hc.y, 14);
+      spawnSparks(Hc.x, Hc.y, 12);
       spawnBolt(Hc.x-30, Hc.y-20, Hc.x+30, Hc.y+20, "cyan");
 
       battleMsg.innerHTML = "<strong>Dayanara:</strong> DEFEND (next hit reduced).";
       showToast('<span class="good">GOOD CHOICE</span> • DEFEND');
 
-      // enemy responds
+      setTimeout(enemyTurn, 650);
+    }
+
+    function potion(){
+      if(state.over) return;
+      if(state.pots <= 0) return;
+
+      state.pots--;
+      potsLeftEl.textContent = state.pots;
+
+      const heal = 25;
+      state.p.hp = Math.min(state.p.max, state.p.hp + heal);
+      setBars();
+
+      const Hc = centerOf(heroImg);
+      spawnSparks(Hc.x, Hc.y, 20);
+      spawnBolt(Hc.x-40, Hc.y+10, Hc.x+40, Hc.y-10, "cyan");
+
+      showToast('<span class="good">POTION</span> • +' + heal + " HP");
+      battleMsg.innerHTML = "<strong>Dayanara:</strong> drinks a potion (+25 HP).";
+
+      if(state.pots <= 0) potionBtn.disabled = true;
+
+      // Enemy still gets a turn after potion (fair but winnable)
       setTimeout(enemyTurn, 650);
     }
 
@@ -1095,15 +1007,10 @@
       state.over = true;
       attackBtn.disabled = true;
       defendBtn.disabled = true;
+      potionBtn.disabled = true;
 
-      // show defeat overlay + play video (sound allowed by interaction)
       defeatOverlay.classList.add("show");
-      defeatOverlay.setAttribute("aria-hidden","false");
 
-      // Pause bgm a bit (optional feel)
-      // bgm.volume = 0.25;
-
-      // Try play with sound. If iPhone blocks, user can press play in the video.
       defeatVid.currentTime = 0;
       defeatVid.play().catch(()=>{});
     }
@@ -1112,76 +1019,60 @@
       state.over = true;
       attackBtn.disabled = true;
       defendBtn.disabled = true;
+      potionBtn.disabled = true;
 
       winOverlay.classList.add("show");
-      winOverlay.setAttribute("aria-hidden","false");
 
-      // BIG WIN FX
       const Ec = centerOf(enemyImg);
       for(let k=0;k<6;k++){
         setTimeout(()=>{
-          spawnSparks(Ec.x, Ec.y, 36);
+          spawnSparks(Ec.x, Ec.y, 34);
           spawnBolt(rand(0,W), 0, rand(0,W), rand(H*0.6,H), "cyan");
           shake(arena);
         }, k*120);
       }
+
       battleMsg.innerHTML = "<strong>Victory:</strong> Vecna retreats. The file is yours.";
       vecnaMsg.textContent = "THIS ISN'T OVER.";
     }
 
-    // =========================
-    // Events
-    // =========================
     startBtn.addEventListener("click", startGame);
     attackBtn.addEventListener("click", attack);
     defendBtn.addEventListener("click", defend);
     resetBtn.addEventListener("click", resetGame);
+    potionBtn.addEventListener("click", potion);
 
     tryAgainBtn.addEventListener("click", ()=>{
       defeatOverlay.classList.remove("show");
-      defeatOverlay.setAttribute("aria-hidden","true");
       defeatVid.pause();
       defeatVid.currentTime = 0;
       resetGame();
-      attackBtn.disabled = false;
-      defendBtn.disabled = false;
-      battleMsg.innerHTML = "<strong>Quest:</strong> Survive the dungeon.<br>Pick your move.";
     });
 
     closeWinBtn.addEventListener("click", ()=>{
       winOverlay.classList.remove("show");
-      winOverlay.setAttribute("aria-hidden","true");
     });
 
     unlockBtn.addEventListener("click", ()=>{
-      // open drive link in new tab
       window.open(DRIVE_LINK, "_blank", "noopener,noreferrer");
     });
 
-    // Keyboard support (desktop)
+    // Keyboard (desktop)
     window.addEventListener("keydown", (e)=>{
       if(gameUI.style.display !== "block") return;
       if(state?.over) return;
-      if(e.key === "a" || e.key === "A" || e.key === "Enter") attack();
+      if(e.key === "Enter" || e.key === "a" || e.key === "A") attack();
       if(e.key === "d" || e.key === "D") defend();
+      if(e.key === "p" || e.key === "P") potion();
     });
 
-    // Touch-friendly extra: tap hero to attack, tap enemy to attack too (optional)
-    arena.addEventListener("pointerdown", (e)=>{
-      if(gameUI.style.display !== "block") return;
-      if(state?.over) return;
+    // ===== Make enemy float more when Vecna
+    const enemyCol = document.getElementById("enemyCol");
+    const enemyColObserver = new MutationObserver(()=>{});
+    enemyColObserver.observe(enemyImg, { attributes:true, attributeFilter:["src"] });
 
-      // simple sparks on touch anywhere in arena
-      spawnSparks(e.clientX, e.clientY, 10);
-
-      // Don’t auto-attack if user hits buttons
-      const isButton = e.target.closest("button");
-      if(isButton) return;
-
-      // If user taps near enemy side -> attack, else defend (feels like arcade)
-      if(e.clientX > window.innerWidth * 0.55) attack();
-      else defend();
-    }, { passive:true });
+    // Init
+    resetGame();
   </script>
 </body>
 </html>
