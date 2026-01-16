@@ -271,6 +271,10 @@
       background: rgba(0,0,0,.18);
       overflow:hidden;
       min-height: 300px;
+      padding: 78px 12px 12px;  /* ✅ deja espacio para la msgBox */
+      display:flex;
+      align-items:flex-end;
+      justify-content:center;
     }
 
     .msgBox{
@@ -291,28 +295,35 @@
     }
     .msgBox strong{ color: rgba(0,255,255,.85); }
 
-    .sprite{
-      position:absolute;
-      left:50%;
-      bottom: 10px;
-      transform: translateX(-50%);
-      width: min(42vw, 320px);
-      max-width: 92%;
-      height:auto;
+    /* ✅ SLOT + IMÁGENES (arregla recorte y encimado) */
+    .spriteSlot{
+      width:100%;
+      height:100%;
+      min-height: 260px;
+      display:flex;
+      align-items:flex-end;
+      justify-content:center;
+      padding: 10px 10px 12px;
+    }
+    .spriteImg{
+      width:auto;
+      max-width:100%;
+      height:min(46vh, 440px);
+      max-height:100%;
+      object-fit:contain;
       user-select:none;
       pointer-events:none;
       filter: drop-shadow(0 0 22px rgba(255,0,72,.18));
-      z-index:4;
     }
 
-    .enemySprite{
-      width: min(34vw, 260px);
-      opacity:.98;
-      animation: floaty 3.2s ease-in-out infinite;
+    /* Enemy floats */
+    .enemyFloat{
+      animation: floatEnemy 3.2s ease-in-out infinite;
+      filter: drop-shadow(0 0 22px rgba(255,0,72,.18));
     }
-    @keyframes floaty{
-      0%,100%{ transform: translateX(-50%) translateY(0); }
-      50%{ transform: translateX(-50%) translateY(-10px); }
+    @keyframes floatEnemy{
+      0%,100%{ transform: translateY(0); }
+      50%{ transform: translateY(-12px); }
     }
 
     /* Controls */
@@ -495,13 +506,13 @@
     @media (max-width: 820px){
       .arena{ grid-template-columns: 1fr; }
       .col{ min-height: 320px; }
-      .sprite{ width: min(70vw, 340px); }
-      .enemySprite{ width: min(55vw, 300px); }
+      .spriteImg{ height:min(44vh, 420px); }
     }
     @media (max-width: 420px){
       .logo{ font-size:24px; }
       .title{ font-size:14px; }
       .btn{ min-width: 140px; font-size:10px; }
+      .spriteImg{ height:min(42vh, 380px); }
     }
   </style>
 </head>
@@ -580,15 +591,21 @@
               <div class="msgBox" id="battleMsg">
                 <strong>Quest:</strong> Survive the dungeon.<br>Pick your move.
               </div>
-              <div class="spriteSlot hero">
-  <img class="spriteImg" id="heroImg" src="img/warrior.PNG" alt="Dayanara Warrior">
-</div>
+
+              <!-- ✅ HERO: ahora siempre entra completo -->
+              <div class="spriteSlot">
+                <img class="spriteImg" id="heroImg" src="img/warrior.PNG" alt="Dayanara Warrior">
+              </div>
             </div>
 
             <!-- ENEMY COLUMN -->
             <div class="col" id="enemyCol">
               <div class="msgBox" id="vecnaMsg" style="text-align:right;">THEY HEAR YOUR HEARTBEAT.</div>
-              <img class="sprite enemySprite" id="enemyImg" src="img/demobat.png" alt="Enemy">
+
+              <!-- ✅ ENEMY: su propio slot, flota, no se encima -->
+              <div class="spriteSlot">
+                <img class="spriteImg enemyFloat" id="enemyImg" src="img/demobat.png" alt="Enemy">
+              </div>
             </div>
           </div>
 
@@ -908,7 +925,6 @@
     function enemyTurn(){
       if(state.over) return;
 
-      // reduced enemy damage
       const base = state.e.name === "VECNA" ? rand(7,12) : rand(5,10);
       let dmg = Math.round(base);
 
@@ -933,7 +949,6 @@
     function attack(){
       if(state.over) return;
 
-      // slightly buff player damage
       const base = state.e.name === "VECNA" ? rand(12,18) : rand(13,21);
       const dmg = Math.round(base);
 
@@ -1001,7 +1016,6 @@
 
       if(state.pots <= 0) potionBtn.disabled = true;
 
-      // Enemy still gets a turn after potion (fair but winnable)
       setTimeout(enemyTurn, 650);
     }
 
@@ -1067,11 +1081,6 @@
       if(e.key === "d" || e.key === "D") defend();
       if(e.key === "p" || e.key === "P") potion();
     });
-
-    // ===== Make enemy float more when Vecna
-    const enemyCol = document.getElementById("enemyCol");
-    const enemyColObserver = new MutationObserver(()=>{});
-    enemyColObserver.observe(enemyImg, { attributes:true, attributeFilter:["src"] });
 
     // Init
     resetGame();
