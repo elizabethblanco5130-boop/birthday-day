@@ -1,10 +1,1064 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Facts</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Facts — Vecna Case File</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.cdnfonts.com/css/benguiat" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --red: rgba(255,0,0,.75);
+      --red2: rgba(255,0,0,.28);
+      --glass: rgba(0,0,0,.55);
+      --glass2: rgba(0,0,0,.30);
+      --txt: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.78);
+      --cyan: rgba(0,255,255,.16);
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      background:#000;
+      color:#fff;
+      overflow:hidden;
+      font-family: system-ui, -apple-system, Arial;
+    }
+
+    /* ===== VIDEO BACKGROUND ===== */
+    .bg{
+      position:fixed; inset:0;
+      z-index:0;
+      background:#000;
+      overflow:hidden;
+    }
+    .bg video{
+      position:absolute; inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      filter: contrast(1.05) saturate(.9) brightness(.65);
+      transform: scale(1.02);
+    }
+
+    /* overlays */
+    .vignette{
+      position:fixed; inset:0; z-index:2;
+      pointer-events:none;
+      background:
+        radial-gradient(ellipse at 40% 30%, rgba(0,0,0,.10), rgba(0,0,0,.78)),
+        radial-gradient(ellipse at 70% 70%, rgba(0,0,0,.18), rgba(0,0,0,.88));
+    }
+    .redMist{
+      position:fixed; inset:0; z-index:3;
+      pointer-events:none;
+      background: radial-gradient(circle at 22% 70%, rgba(255,0,0,.12), rgba(0,0,0,0));
+      opacity:.35;
+      mix-blend-mode: screen;
+      filter: blur(2px);
+    }
+    .noise{
+      position:fixed; inset:0; z-index:4;
+      pointer-events:none;
+      opacity:.10;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.65'/%3E%3C/svg%3E");
+    }
+
+    /* Lightning flash */
+    .flash{
+      position:fixed; inset:0; z-index:50;
+      pointer-events:none;
+      opacity:0;
+      background:
+        radial-gradient(circle at 70% 30%, rgba(255,0,0,.45), rgba(255,0,0,0)),
+        radial-gradient(circle at 20% 80%, rgba(255,0,0,.25), rgba(0,0,0,0));
+      mix-blend-mode: screen;
+      transition: opacity .12s ease;
+    }
+    body.flashing .flash{ opacity:1; }
+
+    /* Lightning cracks (SVG lines feeling) */
+    .cracks{
+      position:fixed; inset:0; z-index:40;
+      pointer-events:none;
+      opacity:.9;
+      filter: drop-shadow(0 0 20px rgba(255,0,0,.22));
+    }
+    .crack{
+      position:absolute;
+      width:240px; height:240px;
+      border:1px solid rgba(255,0,0,.18);
+      border-radius:18px;
+      background:
+        linear-gradient(120deg, rgba(255,0,0,.0), rgba(255,0,0,.22), rgba(255,0,0,.0));
+      transform: rotate(18deg);
+      opacity:0;
+      animation: crack 6.8s ease-in-out infinite;
+    }
+    .crack.c1{ left:8%; top:12%; animation-delay: .4s; }
+    .crack.c2{ right:10%; top:24%; animation-delay: 1.3s; transform: rotate(-14deg); width:280px; height:280px; }
+    .crack.c3{ left:14%; bottom:12%; animation-delay: 2.0s; transform: rotate(8deg); width:320px; height:220px; }
+    .crack.c4{ right:12%; bottom:16%; animation-delay: 3.1s; transform: rotate(-8deg); width:240px; height:300px; }
+    @keyframes crack{
+      0%,100%{ opacity:0; filter: blur(8px); }
+      44%{ opacity:0; }
+      50%{ opacity:.85; filter: blur(0px); }
+      58%{ opacity:.18; filter: blur(6px); }
+    }
+
+    /* Subtle shake on flashes */
+    @keyframes shake{
+      0%{ transform: translate(0,0); }
+      25%{ transform: translate(-1px,1px); }
+      50%{ transform: translate(1px,-1px); }
+      75%{ transform: translate(-1px,-1px); }
+      100%{ transform: translate(0,0); }
+    }
+    body.shake .stage{ animation: shake .18s linear 2; }
+
+    /* ===== TOP BAR ===== */
+    .top{
+      position:fixed;
+      left:14px; right:14px; top:14px;
+      display:flex; gap:10px;
+      align-items:center; justify-content:space-between;
+      z-index:80;
+      flex-wrap:wrap;
+    }
+    .chip, .btn{
+      border-radius:14px;
+      border:1px solid rgba(255,0,0,.55);
+      background: rgba(0,0,0,.45);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 18px rgba(255,0,0,.10);
+      color: var(--txt);
+      font-family:'Press Start 2P', monospace;
+      font-size:10px;
+      letter-spacing:.06em;
+      text-transform: uppercase;
+      padding:12px 14px;
+      user-select:none;
+    }
+    .btn{
+      cursor:pointer;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+    }
+    .btn:active{ transform: translateY(1px); }
+
+    .title{
+      flex:1;
+      min-width: 220px;
+      text-align:center;
+      font-family: 'Benguiat', serif;
+      font-size:18px;
+      letter-spacing:.10em;
+      text-shadow:
+        0 0 18px rgba(255,0,0,.22),
+        2px 0 rgba(0,255,255,.10),
+        -2px 0 rgba(255,0,0,.10);
+    }
+
+    /* ===== MAIN STAGE ===== */
+    .stage{
+      position:fixed; inset:0;
+      display:grid;
+      place-items:center;
+      padding:74px 14px 86px;
+      z-index:60;
+    }
+
+    .panel{
+      width:min(980px, 96vw);
+      border-radius:22px;
+      border:1px solid rgba(255,0,0,.55);
+      background: rgba(0,0,0,.46);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 0 40px rgba(255,0,0,.12);
+      overflow:hidden;
+    }
+
+    .panelHead{
+      padding:14px 14px 12px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+
+    .stamp{
+      border:1px dashed rgba(255,255,255,.20);
+      background: rgba(0,0,0,.25);
+      padding:10px 12px;
+      border-radius:14px;
+      font-family:'Press Start 2P', monospace;
+      font-size:9px;
+      letter-spacing:.06em;
+      opacity:.9;
+      transform: rotate(-2deg);
+      white-space:nowrap;
+    }
+    .stamp.red{
+      border-color: rgba(255,0,0,.45);
+      box-shadow: 0 0 14px rgba(255,0,0,.14);
+    }
+    .stamp.cyan{
+      border-color: rgba(0,255,255,.25);
+      box-shadow: 0 0 14px rgba(0,255,255,.10);
+      transform: rotate(2deg);
+    }
+
+    .caseTitle{
+      flex:1;
+      min-width: 220px;
+      font-family:'Press Start 2P', monospace;
+      font-size:10px;
+      letter-spacing:.08em;
+      line-height:1.7;
+      color: rgba(255,255,255,.88);
+      text-align:center;
+    }
+    .caseTitle b{ color: rgba(255,255,255,.98); }
+
+    .panelBody{
+      padding:14px;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:12px;
+    }
+
+    /* Left: narrative */
+    .log{
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.25);
+      padding:14px 14px 12px;
+      min-height: 320px;
+      position:relative;
+      overflow:hidden;
+    }
+    .logTitle{
+      font-family:'Press Start 2P', monospace;
+      font-size:10px;
+      letter-spacing:.08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.90);
+      margin:0 0 10px;
+      text-shadow: 0 0 14px rgba(255,0,0,.14);
+    }
+    .logText{
+      font-family:'Press Start 2P', monospace;
+      font-size:10px;
+      line-height:1.9;
+      letter-spacing:.04em;
+      color: rgba(255,255,255,.86);
+      white-space:pre-wrap;
+      min-height: 220px;
+    }
+    .caret{
+      display:inline-block;
+      width:10px;
+      height:12px;
+      margin-left:4px;
+      background: rgba(255,255,255,.8);
+      animation: blink .9s step-end infinite;
+      vertical-align: -2px;
+    }
+    @keyframes blink{ 50%{ opacity:0; } }
+
+    /* Right: ritual + embed */
+    .rightCol{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .ritual{
+      border-radius:18px;
+      border:1px solid rgba(255,0,0,.40);
+      background: rgba(0,0,0,.28);
+      padding:14px;
+      position:relative;
+      overflow:hidden;
+    }
+    .ritual h3{
+      margin:0 0 10px;
+      font-family:'Press Start 2P', monospace;
+      font-size:10px;
+      letter-spacing:.08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.92);
+    }
+
+    .meter{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .orbRow{
+      display:flex; gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .orb{
+      width:14px; height:14px;
+      border-radius:50%;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.35);
+      box-shadow: inset 0 0 0 2px rgba(255,0,0,.06);
+    }
+    .orb.on{
+      background: rgba(255,0,0,.55);
+      box-shadow: 0 0 18px rgba(255,0,0,.22), 0 0 10px rgba(0,255,255,.10);
+      border-color: rgba(255,0,0,.55);
+    }
+
+    .ritualBtn{
+      margin-top:12px;
+      width:100%;
+      padding:12px 14px;
+      border-radius:14px;
+      border:2px solid rgba(255,0,0,.65);
+      background: rgba(0,0,0,.45);
+      color:#fff;
+      font-family:'Press Start 2P', monospace;
+      font-size:10px;
+      letter-spacing:.06em;
+      text-transform: uppercase;
+      cursor:pointer;
+      box-shadow: 0 0 18px rgba(255,0,0,.14);
+    }
+    .ritualBtn:active{ transform: translateY(1px); }
+    .ritualNote{
+      margin-top:10px;
+      font-family:'Press Start 2P', monospace;
+      font-size:9px;
+      line-height:1.6;
+      color: rgba(255,255,255,.78);
+      opacity:.95;
+    }
+
+    .embed{
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.22);
+      overflow:hidden;
+      min-height: 260px;
+      position:relative;
+    }
+    .embedCover{
+      position:absolute; inset:0;
+      display:grid;
+      place-items:center;
+      text-align:center;
+      padding:16px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,0,0,.10), rgba(0,0,0,.60));
+    }
+    .embedCover .big{
+      font-family:'Press Start 2P', monospace;
+      font-size:10px;
+      letter-spacing:.08em;
+      line-height:1.8;
+      color: rgba(255,255,255,.86);
+      text-transform: uppercase;
+    }
+    .embedCover .small{
+      margin-top:10px;
+      font-family: system-ui, -apple-system, Arial;
+      font-size:14px;
+      color: rgba(255,255,255,.80);
+      line-height:1.35;
+    }
+    iframe{
+      width:100%;
+      height: 360px;
+      border:0;
+      display:block;
+      background:#000;
+    }
+
+    /* ===== FLOATING OBJECTS ===== */
+    .floatLayer{
+      position:fixed; inset:0;
+      z-index:30;
+      pointer-events:none;
+    }
+    .obj{
+      position:absolute;
+      width:86px; height:86px;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      backdrop-filter: blur(6px);
+      box-shadow: inset 0 0 0 1px rgba(255,0,0,.10);
+      pointer-events:auto;
+      cursor:pointer;
+      user-select:none;
+      display:grid;
+      place-items:center;
+      overflow:hidden;
+      transform: rotate(-6deg);
+      transition: transform .18s ease, opacity .25s ease, filter .25s ease;
+    }
+    .obj:active{ transform: rotate(-6deg) scale(.98); }
+    .obj .ico{
+      font-size: 28px;
+      filter: drop-shadow(0 0 12px rgba(255,0,0,.18));
+      opacity:.95;
+    }
+    .obj .lbl{
+      position:absolute; left:10px; right:10px; bottom:9px;
+      text-align:center;
+      font-family:'Press Start 2P', monospace;
+      font-size:8px;
+      letter-spacing:.06em;
+      opacity:.82;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.82);
+    }
+
+    .obj.clock{ left:16px; top:110px; animation: drift 9s ease-in-out infinite; }
+    .obj.walkie{ left:16px; top:220px; transform: rotate(7deg); animation: drift 11s ease-in-out infinite; }
+    .obj.cass{ right:16px; top:120px; transform: rotate(-10deg); animation: drift 10s ease-in-out infinite; }
+    .obj.candle{ right:16px; top:230px; transform: rotate(10deg); animation: drift 12s ease-in-out infinite; }
+    .obj.portal{ left:16px; bottom:160px; transform: rotate(-10deg); animation: drift 13s ease-in-out infinite; opacity:.85; }
+
+    @keyframes drift{
+      0%,100%{ transform: translate(0,0) rotate(var(--r, 0deg)); }
+      50%{ transform: translate(12px,-16px) rotate(var(--r, 0deg)); }
+    }
+
+    /* ===== SPORES CANVAS ===== */
+    canvas#spores{
+      position:fixed; inset:0;
+      z-index:25;
+      pointer-events:none;
+      opacity:.95;
+    }
+
+    /* ===== FOOTER ===== */
+    .footer{
+      position:fixed;
+      left:14px; right:14px; bottom:14px;
+      z-index:80;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .footer .hint{
+      flex:1;
+      min-width: 260px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.30);
+      padding:12px 14px;
+      color: rgba(255,255,255,.86);
+      font-family:'Press Start 2P', monospace;
+      font-size:9px;
+      line-height:1.6;
+      letter-spacing:.05em;
+      text-align:center;
+      backdrop-filter: blur(10px);
+    }
+
+    /* ===== MODAL ===== */
+    .modal{
+      position:fixed; inset:0;
+      display:none;
+      z-index:120;
+    }
+    .modal.show{ display:block; }
+    .modal .backdrop{
+      position:absolute; inset:0;
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(6px);
+    }
+    .modal .box{
+      position:absolute;
+      left:50%; top:50%;
+      transform: translate(-50%,-50%);
+      width:min(92vw, 520px);
+      border-radius:18px;
+      border:1px solid rgba(255,0,0,.55);
+      background: rgba(0,0,0,.58);
+      box-shadow: 0 0 30px rgba(255,0,0,.18);
+      padding:16px;
+    }
+    .modal h3{
+      margin:0 0 10px;
+      font-family:'Press Start 2P', monospace;
+      font-size:11px;
+      letter-spacing:.08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.92);
+    }
+    .modal p{
+      margin:0;
+      line-height:1.65;
+      color: rgba(255,255,255,.86);
+      font-family: system-ui, -apple-system, Arial;
+      font-size:15px;
+    }
+    .modal .close{
+      margin-top:12px;
+      width:100%;
+    }
+
+    /* Click sparks */
+    .spark{
+      position:fixed;
+      width:10px; height:10px;
+      border-radius:50%;
+      background: rgba(255,0,0,.85);
+      box-shadow: 0 0 14px rgba(255,0,0,.8), 0 0 24px rgba(0,255,255,.18);
+      pointer-events:none;
+      transform: translate(-50%,-50%);
+      animation: pop .6s ease-out forwards;
+      z-index:200;
+    }
+    @keyframes pop{
+      from{ opacity:1; transform: translate(-50%,-50%) scale(.7); }
+      to{ opacity:0; transform: translate(-50%,-50%) scale(3.2); }
+    }
+
+    /* responsive */
+    @media (max-width: 860px){
+      .panelBody{ grid-template-columns: 1fr; }
+      iframe{ height: 320px; }
+      .obj{ width:78px; height:78px; }
+      .title{ font-size:14px; }
+    }
+    @media (max-width: 420px){
+      .title{ font-size:12px; }
+      .caseTitle{ font-size:9px; }
+      .logText{ font-size:9px; }
+      iframe{ height: 300px; }
+    }
+  </style>
 </head>
+
 <body>
-  FACTS PAGE
+
+  <!-- Background -->
+  <div class="bg">
+    <!-- ✅ CAMBIA ESTE VIDEO POR EL TUYO (por ahora: vecna-bg.mp4) -->
+    <video autoplay muted loop playsinline preload="auto" id="bgVid">
+      <source src="vecna-bg.mp4" type="video/mp4">
+    </video>
+  </div>
+
+  <div class="vignette"></div>
+  <div class="redMist"></div>
+  <div class="noise"></div>
+
+  <div class="cracks">
+    <div class="crack c1"></div>
+    <div class="crack c2"></div>
+    <div class="crack c3"></div>
+    <div class="crack c4"></div>
+  </div>
+  <div class="flash"></div>
+
+  <canvas id="spores"></canvas>
+
+  <!-- Audio (dark ambience) -->
+  <audio id="ambience" loop preload="auto">
+    <!-- ✅ Sube un mp3 oscuro e intenso con este nombre -->
+    <source src="facts-dark.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Top bar -->
+  <div class="top">
+    <a class="btn" href="index.html?v=1000">← VOLVER</a>
+    <div class="chip title">VECNA CASE FILES</div>
+    <button class="btn" id="soundBtn" type="button">MUSIC: OFF</button>
+  </div>
+
+  <!-- Floating objects -->
+  <div class="floatLayer" id="floatLayer">
+    <div class="obj clock" id="objClock" style="--r:-6deg" title="Clock">
+      <div class="ico">🕰️</div>
+      <div class="lbl">clock</div>
+    </div>
+    <div class="obj walkie" id="objWalkie" style="--r:7deg" title="Walkie">
+      <div class="ico">📻</div>
+      <div class="lbl">walkie</div>
+    </div>
+    <div class="obj cass" id="objCass" style="--r:-10deg" title="Cassette">
+      <div class="ico">📼</div>
+      <div class="lbl">tape</div>
+    </div>
+    <div class="obj candle" id="objCandle" style="--r:10deg" title="Candle">
+      <div class="ico">🕯️</div>
+      <div class="lbl">candle</div>
+    </div>
+    <div class="obj portal" id="objPortal" style="--r:-10deg" title="Portal">
+      <div class="ico">🕳️</div>
+      <div class="lbl">portal</div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="stage">
+    <div class="panel" id="panel">
+      <div class="panelHead">
+        <div class="stamp red">CONFIDENTIAL</div>
+        <div class="caseTitle" id="caseTitle">
+          <b>SUBJECT:</b> DAY • <b>STATUS:</b> TRACKED • <b>RULE:</b> NO SILENCE
+        </div>
+        <div class="stamp cyan">EVIDENCE LOCKED</div>
+      </div>
+
+      <div class="panelBody">
+        <!-- LEFT -->
+        <div class="log">
+          <div class="logTitle">INCIDENT LOG</div>
+          <div class="logText" id="logText"></div><span class="caret" id="caret"></span>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="rightCol">
+          <div class="ritual" id="ritual">
+            <h3>RITUAL: BREAK THE LOOP</h3>
+
+            <div class="meter">
+              <div class="orbRow" id="orbRow" aria-label="progress">
+                <div class="orb" id="orb1"></div>
+                <div class="orb" id="orb2"></div>
+                <div class="orb" id="orb3"></div>
+                <div class="orb" id="orb4"></div>
+                <div class="orb" id="orb5"></div>
+              </div>
+            </div>
+
+            <button class="ritualBtn" id="ritualBtn" type="button">HOLD TO UNLOCK</button>
+            <div class="ritualNote" id="ritualNote">
+              Mantén presionado para “abrir el archivo”.<br>
+              (La música ayuda a cortar la conexión.)
+            </div>
+          </div>
+
+          <div class="embed" id="embedBox">
+            <div class="embedCover" id="embedCover">
+              <div>
+                <div class="big">FILE SEALED</div>
+                <div class="small">
+                  Completa el ritual arriba para ver el video.
+                </div>
+              </div>
+            </div>
+            <!-- IFRAME SE INSERTA POR JS cuando se desbloquea -->
+            <div id="embedMount"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="hint">
+      TIP: toca objetos para mensajes. <b>Reloj (7 taps)</b> = señal oculta.
+      <br>Si se prende rojo… no te quedes quieta.
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal" id="modal" aria-hidden="true">
+    <div class="backdrop" id="modalBack"></div>
+    <div class="box">
+      <h3 id="modalTitle">SEÑAL</h3>
+      <p id="modalText">...</p>
+      <button class="btn close" id="modalClose" type="button">CERRAR</button>
+    </div>
+  </div>
+
+  <script>
+    // =========================
+    // CONFIG
+    // =========================
+    // ✅ Tu Drive link (ID ya puesto): 1PNAnsFPvncZiq-sJuf-fGuq8tRrIi2w6
+    const DRIVE_URL = "https://drive.google.com/file/d/1PNAnsFPvncZiq-sJuf-fGuq8tRrIi2w6/preview";
+
+    // =========================
+    // UTIL: sparks + modal
+    // =========================
+    function spark(x,y){
+      const s = document.createElement("div");
+      s.className = "spark";
+      s.style.left = x + "px";
+      s.style.top  = y + "px";
+      document.body.appendChild(s);
+      setTimeout(()=>s.remove(), 650);
+    }
+
+    const modal = document.getElementById("modal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalText = document.getElementById("modalText");
+    const modalClose = document.getElementById("modalClose");
+    const modalBack = document.getElementById("modalBack");
+
+    function openModal(title, text){
+      modalTitle.textContent = title;
+      modalText.textContent = text;
+      modal.classList.add("show");
+      modal.setAttribute("aria-hidden","false");
+    }
+    function closeModal(){
+      modal.classList.remove("show");
+      modal.setAttribute("aria-hidden","true");
+    }
+    modalClose.addEventListener("click", closeModal);
+    modalBack.addEventListener("click", closeModal);
+
+    // =========================
+    // AUDIO (iPhone-safe)
+    // =========================
+    const ambience = document.getElementById("ambience");
+    const soundBtn = document.getElementById("soundBtn");
+    let musicOn = false;
+    let started = false;
+
+    function updateSoundBtn(){
+      soundBtn.textContent = musicOn ? "MUSIC: ON" : "MUSIC: OFF";
+    }
+
+    function startMusic(){
+      if(!ambience) return;
+      if(!started){
+        ambience.volume = 0.70; // intenso
+        started = true;
+      }
+      ambience.play().catch(()=>{});
+      musicOn = true;
+      updateSoundBtn();
+    }
+    function stopMusic(){
+      if(!ambience) return;
+      ambience.pause();
+      musicOn = false;
+      updateSoundBtn();
+    }
+
+    // first real gesture anywhere triggers audio attempt
+    function firstGesture(){
+      if(!musicOn) startMusic();
+      window.removeEventListener("pointerdown", firstGesture);
+      window.removeEventListener("touchstart", firstGesture);
+      window.removeEventListener("click", firstGesture);
+    }
+    window.addEventListener("pointerdown", firstGesture, {once:true});
+    window.addEventListener("touchstart", firstGesture, {once:true, passive:true});
+    window.addEventListener("click", firstGesture, {once:true});
+
+    soundBtn.addEventListener("click", (e)=>{
+      spark(e.clientX, e.clientY);
+      if(!musicOn) startMusic();
+      else stopMusic();
+    });
+    updateSoundBtn();
+
+    // =========================
+    // SPORES CANVAS (Upside Down feel)
+    // =========================
+    const canvas = document.getElementById("spores");
+    const ctx = canvas.getContext("2d");
+    let W=0, H=0, dpr=1;
+    const spores = [];
+    const COUNT = 160;
+
+    function resize(){
+      dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+      W = Math.floor(window.innerWidth);
+      H = Math.floor(window.innerHeight);
+      canvas.width = Math.floor(W*dpr);
+      canvas.height = Math.floor(H*dpr);
+      canvas.style.width = W+"px";
+      canvas.style.height = H+"px";
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    function rand(a,b){ return a + Math.random()*(b-a); }
+    function seed(){
+      spores.length = 0;
+      for(let i=0;i<COUNT;i++){
+        spores.push({
+          x: rand(0,W),
+          y: rand(0,H),
+          r: rand(0.7, 2.6),
+          vx: rand(-0.10, 0.14),
+          vy: rand(-0.22, -0.06),
+          a: rand(0.05, 0.22),
+          tw: rand(0, Math.PI*2)
+        });
+      }
+    }
+    seed();
+
+    function draw(){
+      ctx.clearRect(0,0,W,H);
+      for(const p of spores){
+        p.tw += 0.02;
+        p.x += p.vx + Math.sin(p.tw)*0.07;
+        p.y += p.vy;
+
+        if(p.x < -10) p.x = W+10;
+        if(p.x > W+10) p.x = -10;
+        if(p.y < -12) p.y = H+12;
+
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(255,255,255,${p.a})`;
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+        ctx.fill();
+
+        // red embers
+        if(Math.random() < 0.006){
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(255,0,0,${rand(0.08,0.22)})`;
+          ctx.arc(p.x+rand(-2,2), p.y+rand(-2,2), p.r+rand(0.6,1.8), 0, Math.PI*2);
+          ctx.fill();
+        }
+      }
+      requestAnimationFrame(draw);
+    }
+    draw();
+
+    // =========================
+    // NARRATIVE TYPING
+    // =========================
+    const logTextEl = document.getElementById("logText");
+    const caret = document.getElementById("caret");
+    const lines = [
+      "CASE FILE: SUBJECT — DAY",
+      "",
+      "EVIDENCE: MUSIC BREAKS THE CONNECTION.",
+      "WARNING: SILENCE AMPLIFIES THE SIGNAL.",
+      "",
+      "NOTE:",
+      "“When the noise gets too loud, this is what brings her back.”",
+      "",
+      "PROTOCOL:",
+      "- Do not stare at the clocks.",
+      "- Do not follow the whispers.",
+      "- If red lightning starts… MOVE.",
+      "",
+      "STATUS: WAITING FOR USER ACTION…"
+    ];
+
+    let typing = false;
+    async function typeAll(){
+      if(typing) return;
+      typing = true;
+      logTextEl.textContent = "";
+      caret.style.display = "inline-block";
+
+      for(const l of lines){
+        await typeLine(l);
+        logTextEl.textContent += "\n";
+        await sleep(120);
+      }
+      caret.style.display = "none";
+    }
+    function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+    async function typeLine(line){
+      for(let i=0;i<line.length;i++){
+        logTextEl.textContent += line[i];
+        await sleep(14 + Math.random()*20);
+      }
+    }
+    typeAll();
+
+    // =========================
+    // LIGHTNING SCHEDULER (red)
+    // =========================
+    function flashOnce(){
+      document.body.classList.add("flashing","shake");
+      setTimeout(()=> document.body.classList.remove("flashing"), 120);
+      setTimeout(()=> document.body.classList.remove("shake"), 220);
+    }
+
+    // random flashes
+    setInterval(()=>{
+      // more intense when music is OFF
+      const p = musicOn ? 0.18 : 0.32;
+      if(Math.random() < p){
+        flashOnce();
+      }
+    }, 2300);
+
+    // =========================
+    // OBJECTS (messages + clock 7 taps)
+    // =========================
+    const objClock = document.getElementById("objClock");
+    const objWalkie = document.getElementById("objWalkie");
+    const objCass = document.getElementById("objCass");
+    const objCandle = document.getElementById("objCandle");
+    const objPortal = document.getElementById("objPortal");
+
+    let clockTaps = 0;
+
+    function onObjClick(e, title, text){
+      const x = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? (window.innerWidth/2);
+      const y = e.clientY ?? (e.touches && e.touches[0]?.clientY) ?? 120;
+      spark(x,y);
+      // try start music (iPhone friendly)
+      if(!musicOn) startMusic();
+      openModal(title, text);
+    }
+
+    objWalkie.addEventListener("click", (e)=> onObjClick(e,
+      "WALKIE TRANSMISSION",
+      "📡 “Day… ¿me copias?”\n\nSi escuchas estática: RESPONDE con música.\nLa canción es la cuerda de regreso."
+    ));
+
+    objCass.addEventListener("click", (e)=> onObjClick(e,
+      "CASSETTE EVIDENCE",
+      "Una cinta etiquetada: “PLAY ME WHEN IT HURTS”.\n\nLa música no es nostalgia.\nEs supervivencia."
+    ));
+
+    objCandle.addEventListener("click", (e)=> onObjClick(e,
+      "CANDLE NOTE",
+      "La llama tiembla.\n\nSi la luz parpadea, no mires arriba.\nNo es el techo lo que está vivo."
+    ));
+
+    objPortal.addEventListener("click", (e)=> onObjClick(e,
+      "PORTAL RESIDUE",
+      "El aire aquí se siente… al revés.\n\nRegla simple:\nNo camines en silencio."
+    ));
+
+    objClock.addEventListener("click", (e)=>{
+      spark(e.clientX, e.clientY);
+      if(!musicOn) startMusic();
+
+      clockTaps++;
+      if(clockTaps >= 7){
+        clockTaps = 0;
+        flashOnce();
+        openModal("YOU ALMOST LOST HER.",
+          "El reloj intentó cerrar la puerta.\n\nPero la música la sostuvo.\n\nAbre el archivo… rápido."
+        );
+      }else{
+        openModal("CLOCK WARNING", "Tick…\nTock…\n\nNo le des tiempo a Vecna.");
+      }
+    });
+
+    // =========================
+    // RITUAL UNLOCK (hold)
+    // =========================
+    const ritualBtn = document.getElementById("ritualBtn");
+    const embedCover = document.getElementById("embedCover");
+    const embedMount = document.getElementById("embedMount");
+    const orbs = [
+      document.getElementById("orb1"),
+      document.getElementById("orb2"),
+      document.getElementById("orb3"),
+      document.getElementById("orb4"),
+      document.getElementById("orb5"),
+    ];
+
+    let holdTimer = null;
+    let holdProgress = 0;
+    let unlocked = false;
+
+    function setOrbs(n){
+      orbs.forEach((o,idx)=> o.classList.toggle("on", idx < n));
+    }
+
+    function unlock(){
+      if(unlocked) return;
+      unlocked = true;
+
+      // insert iframe
+      embedMount.innerHTML = `
+        <iframe
+          src="${DRIVE_URL}"
+          allow="autoplay; encrypted-media"
+          allowfullscreen
+          title="Facts Video">
+        </iframe>
+      `;
+
+      embedCover.style.display = "none";
+      flashOnce();
+      openModal("FILE OPENED", "Acceso concedido.\n\nSi el ruido vuelve… presiona MUSIC.");
+    }
+
+    function startHold(){
+      if(unlocked) return;
+
+      if(!musicOn) startMusic(); // help iPhone
+      holdProgress = 0;
+      setOrbs(0);
+      ritualBtn.textContent = "UNLOCKING…";
+
+      holdTimer = setInterval(()=>{
+        holdProgress++;
+        setOrbs(holdProgress);
+
+        // small chance flash while unlocking
+        if(Math.random() < 0.35) flashOnce();
+
+        if(holdProgress >= 5){
+          clearInterval(holdTimer);
+          holdTimer = null;
+          ritualBtn.textContent = "UNLOCKED";
+          unlock();
+        }
+      }, 220);
+    }
+
+    function cancelHold(){
+      if(unlocked) return;
+      if(holdTimer){
+        clearInterval(holdTimer);
+        holdTimer = null;
+      }
+      holdProgress = 0;
+      setOrbs(0);
+      ritualBtn.textContent = "HOLD TO UNLOCK";
+    }
+
+    // pointer events
+    ritualBtn.addEventListener("pointerdown", (e)=>{
+      spark(e.clientX, e.clientY);
+      startHold();
+    });
+    ritualBtn.addEventListener("pointerup", cancelHold);
+    ritualBtn.addEventListener("pointercancel", cancelHold);
+    ritualBtn.addEventListener("pointerleave", cancelHold);
+
+    // touch fallback
+    ritualBtn.addEventListener("touchstart", (e)=>{
+      const t = e.touches[0];
+      spark(t.clientX, t.clientY);
+      startHold();
+    }, {passive:true});
+    ritualBtn.addEventListener("touchend", cancelHold, {passive:true});
+
+    // global sparks on clicks (for vibe)
+    document.addEventListener("click", (e)=>{
+      // avoid double sparks on ritual button
+      if(e.target === ritualBtn) return;
+      spark(e.clientX, e.clientY);
+    }, {passive:true});
+  </script>
 </body>
 </html>
