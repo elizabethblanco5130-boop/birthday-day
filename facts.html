@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>FACTS — ARCADE QUEST</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,733 +11,661 @@
 
   <style>
     :root{
-      --pink: rgba(255, 0, 153, .75);
-      --cyan: rgba(0, 255, 255, .35);
-      --red: rgba(255,0,0,.55);
+      --bg:#07070b;
+      --pink: rgba(255,0,153,.75);
+      --cyan: rgba(0,255,255,.35);
       --glass: rgba(0,0,0,.55);
-      --txt: rgba(255,255,255,.92);
+      --line: rgba(255,255,255,.12);
+      --white: rgba(255,255,255,.92);
       --muted: rgba(255,255,255,.72);
-      --panel: rgba(0,0,0,.42);
-      --line: rgba(255,255,255,.10);
-    }
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; }
-    body{
-      margin:0;
-      background:#000;
-      color:#fff;
-      overflow:hidden;
-      font-family: system-ui, -apple-system, Arial;
-      touch-action: manipulation;
+      --ok: rgba(0,255,170,.55);
+      --warn: rgba(255,90,90,.65);
     }
 
-    /* ===== BACKGROUND (you can change later) ===== */
+    *{ box-sizing:border-box; }
+    html, body{ height:100%; }
+    body{
+      margin:0;
+      background: radial-gradient(circle at 30% 20%, rgba(255,0,153,.12), rgba(0,0,0,.92));
+      color:#fff;
+      font-family: system-ui, -apple-system, Arial;
+      overflow:auto;               /* ✅ para que NO se congele */
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* fondo arcade */
     .bg{
       position:fixed; inset:0;
       background:
-        radial-gradient(circle at 30% 20%, rgba(255,0,153,.14), rgba(0,0,0,.88)),
-        radial-gradient(circle at 80% 70%, rgba(0,255,255,.10), rgba(0,0,0,.92));
+        radial-gradient(circle at 75% 25%, rgba(0,255,255,.10), rgba(0,0,0,0)),
+        radial-gradient(circle at 20% 80%, rgba(255,0,153,.10), rgba(0,0,0,0)),
+        linear-gradient(180deg, rgba(0,0,0,.65), rgba(0,0,0,.88));
+      pointer-events:none;
       z-index:0;
     }
-
-    /* CRT overlay */
-    .crt{
-      position:fixed; inset:0;
-      pointer-events:none;
-      z-index:5;
+    .gridGlow{
+      position:fixed; inset:-20%;
       background:
-        linear-gradient(to bottom, rgba(255,255,255,.04), rgba(255,255,255,0) 18%, rgba(0,0,0,.08)),
-        repeating-linear-gradient(to bottom, rgba(255,255,255,.03) 0px, rgba(255,255,255,.03) 1px, rgba(0,0,0,0) 3px, rgba(0,0,0,0) 5px);
-      mix-blend-mode: screen;
-      opacity:.35;
-    }
-    .vignette{
-      position:fixed; inset:0;
+        linear-gradient(90deg, rgba(0,255,255,.10) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(255,0,153,.10) 1px, transparent 1px);
+      background-size: 48px 48px;
+      transform: rotate(8deg);
+      opacity:.12;
+      filter: blur(.2px);
       pointer-events:none;
-      z-index:6;
-      background: radial-gradient(ellipse at center, rgba(0,0,0,.06), rgba(0,0,0,.86));
+      z-index:0;
+      animation: drift 10s ease-in-out infinite;
+    }
+    @keyframes drift{
+      0%,100%{ transform: rotate(8deg) translate(0,0); }
+      50%{ transform: rotate(8deg) translate(18px,-14px); }
     }
 
-    /* top bar */
-    .top{
-      position:fixed; left:14px; right:14px; top:14px;
-      display:flex; gap:10px;
-      align-items:center; justify-content:space-between;
-      z-index:50;
-      flex-wrap:wrap;
-    }
-    .chip, .btn{
-      border-radius:14px;
-      border:1px solid rgba(255,0,153,.45);
-      background: rgba(0,0,0,.45);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 0 20px rgba(255,0,153,.10);
-      color: var(--txt);
-      font-family:'Press Start 2P', monospace;
-      font-size:10px;
-      letter-spacing:.06em;
-      text-transform: uppercase;
-      padding:12px 14px;
-      user-select:none;
-    }
-    .btn{ cursor:pointer; }
-    .btn:active{ transform: translateY(1px); }
-    a.btn{ text-decoration:none; display:inline-flex; align-items:center; justify-content:center; }
-
-    .title{
-      flex:1;
-      min-width: 260px;
-      text-align:center;
-      border-color: rgba(255,255,255,.10);
-      box-shadow: 0 0 20px rgba(0,255,255,.08);
-      letter-spacing:.10em;
-    }
-
-    /* main stage */
-    .stage{
-      position:fixed; inset:0;
-      padding:78px 14px 98px;
-      z-index:20;
-      display:grid;
-      place-items:center;
-    }
-
-    .cabinet{
-      width:min(1100px, 96vw);
-      height:min(76vh, 720px);
-      border-radius:26px;
-      border:1px solid rgba(255,255,255,.10);
-      background: linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.32));
-      backdrop-filter: blur(10px);
-      box-shadow:
-        0 0 0 2px rgba(255,0,153,.08),
-        0 0 36px rgba(255,0,153,.12),
-        0 0 30px rgba(0,255,255,.08);
-      overflow:hidden;
+    /* layout */
+    .wrap{
       position:relative;
+      z-index:2;
+      min-height:100vh;
+      padding: 16px 14px 18px;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      max-width: 980px;
+      margin: 0 auto;
     }
 
-    /* neon header inside cabinet */
-    .cabHeader{
-      padding:14px 14px 12px;
-      border-bottom: 1px solid var(--line);
+    .topbar{
       display:flex;
       gap:10px;
       align-items:center;
       justify-content:space-between;
       flex-wrap:wrap;
-      background: rgba(0,0,0,.22);
     }
-    .cabHeader .big{
-      font-size:14px;
-      letter-spacing:.10em;
-      text-shadow: 0 0 18px rgba(255,0,153,.18), 2px 0 rgba(0,255,255,.10), -2px 0 rgba(255,0,0,.10);
-    }
-    .statline{
-      display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;
-      font-family:'Press Start 2P', monospace;
-      font-size:10px;
-      letter-spacing:.06em;
-      color: var(--muted);
-    }
-    .pill{
-      padding:10px 12px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.28);
-    }
-
-    /* battle grid */
-    .battle{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:14px;
-      padding:14px;
-      height: calc(100% - 64px);
-    }
-
-    .panel{
-      border-radius:20px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.28);
-      box-shadow: inset 0 0 0 1px rgba(255,0,153,.08);
-      overflow:hidden;
-      position:relative;
-      min-height: 280px;
-    }
-
-    /* hero / enemy presentation */
-    .who{
-      display:flex;
-      gap:12px;
-      padding:14px;
-      align-items:center;
-      border-bottom:1px solid rgba(255,255,255,.08);
-      background: rgba(0,0,0,.20);
-    }
-    .avatar{
-      width:96px; height:96px;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.12);
-      overflow:hidden;
-      background: rgba(0,0,0,.35);
-      box-shadow: 0 0 18px rgba(255,0,153,.10);
-      flex:0 0 auto;
-    }
-    .avatar img{
-      width:100%; height:100%;
-      object-fit:cover;
-      display:block;
-    }
-    .meta{
-      flex:1;
-      min-width: 0;
-    }
-    .name{
-      font-family:'Press Start 2P', monospace;
-      font-size:11px;
-      letter-spacing:.06em;
-      text-transform: uppercase;
-      color: var(--txt);
-      line-height:1.35;
-    }
-    .sub{
-      margin-top:8px;
-      font-family:'Press Start 2P', monospace;
-      font-size:9px;
-      letter-spacing:.06em;
-      color: rgba(255,255,255,.72);
-      line-height:1.6;
-    }
-
-    .log{
-      padding:14px;
-      font-family:'Press Start 2P', monospace;
-      font-size:10px;
-      letter-spacing:.05em;
-      line-height:1.65;
-      color: rgba(255,255,255,.86);
-      height: calc(100% - 126px);
-      overflow:auto;
-      -webkit-overflow-scrolling: touch;
-    }
-    .log .line{ margin-bottom:10px; }
-    .log .good{ color: rgba(0,255,255,.85); }
-    .log .bad{ color: rgba(255,0,0,.75); }
-    .log .warn{ color: rgba(255,255,255,.78); }
-
-    /* timing bar */
-    .timing{
-      padding:14px;
-      border-top:1px solid rgba(255,255,255,.08);
-      background: rgba(0,0,0,.18);
-    }
-    .bar{
-      height:14px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.30);
-      overflow:hidden;
-      position:relative;
-    }
-    .zone{
-      position:absolute; top:0; bottom:0;
-      left:62%;
-      width:14%;
-      background: rgba(0,255,255,.22);
-      box-shadow: 0 0 16px rgba(0,255,255,.20);
-    }
-    .needle{
-      position:absolute; top:-6px;
-      width:6px; height:26px;
-      border-radius:4px;
-      background: rgba(255,255,255,.88);
-      box-shadow: 0 0 18px rgba(255,0,153,.22);
-      left:0%;
-      transform: translateX(-50%);
-    }
-    .timingHint{
-      margin-top:10px;
-      font-family:'Press Start 2P', monospace;
-      font-size:9px;
-      letter-spacing:.05em;
-      color: rgba(255,255,255,.70);
-      line-height:1.6;
-    }
-
-    /* controls bottom */
-    .controls{
-      position:fixed;
-      left:14px; right:14px; bottom:14px;
-      display:grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap:10px;
-      z-index:60;
-    }
-    .act{
-      padding:14px 12px;
-      border-radius:16px;
+    .chip{
       border:1px solid rgba(255,0,153,.55);
-      background: rgba(0,0,0,.55);
+      background: rgba(0,0,0,.45);
       backdrop-filter: blur(10px);
+      border-radius:16px;
+      padding:12px 14px;
       box-shadow: 0 0 18px rgba(255,0,153,.10);
-      color:#fff;
+    }
+    .btn{
+      appearance:none;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.45);
+      color: var(--white);
+      padding:12px 14px;
+      border-radius:16px;
       font-family:'Press Start 2P', monospace;
       font-size:10px;
       letter-spacing:.06em;
       text-transform: uppercase;
       cursor:pointer;
       user-select:none;
+      backdrop-filter: blur(10px);
     }
-    .act.main{
-      border:2px solid rgba(0,255,255,.35);
-      box-shadow: 0 0 0 2px rgba(0,255,255,.08), 0 0 24px rgba(255,0,153,.12);
+    .btn:active{ transform: translateY(1px); }
+    .btn.main{
+      border:2px solid rgba(255,0,153,.70);
+      box-shadow: 0 0 18px rgba(255,0,153,.16);
     }
-    .act:active{ transform: translateY(1px); }
-    .act[disabled]{ opacity:.45; cursor:not-allowed; }
+    .btn.ok{
+      border:2px solid rgba(0,255,170,.55);
+      box-shadow: 0 0 18px rgba(0,255,170,.12);
+    }
 
-    /* unlock modal */
-    .modal{
-      position:fixed; inset:0;
-      display:none;
-      z-index:120;
-    }
-    .modal.show{ display:block; }
-    .modal .backdrop{
-      position:absolute; inset:0;
-      background: rgba(0,0,0,.75);
-      backdrop-filter: blur(6px);
-    }
-    .modal .box{
-      position:absolute;
-      left:50%; top:50%;
-      transform: translate(-50%,-50%);
-      width:min(92vw, 680px);
-      border-radius:22px;
-      border:1px solid rgba(0,255,255,.22);
-      background: rgba(0,0,0,.62);
-      box-shadow: 0 0 40px rgba(255,0,153,.14);
-      padding:16px;
-    }
-    .modal .h{
+    .title{
       font-family:'Press Start 2P', monospace;
+      font-size:14px;
       letter-spacing:.08em;
-      font-size:12px;
-      line-height:1.6;
-      margin:0 0 10px;
-      text-transform: uppercase;
+      text-transform:uppercase;
+      text-shadow: 2px 0 rgba(0,255,255,.18), -2px 0 rgba(255,0,153,.18);
     }
-    .modal .p{
-      font-family:'Press Start 2P', monospace;
-      font-size:10px;
-      line-height:1.75;
-      color: rgba(255,255,255,.84);
-      margin:0 0 14px;
+    .sub{
+      margin-top:8px;
+      color: var(--muted);
+      font-size:13px;
+      line-height:1.45;
     }
-    .modal .row{
-      display:flex; gap:10px; flex-wrap:wrap;
+
+    /* HUD */
+    .hud{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
     }
-    .modal .row .btn2{
-      flex:1;
-      min-width: 160px;
-      padding:14px 12px;
+    .stat{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.35);
       border-radius:16px;
-      border:1px solid rgba(255,0,153,.55);
-      background: rgba(0,0,0,.55);
-      color:#fff;
+      padding:12px 14px;
+      backdrop-filter: blur(10px);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
       font-family:'Press Start 2P', monospace;
       font-size:10px;
       letter-spacing:.06em;
-      text-transform: uppercase;
-      cursor:pointer;
+      text-transform:uppercase;
     }
-    .modal .row a.btn2{ text-decoration:none; display:flex; align-items:center; justify-content:center; }
-    .modal .row .btn2.main{ border:2px solid rgba(0,255,255,.35); }
-    .modal .row .btn2:active{ transform: translateY(1px); }
+    .stat b{ color: var(--white); font-weight:700; }
+    .stat small{ opacity:.8; }
+
+    /* arena */
+    .arena{
+      border-radius:22px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.35);
+      box-shadow:
+        0 0 0 2px rgba(255,0,153,.08),
+        0 0 28px rgba(0,255,255,.08);
+      backdrop-filter: blur(10px);
+      overflow:hidden;
+    }
+
+    .arenaTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:12px 14px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      flex-wrap:wrap;
+    }
+    .arenaTop .tag{
+      font-family:'Press Start 2P', monospace;
+      font-size:10px;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      opacity:.9;
+    }
+    .arenaTop .hint{
+      font-size:12px;
+      opacity:.75;
+      line-height:1.35;
+    }
+
+    .field{
+      position:relative;
+      height: 420px;
+      background:
+        radial-gradient(circle at 50% 40%, rgba(255,0,153,.10), rgba(0,0,0,0)),
+        radial-gradient(circle at 70% 70%, rgba(0,255,255,.10), rgba(0,0,0,0)),
+        linear-gradient(180deg, rgba(0,0,0,.30), rgba(0,0,0,.55));
+    }
+
+    /* sprites */
+    .sprite{
+      position:absolute;
+      width: 180px;   /* base, luego warrior será más grande con clase */
+      height:auto;
+      user-select:none;
+      -webkit-user-drag:none;
+      filter: drop-shadow(0 0 18px rgba(255,0,153,.20));
+      transition: transform .12s ease;
+    }
+    .sprite:active{ transform: scale(.98); }
+
+    .warrior{
+      width: 240px; /* ✅ MÁS GRANDE */
+      left: 10%;
+      top: 18%;
+      cursor:pointer;
+      filter: drop-shadow(0 0 24px rgba(0,255,255,.18)) drop-shadow(0 0 18px rgba(255,0,153,.16));
+    }
+
+    .enemy{
+      width: 150px;
+      right: 10%;
+      top: 18%;
+      opacity:.95;
+      cursor:pointer;
+      filter: drop-shadow(0 0 22px rgba(255,0,0,.22));
+    }
+    .enemy.demobat{ right: 12%; top: 26%; width: 140px; }
+    .enemy.vecna{ right: 8%; top: 54%; width: 170px; }
+
+    /* floating text console */
+    .console{
+      padding:12px 14px;
+      border-top:1px solid rgba(255,255,255,.10);
+      font-family:'Press Start 2P', monospace;
+      font-size:10px;
+      letter-spacing:.04em;
+      line-height:1.7;
+      min-height: 96px;
+    }
+    .console .line{ opacity:.9; }
+    .console .good{ color: rgba(0,255,170,.95); }
+    .console .bad{ color: rgba(255,120,120,.95); }
+    .console .sys{ color: rgba(0,255,255,.85); }
+
+    /* mobile controls */
+    .controls{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      padding:12px 14px 14px;
+      border-top:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.22);
+    }
+    .pad{
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap:8px;
+      align-items:center;
+      justify-items:center;
+    }
+    .pad .d{
+      width: 54px;
+      height: 46px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.45);
+      font-family:'Press Start 2P', monospace;
+      font-size:10px;
+      color: var(--white);
+      cursor:pointer;
+      user-select:none;
+    }
+    .pad .d:active{ transform: translateY(1px); }
+    .pad .empty{ opacity:0; pointer-events:none; }
+
+    .actions{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      justify-content:center;
+    }
+
+    /* sparkle */
+    .spark{
+      position:fixed;
+      width:10px; height:10px;
+      border-radius:50%;
+      background: rgba(255,0,153,.85);
+      box-shadow: 0 0 16px rgba(255,0,153,.75), 0 0 26px rgba(0,255,255,.25);
+      pointer-events:none;
+      transform: translate(-50%,-50%);
+      animation: pop .55s ease-out forwards;
+      z-index:999;
+    }
+    @keyframes pop{
+      from{ opacity:1; transform: translate(-50%,-50%) scale(.7); }
+      to{ opacity:0; transform: translate(-50%,-50%) scale(3.0); }
+    }
 
     /* responsive */
-    @media (max-width: 900px){
-      .battle{ grid-template-columns: 1fr; height:auto; }
-      .cabinet{ height: min(78vh, 820px); }
-      .controls{ grid-template-columns: 1fr 1fr; }
-      .avatar{ width:88px; height:88px; }
-      .cabHeader .big{ font-size:12px; }
+    @media (min-width: 900px){
+      .hud{ grid-template-columns: 1fr 1fr 1fr 1fr; }
+      .field{ height: 520px; }
+      .warrior{ width: 280px; }
+      .enemy.vecna{ width: 190px; }
+      .controls{ grid-template-columns: 1.2fr .8fr; }
     }
     @media (max-width: 420px){
-      .title{ min-width: 220px; }
-      .chip, .btn{ font-size:9px; padding:11px 12px; }
-      .log{ font-size:9px; }
-      .act{ font-size:9px; padding:13px 10px; }
+      .title{ font-size:12px; }
+      .sub{ font-size:12px; }
+      .warrior{ width: 230px; left: 6%; top: 16%; }
+      .enemy.demobat{ right: 6%; top: 20%; }
+      .enemy.vecna{ right: 4%; top: 58%; }
     }
   </style>
 </head>
 
 <body>
   <div class="bg"></div>
-  <div class="crt"></div>
-  <div class="vignette"></div>
+  <div class="gridGlow"></div>
 
-  <div class="top">
-    <a class="btn" href="index.html?v=1000">← VOLVER</a>
-    <div class="chip title">FACTS // ARCADE QUEST</div>
-    <button class="btn" id="musicBtn" type="button">SFX: ON</button>
-  </div>
+  <main class="wrap">
+    <div class="topbar">
+      <a class="btn" href="index.html?v=1000">← BACK</a>
+      <div class="chip" style="flex:1;">
+        <div class="title">DUNGEONS &amp; DRAGONS — ARCADE QUEST</div>
+        <div class="sub">
+          Dayanara entra al <b>ARCADE</b>. La pantalla parpadea. Un <b>QUEST</b> aparece:
+          <span style="opacity:.9;">derrota a los minions… y mira el archivo oculto.</span>
+        </div>
+      </div>
+      <button class="btn main" id="startBtn" type="button">START</button>
+    </div>
 
-  <div class="stage">
-    <div class="cabinet">
-      <div class="cabHeader">
-        <div class="chip big">DAYANARA — THE PARTY LEADER</div>
-        <div class="statline">
-          <div class="pill">HP: <span id="hp">10</span>/10</div>
-          <div class="pill">XP: <span id="xp">0</span></div>
-          <div class="pill">RUNES: <span id="wins">0</span>/3</div>
+    <section class="hud">
+      <div class="stat"><span>PLAYER</span><b id="playerName">DAYANARA</b></div>
+      <div class="stat"><span>LEVEL</span><b id="lvl">01</b></div>
+      <div class="stat"><span>HP</span><b id="hp">100</b></div>
+      <div class="stat"><span>QUEST</span><b id="quest">LOCKED</b></div>
+    </section>
+
+    <section class="arena" aria-label="Arcade Arena">
+      <div class="arenaTop">
+        <div class="tag">MODE: ARCADE</div>
+        <div class="hint">
+          PC: usa <b>W A S D</b> o flechas + <b>SPACE</b> (ATTACK). <br>
+          Móvil: usa el pad + <b>ATTACK</b>. Toca a los enemigos para golpe crítico.
         </div>
       </div>
 
-      <div class="battle">
-        <!-- HERO PANEL -->
-        <section class="panel">
-          <div class="who">
-            <div class="avatar">
-              <!-- Cambia esta ruta si tu archivo tiene otro nombre -->
-              <img id="heroImg" src="img/warrior.jpg" alt="Dayanara Hero">
-            </div>
-            <div class="meta">
-              <div class="name">DAYANARA // HERO</div>
-              <div class="sub">Clase: Paladin • Arma: Sword + Shield<br>Objetivo: 3 RUNES para abrir el archivo.</div>
-            </div>
-          </div>
+      <div class="field" id="field">
+        <!-- ✅ Warrior (cambia el nombre del archivo si es otro) -->
+        <img
+          id="warrior"
+          class="sprite warrior"
+          src="img/warrior.jpg"
+          alt="Dayanara — Warrior"
+          draggable="false"
+        />
 
-          <div class="log" id="log"></div>
+        <!-- ✅ Enemigos -->
+        <img
+          id="demobat"
+          class="sprite enemy demobat"
+          src="img/demobat.png"
+          alt="Demobat"
+          draggable="false"
+        />
 
-          <div class="timing">
-            <div class="bar" aria-label="Timing bar">
-              <div class="zone" id="zone"></div>
-              <div class="needle" id="needle"></div>
-            </div>
-            <div class="timingHint">Tip: toca en el momento “CYAN” para CRIT. (Tap / Space / Enter)</div>
-          </div>
-        </section>
-
-        <!-- ENEMY PANEL -->
-        <section class="panel">
-          <div class="who">
-            <div class="avatar" style="box-shadow:0 0 18px rgba(255,0,0,.12);">
-              <img id="enemyImg" src="img/Demogorgon.png" alt="Enemy">
-            </div>
-            <div class="meta">
-              <div class="name" id="enemyName">ENEMY // DEMO</div>
-              <div class="sub">Threat: <span id="enemyThreat">MED</span> • HP: <span id="enemyHp">8</span></div>
-            </div>
-          </div>
-
-          <div class="log">
-            <div class="line warn">INSERT COIN… ✅</div>
-            <div class="line warn">Regla: gana 3 rondas. Entonces se desbloquea el Drive.</div>
-            <div class="line warn">Si fallas el timing… Vecna se ríe.</div>
-          </div>
-        </section>
+        <img
+          id="vecna"
+          class="sprite enemy vecna"
+          src="img/enemigo2.png"
+          alt="Vecna"
+          draggable="false"
+        />
       </div>
-    </div>
-  </div>
 
-  <div class="controls">
-    <button class="act main" id="attackBtn" type="button">ATACAR</button>
-    <button class="act" id="defBtn" type="button">DEFENDER</button>
-    <button class="act" id="spellBtn" type="button">HECHIZO</button>
-    <button class="act" id="runBtn" type="button">RUN</button>
-  </div>
-
-  <!-- unlock modal -->
-  <div class="modal" id="modal">
-    <div class="backdrop"></div>
-    <div class="box">
-      <div class="h">ACCESS GRANTED</div>
-      <div class="p">Desbloqueaste el archivo. Hawkins te deja pasar… por ahora.</div>
-      <div class="row">
-        <a class="btn2 main" id="openDrive" href="#" target="_blank" rel="noopener">ABRIR DRIVE</a>
-        <button class="btn2" id="closeModal" type="button">VOLVER AL JUEGO</button>
+      <div class="console" id="console">
+        <div class="line sys">INSERT COIN…</div>
+        <div class="line">Pulsa <span class="sys">START</span> para iniciar el QUEST.</div>
       </div>
-    </div>
-  </div>
 
-  <!-- (opcional) sfx silenciosos por ahora: iPhone necesita gesto igual -->
-  <audio id="sfx" preload="auto"></audio>
+      <div class="controls">
+        <div class="pad" aria-label="D-Pad (mobile)">
+          <button class="d empty" tabindex="-1"> </button>
+          <button class="d" data-move="up" type="button">↑</button>
+          <button class="d empty" tabindex="-1"> </button>
+
+          <button class="d" data-move="left" type="button">←</button>
+          <button class="d" data-move="down" type="button">↓</button>
+          <button class="d" data-move="right" type="button">→</button>
+        </div>
+
+        <div class="actions">
+          <button class="btn main" id="attackBtn" type="button">ATTACK</button>
+          <button class="btn" id="openBtn" type="button" disabled style="opacity:.55; cursor:not-allowed;">
+            OPEN FILE (LOCKED)
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
 
   <script>
-    // ===== CONFIG =====
+    // =========================
+    // CONFIG
+    // =========================
     const DRIVE_URL = "https://drive.google.com/file/d/1PNAnsFPvncZiq-sJuf-fGuq8tRrIi2w6/view?usp=drivesdk";
 
-    // ===== STATE =====
-    const state = {
-      hp: 10,
-      xp: 0,
-      wins: 0,
-      enemy: null,
-      busy: false,
-      shield: 0,
-      spellCd: 0,
-      sfxOn: true,
-      timing: { t: 0, dir: 1, speed: 0.9, last: 0, active: true, stopped: false, val: 0 }
+    // =========================
+    // STATE
+    // =========================
+    let started = false;
+    let hp = 100;
+    let level = 1;
+
+    const enemies = {
+      demobat: { hp: 35, alive: true },
+      vecna:   { hp: 70, alive: true }
     };
 
-    const enemies = [
-      { name: "DEMOBATS", hp: 7, threat: "LOW", img: "img/Demogorgon.png" },
-      { name: "MIND FLAYER", hp: 9, threat: "MED", img: "img/Demogorgon.png" },
-      { name: "VECNA'S ECHO", hp: 11, threat: "HIGH", img: "img/Demogorgon.png" }
-    ];
+    // positions (percent based)
+    let px = 10; // warrior left %
+    let py = 18; // warrior top %
+    const STEP = 2.2; // movement step %
 
-    // ===== EL =====
-    const elHp = document.getElementById("hp");
-    const elXp = document.getElementById("xp");
-    const elWins = document.getElementById("wins");
-    const log = document.getElementById("log");
-
-    const enemyName = document.getElementById("enemyName");
-    const enemyThreat = document.getElementById("enemyThreat");
-    const enemyHp = document.getElementById("enemyHp");
-    const enemyImg = document.getElementById("enemyImg");
-
-    const needle = document.getElementById("needle");
-    const zone = document.getElementById("zone");
-
+    // =========================
+    // EL
+    // =========================
+    const elHP = document.getElementById("hp");
+    const elLvl = document.getElementById("lvl");
+    const elQuest = document.getElementById("quest");
+    const consoleEl = document.getElementById("console");
+    const startBtn = document.getElementById("startBtn");
     const attackBtn = document.getElementById("attackBtn");
-    const defBtn = document.getElementById("defBtn");
-    const spellBtn = document.getElementById("spellBtn");
-    const runBtn = document.getElementById("runBtn");
+    const openBtn = document.getElementById("openBtn");
 
-    const modal = document.getElementById("modal");
-    const closeModal = document.getElementById("closeModal");
-    const openDrive = document.getElementById("openDrive");
+    const field = document.getElementById("field");
+    const warrior = document.getElementById("warrior");
+    const demobat = document.getElementById("demobat");
+    const vecna = document.getElementById("vecna");
 
-    const musicBtn = document.getElementById("musicBtn");
+    // =========================
+    // FX
+    // =========================
+    function spark(x,y){
+      const s = document.createElement("div");
+      s.className = "spark";
+      s.style.left = x + "px";
+      s.style.top  = y + "px";
+      document.body.appendChild(s);
+      setTimeout(()=>s.remove(), 600);
+    }
 
-    // ===== UTIL =====
-    function setText(el, v){ el.textContent = String(v); }
-    function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
-    function randInt(a,b){ return Math.floor(a + Math.random()*(b-a+1)); }
-
-    function pushLog(text, cls="warn"){
+    function logLine(text, cls=""){
       const div = document.createElement("div");
       div.className = "line " + cls;
       div.textContent = text;
-      log.prepend(div);
-      // keep log reasonable
-      while(log.children.length > 9) log.removeChild(log.lastChild);
+      consoleEl.appendChild(div);
+      // keep last ~6
+      while(consoleEl.children.length > 6) consoleEl.removeChild(consoleEl.firstChild);
     }
 
-    function updateHud(){
-      setText(elHp, state.hp);
-      setText(elXp, state.xp);
-      setText(elWins, state.wins);
-      spellBtn.textContent = state.spellCd > 0 ? `HECHIZO (${state.spellCd})` : "HECHIZO";
-      spellBtn.disabled = state.spellCd > 0 || state.busy;
-      attackBtn.disabled = state.busy;
-      defBtn.disabled = state.busy;
-      runBtn.disabled = state.busy;
+    function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
+
+    function placeWarrior(){
+      warrior.style.left = px + "%";
+      warrior.style.top = py + "%";
+    }
+    placeWarrior();
+
+    function setQuestUnlocked(){
+      elQuest.textContent = "UNLOCKED";
+      openBtn.disabled = false;
+      openBtn.style.opacity = "1";
+      openBtn.style.cursor = "pointer";
+      openBtn.classList.add("ok");
+      logLine("QUEST COMPLETE. FILE UNLOCKED.", "good");
     }
 
-    function spawnEnemy(){
-      const pick = enemies[Math.min(enemies.length-1, Math.floor(state.wins/1))];
-      // clone & randomize a bit
-      state.enemy = {
-        name: pick.name,
-        hp: pick.hp + randInt(0,2),
-        threat: pick.threat,
-        img: pick.img
-      };
-      enemyName.textContent = "ENEMY // " + state.enemy.name;
-      enemyThreat.textContent = state.enemy.threat;
-      enemyHp.textContent = state.enemy.hp;
-      enemyImg.src = state.enemy.img;
-
-      pushLog(`NEW ENEMY: ${state.enemy.name}`, "warn");
+    function checkWin(){
+      const allDead = Object.values(enemies).every(e => !e.alive);
+      if(allDead) setQuestUnlocked();
     }
 
-    // ===== TIMING BAR =====
-    // Zone random per action so it feels alive
-    function randomizeZone(){
-      const left = randInt(52, 76);     // percent
-      const width = randInt(10, 18);    // percent
-      zone.style.left = left + "%";
-      zone.style.width = width + "%";
-      state.timing.zoneLeft = left;
-      state.timing.zoneRight = left + width;
-    }
-
-    function timingStep(ts){
-      if(!state.timing.last) state.timing.last = ts;
-      const dt = Math.min(32, ts - state.timing.last);
-      state.timing.last = ts;
-
-      if(state.timing.active && !state.timing.stopped){
-        state.timing.val += state.timing.dir * state.timing.speed * dt * 0.12; // %
-        if(state.timing.val >= 100){ state.timing.val = 100; state.timing.dir = -1; }
-        if(state.timing.val <= 0){ state.timing.val = 0; state.timing.dir = 1; }
-        needle.style.left = state.timing.val + "%";
-      }
-      requestAnimationFrame(timingStep);
-    }
-    requestAnimationFrame(timingStep);
-
-    function stopTimingAndJudge(){
-      // stop once per action
-      state.timing.stopped = true;
-      const v = state.timing.val;
-      const ok = (v >= state.timing.zoneLeft && v <= state.timing.zoneRight);
-      return ok;
-    }
-    function resumeTiming(){
-      state.timing.stopped = false;
-      randomizeZone();
-    }
-
-    // Also allow Space/Enter to “stop”
-    window.addEventListener("keydown", (e)=>{
-      if(e.key === " " || e.key === "Enter"){
-        // if action is waiting for timing, treat as press
-        if(state.busy && state.waitingTiming) state.resolveTiming();
-      }
-    });
-
-    // ===== ACTION FLOW =====
-    function enemyHit(dmg){
-      state.enemy.hp = Math.max(0, state.enemy.hp - dmg);
-      enemyHp.textContent = state.enemy.hp;
-      if(state.enemy.hp <= 0){
-        state.wins += 1;
-        state.xp += 5;
-        pushLog("ENEMY DOWN. +1 RUNE.", "good");
-        updateHud();
-
-        if(state.wins >= 3){
-          unlock();
-          return;
-        }
-        spawnEnemy();
+    function takeDamage(n){
+      hp = clamp(hp - n, 0, 100);
+      elHP.textContent = hp;
+      if(hp <= 0){
+        started = false;
+        logLine("YOU DIED. PRESS START.", "bad");
+        startBtn.textContent = "RESTART";
+        elQuest.textContent = "LOCKED";
       }
     }
 
-    function takeDamage(dmg){
-      const reduced = Math.max(0, dmg - state.shield);
-      state.shield = 0;
-      state.hp = Math.max(0, state.hp - reduced);
-      updateHud();
-      if(reduced > 0) pushLog(`YOU TOOK ${reduced} DMG.`, "bad");
-      else pushLog("BLOCKED.", "good");
+    function attack(base=10){
+      if(!started) { logLine("PRESS START FIRST.", "sys"); return; }
 
-      if(state.hp <= 0){
-        // soft reset
-        pushLog("YOU FELL… INSERT COIN AGAIN.", "bad");
-        state.hp = 10;
-        state.xp = Math.max(0, state.xp - 3);
-        state.wins = Math.max(0, state.wins - 1);
-        spawnEnemy();
-        updateHud();
-      }
-    }
+      // simple distance-based: if close to enemy -> hit
+      const wRect = warrior.getBoundingClientRect();
 
-    function enemyTurn(){
-      // enemy attacks after your action
-      const base = state.enemy.threat === "HIGH" ? randInt(3,4) : state.enemy.threat === "MED" ? randInt(2,3) : randInt(1,2);
-      takeDamage(base);
-    }
+      const targets = [
+        { key:"demobat", el:demobat, dmg: base, crit: base+8 },
+        { key:"vecna", el:vecna, dmg: base-2, crit: base+10 }
+      ];
 
-    function startAction(label){
-      if(state.busy) return;
-      state.busy = true;
-      state.waitingTiming = true;
+      let hitSomething = false;
 
-      pushLog(`> ${label}: TIMING…`, "warn");
+      for(const t of targets){
+        if(!enemies[t.key].alive) continue;
 
-      // define resolveTiming once per action
-      state.resolveTiming = () => {
-        if(!state.waitingTiming) return;
-        state.waitingTiming = false;
+        const r = t.el.getBoundingClientRect();
+        const dx = Math.abs((wRect.left + wRect.width/2) - (r.left + r.width/2));
+        const dy = Math.abs((wRect.top + wRect.height/2) - (r.top + r.height/2));
+        const close = (dx < 160 && dy < 160);
 
-        const crit = stopTimingAndJudge();
-        setTimeout(()=> resumeTiming(), 250);
+        if(close){
+          enemies[t.key].hp -= t.dmg;
+          hitSomething = true;
+          logLine("ATTACK! " + t.key.toUpperCase() + " -" + t.dmg, "good");
 
-        let dmg = 0;
-
-        if(label === "ATACAR"){
-          dmg = crit ? randInt(4,5) : randInt(2,3);
-          pushLog(crit ? "GOOD CHOICE. CRIT HIT!" : "HIT.", crit ? "good":"warn");
-          enemyHit(dmg);
-        }
-
-        if(label === "DEFENDER"){
-          state.shield = crit ? 3 : 2;
-          pushLog(crit ? "PERFECT GUARD." : "GUARD UP.", "good");
-        }
-
-        if(label === "HECHIZO"){
-          dmg = crit ? randInt(5,6) : randInt(3,4);
-          pushLog(crit ? "GOOD CHOICE. HOLY BLAST!" : "SPELL CAST.", crit ? "good":"warn");
-          enemyHit(dmg);
-          state.spellCd = 2;
-        }
-
-        if(label === "RUN"){
-          const escaped = crit ? true : (Math.random() < 0.35);
-          if(escaped){
-            pushLog("ESCAPED. NEW ENEMY SPAWNS.", "good");
-            spawnEnemy();
-          }else{
-            pushLog("FAILED TO RUN.", "bad");
+          if(enemies[t.key].hp <= 0){
+            enemies[t.key].alive = false;
+            t.el.style.opacity = "0.12";
+            t.el.style.filter = "grayscale(1) blur(.2px)";
+            t.el.style.pointerEvents = "none";
+            logLine(t.key.toUpperCase() + " DEFEATED.", "sys");
+            // Level up small
+            level = Math.min(9, level + 1);
+            elLvl.textContent = String(level).padStart(2,"0");
           }
         }
+      }
 
-        // cooldown tick
-        if(state.spellCd > 0 && label !== "HECHIZO") state.spellCd -= 1;
-        if(label === "HECHIZO") {} // already set
+      if(!hitSomething){
+        logLine("MISS… MOVE CLOSER.", "bad");
+        // punish small
+        takeDamage(4);
+      }
 
-        // enemy response (unless you killed & unlocked)
-        if(state.wins < 3 && state.enemy.hp > 0 && label !== "RUN"){
-          enemyTurn();
-        }
-
-        state.busy = false;
-        updateHud();
-      };
-
-      updateHud();
+      checkWin();
     }
 
-    // click/tap to resolve timing ONLY when action active
-    window.addEventListener("pointerdown", ()=>{
-      if(state.busy && state.waitingTiming) state.resolveTiming();
-    }, {passive:true});
+    function move(dir){
+      if(!started) return;
+      if(dir === "left") px -= STEP;
+      if(dir === "right") px += STEP;
+      if(dir === "up") py -= STEP;
+      if(dir === "down") py += STEP;
 
-    attackBtn.addEventListener("click", ()=> startAction("ATACAR"));
-    defBtn.addEventListener("click", ()=> startAction("DEFENDER"));
-    spellBtn.addEventListener("click", ()=> startAction("HECHIZO"));
-    runBtn.addEventListener("click", ()=> startAction("RUN"));
-
-    // ===== UNLOCK =====
-    function unlock(){
-      openDrive.href = DRIVE_URL;
-      modal.classList.add("show");
+      px = clamp(px, 0, 70);
+      py = clamp(py, 0, 72);
+      placeWarrior();
     }
-    closeModal.addEventListener("click", ()=> modal.classList.remove("show"));
-    modal.querySelector(".backdrop").addEventListener("click", ()=> modal.classList.remove("show"));
 
-    // ===== SFX TOGGLE (placeholder) =====
-    function updateSfxBtn(){
-      musicBtn.textContent = state.sfxOn ? "SFX: ON" : "SFX: OFF";
-    }
-    musicBtn.addEventListener("click", ()=>{
-      state.sfxOn = !state.sfxOn;
-      updateSfxBtn();
+    // =========================
+    // START / OPEN
+    // =========================
+    startBtn.addEventListener("click", (e)=>{
+      spark(e.clientX, e.clientY);
+
+      // reset if dead or first time
+      started = true;
+      hp = 100; level = 1;
+      elHP.textContent = hp;
+      elLvl.textContent = "01";
+      elQuest.textContent = "LOCKED";
+
+      // reset enemies
+      enemies.demobat = { hp: 35, alive: true };
+      enemies.vecna   = { hp: 70, alive: true };
+
+      // restore visuals
+      demobat.style.opacity = ".95";
+      demobat.style.filter = "drop-shadow(0 0 22px rgba(255,0,0,.22))";
+      demobat.style.pointerEvents = "auto";
+
+      vecna.style.opacity = ".95";
+      vecna.style.filter = "drop-shadow(0 0 22px rgba(255,0,0,.22))";
+      vecna.style.pointerEvents = "auto";
+
+      // lock button
+      openBtn.disabled = true;
+      openBtn.style.opacity = ".55";
+      openBtn.style.cursor = "not-allowed";
+      openBtn.classList.remove("ok");
+
+      // log
+      consoleEl.innerHTML = "";
+      logLine("QUEST STARTED.", "sys");
+      logLine("Defeat DEMOBAT + VECNA to unlock.", "");
+      startBtn.textContent = "START";
     });
-    updateSfxBtn();
 
-    // ===== INIT =====
-    randomizeZone();
-    spawnEnemy();
-    pushLog("INSERT COIN… READY.", "good");
-    pushLog("Win 3 RUNES to unlock the file.", "warn");
-    updateHud();
+    openBtn.addEventListener("click", ()=>{
+      if(openBtn.disabled) return;
+      window.open(DRIVE_URL, "_blank");
+    });
+
+    // =========================
+    // MOBILE PAD
+    // =========================
+    document.querySelectorAll("[data-move]").forEach(b=>{
+      b.addEventListener("click", ()=>{
+        move(b.dataset.move);
+      });
+    });
+
+    attackBtn.addEventListener("click", (e)=>{
+      spark(e.clientX, e.clientY);
+      attack(12);
+    });
+
+    // =========================
+    // ENEMY TAP = CRIT
+    // =========================
+    function enemyCrit(which, dmg){
+      if(!started) { logLine("PRESS START FIRST.", "sys"); return; }
+      if(!enemies[which].alive) return;
+
+      enemies[which].hp -= dmg;
+      logLine("CRIT HIT! " + which.toUpperCase() + " -" + dmg, "good");
+
+      if(enemies[which].hp <= 0){
+        enemies[which].alive = false;
+        const el = which === "demobat" ? demobat : vecna;
+        el.style.opacity = "0.12";
+        el.style.filter = "grayscale(1) blur(.2px)";
+        el.style.pointerEvents = "none";
+        logLine(which.toUpperCase() + " DEFEATED.", "sys");
+        level = Math.min(9, level + 1);
+        elLvl.textContent = String(level).padStart(2,"0");
+      }
+
+      // tiny retaliation
+      takeDamage(which === "vecna" ? 7 : 4);
+      checkWin();
+    }
+
+    demobat.addEventListener("click", (e)=>{
+      spark(e.clientX, e.clientY);
+      enemyCrit("demobat", 16);
+    });
+    vecna.addEventListener("click", (e)=>{
+      spark(e.clientX, e.clientY);
+      enemyCrit("vecna", 18);
+    });
+
+    // =========================
+    // KEYBOARD (PC)
+    // =========================
+    window.addEventListener("keydown", (e)=>{
+      const k = e.key.toLowerCase();
+      if(k === "arrowleft" || k === "a") move("left");
+      if(k === "arrowright" || k === "d") move("right");
+      if(k === "arrowup" || k === "w") move("up");
+      if(k === "arrowdown" || k === "s") move("down");
+      if(k === " "){ e.preventDefault(); attack(12); }
+      if(k === "enter"){ if(!started) startBtn.click(); }
+    });
+
+    // =========================
+    // IMPORTANT: allow scroll + no accidental drag
+    // =========================
+    ["dragstart"].forEach(ev=>{
+      document.addEventListener(ev, (e)=> e.preventDefault());
+    }, {passive:false});
   </script>
 </body>
 </html>
