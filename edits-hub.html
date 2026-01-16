@@ -12,7 +12,7 @@
 
   <style>
     :root{
-      --red: rgba(255,0,0,.75);
+      --red: rgba(255,0,0,.78);
       --cyan: rgba(0,255,255,.20);
       --glass: rgba(0,0,0,.55);
       --paper: #d7c7aa;
@@ -128,10 +128,10 @@
 
     .bookWrap{
       width:min(980px, 96vw);
-      height:min(72vh, 680px);
+      height:min(74vh, 700px);
       position:relative;
       border-radius:28px;
-      filter: drop-shadow(0 0 40px rgba(255,0,0,.12));
+      filter: drop-shadow(0 0 44px rgba(255,0,0,.14));
       perspective: 1200px;
     }
 
@@ -157,8 +157,6 @@
       transition: transform 980ms cubic-bezier(.2,.85,.2,1), opacity 500ms ease;
       z-index:25;
     }
-
-    /* faux leather grain */
     .cover::before{
       content:"";
       position:absolute; inset:0;
@@ -177,7 +175,6 @@
       padding:20px;
       max-width: 88%;
     }
-
     .coverTitle h1{
       margin:0;
       font-family: 'Benguiat', serif;
@@ -200,7 +197,6 @@
       color: rgba(255,255,255,.82);
       opacity:.92;
     }
-
     .coverHint{
       position:absolute;
       bottom:16px;
@@ -217,8 +213,6 @@
       border-radius:14px;
       backdrop-filter: blur(8px);
     }
-
-    /* When opened */
     body.open .cover{
       transform: rotateY(-130deg);
       opacity:0;
@@ -252,18 +246,15 @@
       transition: opacity 520ms ease, transform 520ms ease;
       z-index:12;
     }
-    body.open .book{
-      opacity:1;
-      transform: scale(1);
-    }
+    body.open .book{ opacity:1; transform: scale(1); }
 
     .page{
       position:relative;
       overflow:hidden;
-      padding:18px 18px 18px;
+      padding:18px;
       background:
         radial-gradient(circle at 30% 30%, rgba(255,255,255,.10), rgba(255,255,255,0)),
-        linear-gradient(180deg, rgba(215,199,170,.94), rgba(203,182,144,.92));
+        linear-gradient(180deg, rgba(215,199,170,.96), rgba(203,182,144,.94));
       color: var(--ink);
     }
     .page.left{ border-right: 1px solid rgba(0,0,0,.18); }
@@ -281,12 +272,65 @@
       z-index:5;
     }
 
+    /* ===== TOP SECRET DECOR ===== */
+    .stampBig{
+      position:absolute;
+      top:12px;
+      left:50%;
+      transform: translateX(-50%) rotate(-6deg);
+      font-family:'Press Start 2P', monospace;
+      font-size:10px;
+      letter-spacing:.10em;
+      text-transform: uppercase;
+      color: rgba(255,0,0,.60);
+      border:2px solid rgba(255,0,0,.45);
+      padding:10px 12px;
+      border-radius:16px;
+      background: rgba(255,255,255,.10);
+      box-shadow: 0 0 18px rgba(255,0,0,.12);
+      opacity:.85;
+      pointer-events:none;
+      z-index:6;
+      white-space:nowrap;
+    }
+
+    .caseLine{
+      position:absolute;
+      left:16px;
+      right:16px;
+      top:58px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      font-family:'Press Start 2P', monospace;
+      font-size:9px;
+      letter-spacing:.06em;
+      color: rgba(0,0,0,.66);
+      opacity:.95;
+      z-index:6;
+      pointer-events:none;
+    }
+    .caseLine span{ white-space:nowrap; }
+
+    .redact{
+      display:inline-block;
+      padding:2px 6px;
+      border-radius:6px;
+      background: rgba(0,0,0,.75);
+      color: rgba(0,0,0,0);
+      transform: translateY(-1px);
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.35);
+    }
+
     .pageHdr{
+      margin-top:78px; /* baja todo para que NO se meta detrás de las fotos */
       display:flex;
       align-items:flex-start;
       justify-content:space-between;
       gap:12px;
       margin-bottom:10px;
+      position:relative;
+      z-index:7;
     }
     .pageHdr .stamp{
       font-family:'Press Start 2P', monospace;
@@ -311,12 +355,31 @@
       white-space:nowrap;
     }
 
+    /* ===== typed “file story” block ===== */
+    .fileNote{
+      margin: 8px 0 10px;
+      padding: 10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(0,0,0,.18);
+      background: rgba(255,255,255,.22);
+      box-shadow: inset 0 0 0 1px rgba(255,0,0,.08);
+      font-family:'Press Start 2P', monospace;
+      font-size:9px;
+      letter-spacing:.04em;
+      line-height:1.7;
+      color: rgba(0,0,0,.78);
+      position:relative;
+      z-index:7;
+    }
+    .fileNote b{ color: rgba(0,0,0,.88); }
+
+    /* Polaroids (no text behind them now) */
     .polaroid{
       position:relative;
       width: min(92%, 360px);
-      margin: 8px auto 10px;
+      margin: 10px auto 10px;
       padding:10px 10px 18px;
-      background: rgba(255,255,255,.86);
+      background: rgba(255,255,255,.88);
       border-radius:14px;
       border:1px solid rgba(0,0,0,.18);
       box-shadow:
@@ -326,6 +389,7 @@
       cursor:pointer;
       user-select:none;
       transition: transform .12s ease;
+      z-index:8;
     }
     .polaroid:active{ transform: rotate(var(--rot, -2deg)) scale(.99); }
 
@@ -348,6 +412,7 @@
       text-align:center;
     }
 
+    /* Scribbles (kept, but more “case-file”) */
     .scribble{
       position:absolute;
       font-family:'Press Start 2P', monospace;
@@ -358,12 +423,14 @@
       line-height:1.65;
       max-width: 60%;
       transform: rotate(var(--srot, -2deg));
+      z-index:7;
     }
-    .scribble.s1{ left:16px; top:78px; max-width:44%; }
+    .scribble.s1{ left:16px; top: 248px; max-width:44%; }
     .scribble.s2{ right:16px; bottom:18px; text-align:right; }
     .scribble.s3{ left:16px; bottom:18px; }
-    .scribble.s4{ right:16px; top:78px; text-align:right; }
+    .scribble.s4{ right:16px; top: 248px; text-align:right; }
 
+    /* Decor: tape + paperclip icon */
     .tape{
       position:absolute;
       width:66px; height:18px;
@@ -372,14 +439,77 @@
       border-radius:6px;
       filter: blur(.2px);
       opacity:.85;
-      z-index:4;
+      z-index:9;
       transform: rotate(var(--trot, -10deg));
       pointer-events:none;
     }
-    .tape.tl{ left:38px; top:56px; --trot:-14deg; }
-    .tape.tr{ right:38px; top:56px; --trot:12deg; }
+    .tape.tl{ left:38px; top: 330px; --trot:-14deg; }
+    .tape.tr{ right:38px; top: 330px; --trot:12deg; }
     .tape.bl{ left:46px; bottom:110px; --trot:8deg; }
     .tape.br{ right:46px; bottom:110px; --trot:-9deg; }
+
+    .clip{
+      position:absolute;
+      top:92px;
+      right:18px;
+      font-family:'Press Start 2P', monospace;
+      font-size:11px;
+      color: rgba(0,0,0,.45);
+      transform: rotate(10deg);
+      z-index:9;
+      pointer-events:none;
+      filter: drop-shadow(0 0 10px rgba(255,0,0,.08));
+    }
+
+    /* ===== PAGE FLIP OVERLAY (looks like paper passing) ===== */
+    .pageFlip{
+      position:absolute;
+      top:10px; left:10px; right:10px; bottom:10px;
+      border-radius:22px;
+      pointer-events:none;
+      z-index:20;
+      display:none;
+    }
+    .pageFlip.show{ display:block; }
+
+    .flipSheet{
+      position:absolute;
+      top:0; bottom:0;
+      width:50%;
+      background:
+        radial-gradient(circle at 20% 30%, rgba(255,255,255,.14), rgba(255,255,255,0)),
+        linear-gradient(180deg, rgba(215,199,170,.98), rgba(203,182,144,.96));
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,.16),
+        0 22px 50px rgba(0,0,0,.28);
+      opacity:.98;
+    }
+    .flipSheet.left{
+      left:0;
+      transform-origin: left center;
+      border-radius:22px 0 0 22px;
+    }
+    .flipSheet.right{
+      right:0;
+      transform-origin: right center;
+      border-radius:0 22px 22px 0;
+    }
+
+    .pageFlip.next .flipSheet.right{
+      animation: flipNext 520ms cubic-bezier(.2,.85,.2,1) forwards;
+    }
+    .pageFlip.prev .flipSheet.left{
+      animation: flipPrev 520ms cubic-bezier(.2,.85,.2,1) forwards;
+    }
+
+    @keyframes flipNext{
+      0%{ transform: rotateY(0deg); }
+      100%{ transform: rotateY(-145deg); opacity:0; }
+    }
+    @keyframes flipPrev{
+      0%{ transform: rotateY(0deg); }
+      100%{ transform: rotateY(145deg); opacity:0; }
+    }
 
     /* ===== BOTTOM NAV ===== */
     .nav{
@@ -474,33 +604,27 @@
       user-select:none;
     }
 
-    /* ===== PAGE FLIP EFFECT (subtle epic) ===== */
-    .flip{
-      animation: flip 420ms ease;
-    }
-    @keyframes flip{
-      0%{ transform: scale(.995); filter: none; }
-      30%{ transform: scale(1.01); filter: drop-shadow(2px 0 rgba(255,0,0,.25)) drop-shadow(-2px 0 rgba(0,255,255,.18)); }
-      100%{ transform: scale(1); filter:none; }
-    }
-
     /* ===== RESPONSIVE ===== */
     @media (max-width: 760px){
       .titleChip{ font-size:14px; }
-      .bookWrap{ height: min(78vh, 720px); }
+      .bookWrap{ height: min(78vh, 740px); }
       .polaroid img{ height: 190px; }
       .page{ padding:14px; }
       .scribble{ font-size:8px; }
+      .stampBig{ font-size:9px; }
     }
 
     @media (max-width: 520px){
       .titleChip{ font-size:12px; }
-      .bookWrap{ height: min(80vh, 740px); }
+      .bookWrap{ height: min(80vh, 760px); }
       .polaroid{ width: 96%; }
       .polaroid img{ height: 170px; }
       .tape{ display:none; }
       .hint{ font-size:8px; }
       .coverHint{ font-size:9px; }
+      .fileNote{ font-size:8px; }
+      .caseLine{ font-size:8px; }
+      .clip{ display:none; }
     }
   </style>
 </head>
@@ -544,14 +668,27 @@
       <div class="book" id="book">
         <div class="spine"></div>
 
+        <!-- overlay flip sheet -->
+        <div class="pageFlip" id="pageFlip">
+          <div class="flipSheet left"></div>
+          <div class="flipSheet right"></div>
+        </div>
+
         <div class="page left" id="pageL">
+          <div class="stampBig">TOP SECRET • EVIDENCE</div>
+          <div class="caseLine">
+            <span>CASE: <span class="redact">████</span>-HF</span>
+            <span>STATUS: ACTIVE</span>
+          </div>
+
           <div class="pageHdr">
             <div class="stamp" id="stampL">CONFIDENTIAL</div>
             <div class="pageNo" id="pageNoL">ARCHIVE 01 / PAGE 01</div>
           </div>
 
-          <div class="tape tl"></div><div class="tape tr"></div>
-          <div class="tape bl"></div><div class="tape br"></div>
+          <div class="clip">📎</div>
+
+          <div class="fileNote" id="noteL"></div>
 
           <div class="scribble s1" id="scrL1"></div>
           <div class="scribble s3" id="scrL2"></div>
@@ -560,16 +697,26 @@
             <img id="imgL" src="" alt="Foto izquierda">
             <div class="cap" id="capL"></div>
           </div>
+
+          <div class="tape tl"></div><div class="tape tr"></div>
+          <div class="tape bl"></div><div class="tape br"></div>
         </div>
 
         <div class="page right" id="pageR">
+          <div class="stampBig">RESTRICTED • DO NOT COPY</div>
+          <div class="caseLine">
+            <span>WITNESS: <span class="redact">██████</span></span>
+            <span>TIME: 03:33</span>
+          </div>
+
           <div class="pageHdr">
             <div class="stamp" id="stampR">HAWKINS</div>
             <div class="pageNo" id="pageNoR">ARCHIVE 01 / PAGE 02</div>
           </div>
 
-          <div class="tape tl"></div><div class="tape tr"></div>
-          <div class="tape bl"></div><div class="tape br"></div>
+          <div class="clip">📎</div>
+
+          <div class="fileNote" id="noteR"></div>
 
           <div class="scribble s4" id="scrR1"></div>
           <div class="scribble s2" id="scrR2"></div>
@@ -578,6 +725,9 @@
             <img id="imgR" src="" alt="Foto derecha">
             <div class="cap" id="capR"></div>
           </div>
+
+          <div class="tape tl"></div><div class="tape tr"></div>
+          <div class="tape bl"></div><div class="tape br"></div>
         </div>
       </div>
     </div>
@@ -586,7 +736,7 @@
   <!-- Nav -->
   <div class="nav">
     <button class="navBtn" id="prevBtn" type="button">← ANTERIOR</button>
-    <div class="hint">Toca el libro para abrir. Luego desliza ←/→ o usa flechas.</div>
+    <div class="hint">Abre el libro. Luego desliza ←/→ o usa flechas. Toca una foto para verla sola.</div>
     <button class="navBtn" id="nextBtn" type="button">SIGUIENTE →</button>
   </div>
 
@@ -600,23 +750,79 @@
   </div>
 
   <script>
-    // ===== DATA (8 fotos) =====
+    // ===== DATA (8 fotos + historia) =====
     const spreads = [
       {
-        L: { src:"img/edits/img1.PNG", cap:"FRIENDS DON’T LIE.", a:"ARCHIVE 01 / PAGE 01", s1:"Some doors don’t stay closed forever.", s2:"Hawkins remembers." },
-        R: { src:"img/edits/img2.PNG", cap:"THE THINGS WE LEFT BEHIND.", a:"ARCHIVE 01 / PAGE 02", s1:"Not everything lost wants to be found.", s2:"Stay close. Stay loud." }
+        L: {
+          src:"img/edits/img1.PNG",
+          cap:"FRIENDS DON’T LIE.",
+          a:"ARCHIVE 01 / PAGE 01",
+          note:"<b>RECOVERED MEMORY:</b> Starcourt. Laughter recorded. Subject appears calm. <span class='redact'>██████</span> present in background.",
+          s1:"Some doors don’t stay closed forever.",
+          s2:"Hawkins remembers."
+        },
+        R: {
+          src:"img/edits/img2.PNG",
+          cap:"THE THINGS WE LEFT BEHIND.",
+          a:"ARCHIVE 01 / PAGE 02",
+          note:"<b>FIELD NOTE:</b> Lights flicker at 03:33. Hearing: static + distant voice. Advise: keep music ready. Do <span class='redact'>████</span> NOT look up.",
+          s1:"Not everything lost wants to be found.",
+          s2:"Stay close. Stay loud."
+        }
       },
       {
-        L: { src:"img/edits/img3.PNG", cap:"SAFE FOR NOW.", a:"ARCHIVE 02 / PAGE 03", s1:"If you stay too long… it stays with you.", s2:"Good people. Bad place." },
-        R: { src:"img/edits/img4.PNG", cap:"STARCOURT DAYS.", a:"ARCHIVE 02 / PAGE 04", s1:"Summer felt normal. For a second.", s2:"Then the lights changed." }
+        L: {
+          src:"img/edits/img3.PNG",
+          cap:"SAFE FOR NOW.",
+          a:"ARCHIVE 02 / PAGE 03",
+          note:"<b>STATUS:</b> SAFE (temporary). The air changes fast. If silence lasts too long, it starts listening back.",
+          s1:"If you stay too long… it stays with you.",
+          s2:"Good people. Bad place."
+        },
+        R: {
+          src:"img/edits/img4.PNG",
+          cap:"STARCOURT DAYS.",
+          a:"ARCHIVE 02 / PAGE 04",
+          note:"<b>ANOMALY:</b> Neon lights appear normal until they don’t. Report mentions a “shadow in the vents” <span class='redact'>██████</span>.",
+          s1:"Summer felt normal. For a second.",
+          s2:"Then the lights changed."
+        }
       },
       {
-        L: { src:"img/edits/img5.PNG", cap:"THE UPSIDE KNOWS.", a:"ARCHIVE 03 / PAGE 05", s1:"Time works differently here.", s2:"Don’t look back." },
-        R: { src:"img/edits/img6.PNG", cap:"WE SURVIVED.", a:"ARCHIVE 03 / PAGE 06", s1:"Not because we’re fearless.", s2:"Because we didn’t stop." }
+        L: {
+          src:"img/edits/img5.PNG",
+          cap:"THE UPSIDE KNOWS.",
+          a:"ARCHIVE 03 / PAGE 05",
+          note:"<b>WARNING:</b> Time doesn’t move here— it loops. If you hear your name, answer with sound. Never with fear.",
+          s1:"Time works differently here.",
+          s2:"Don’t look back."
+        },
+        R: {
+          src:"img/edits/img6.PNG",
+          cap:"WE SURVIVED.",
+          a:"ARCHIVE 03 / PAGE 06",
+          note:"<b>STATEMENT:</b> Survival wasn’t luck. It was a chain: hands, voices, and the one song that pulls you back.",
+          s1:"Not because we’re fearless.",
+          s2:"Because we didn’t stop."
+        }
       },
       {
-        L: { src:"img/edits/img7.PNG", cap:"THE SIGNAL.", a:"ARCHIVE 04 / PAGE 07", s1:"If you hear static… answer.", s2:"Music is the rope back." },
-        R: { src:"img/edits/img8.PNG", cap:"END OF FILE.", a:"ARCHIVE 04 / PAGE 08", s1:"Some memories bite.", s2:"But they’re still yours." }
+        L: {
+          src:"img/edits/img7.PNG",
+          cap:"THE SIGNAL.",
+          a:"ARCHIVE 04 / PAGE 07",
+          note:"<b>TRANSMISSION:</b> Static. Then: “Do you copy?” Reply recommended: music at max volume. Ignore whispers.",
+          s1:"If you hear static… answer.",
+          s2:"Music is the rope back."
+        },
+        R: {
+          src:"img/edits/img8.PNG",
+          cap:"END OF FILE.",
+          a:"ARCHIVE 04 / PAGE 08",
+          note:"<b>CLOSING NOTE:</b> Some memories bite. But they’re yours. Keep them loud. Keep them close. File sealed <span class='redact'>████</span>.",
+          s1:"Some memories bite.",
+          s2:"But they’re still yours."
+        }
       }
     ];
 
@@ -625,7 +831,7 @@
     const body = document.body;
     const cover = document.getElementById("cover");
     const bookWrap = document.getElementById("bookWrap");
-    const book = document.getElementById("book");
+    const pageFlip = document.getElementById("pageFlip");
 
     const imgL = document.getElementById("imgL");
     const imgR = document.getElementById("imgR");
@@ -637,34 +843,35 @@
     const scrL2 = document.getElementById("scrL2");
     const scrR1 = document.getElementById("scrR1");
     const scrR2 = document.getElementById("scrR2");
+    const noteL = document.getElementById("noteL");
+    const noteR = document.getElementById("noteR");
 
-    function render(){
-      const s = spreads[i];
-      imgL.src = s.L.src;
-      capL.textContent = s.L.cap;
-      pageNoL.textContent = s.L.a;
-      scrL1.textContent = s.L.s1;
-      scrL2.textContent = s.L.s2;
-
-      imgR.src = s.R.src;
-      capR.textContent = s.R.cap;
-      pageNoR.textContent = s.R.a;
-      scrR1.textContent = s.R.s1;
-      scrR2.textContent = s.R.s2;
-
-      // “alive” rotations
+    function jitter(){
       document.getElementById("polL").style.setProperty("--rot", (Math.random()*5-3) + "deg");
       document.getElementById("polR").style.setProperty("--rot", (Math.random()*5-2) + "deg");
       scrL1.style.setProperty("--srot", (Math.random()*4-2) + "deg");
       scrL2.style.setProperty("--srot", (Math.random()*4-2) + "deg");
       scrR1.style.setProperty("--srot", (Math.random()*4-2) + "deg");
       scrR2.style.setProperty("--srot", (Math.random()*4-2) + "deg");
+    }
 
-      // page flip micro FX
-      bookWrap.classList.remove("flip");
-      void bookWrap.offsetWidth;
-      bookWrap.classList.add("flip");
-      setTimeout(()=>bookWrap.classList.remove("flip"), 450);
+    function render(){
+      const s = spreads[i];
+      imgL.src = s.L.src;
+      capL.textContent = s.L.cap;
+      pageNoL.textContent = s.L.a;
+      noteL.innerHTML = s.L.note;
+      scrL1.textContent = s.L.s1;
+      scrL2.textContent = s.L.s2;
+
+      imgR.src = s.R.src;
+      capR.textContent = s.R.cap;
+      pageNoR.textContent = s.R.a;
+      noteR.innerHTML = s.R.note;
+      scrR1.textContent = s.R.s1;
+      scrR2.textContent = s.R.s2;
+
+      jitter();
     }
     render();
 
@@ -676,7 +883,6 @@
     }
     cover.addEventListener("click", ()=>{
       openBook();
-      // arranca música con el mismo click (iPhone safe)
       if(!musicOn) startMusic();
     });
 
@@ -696,11 +902,33 @@
       lightbox.classList.remove("show");
       lightbox.setAttribute("aria-hidden","true");
     }
-
     document.getElementById("polL").addEventListener("click", ()=> openLB(imgL.src));
     document.getElementById("polR").addEventListener("click", ()=> openLB(imgR.src));
     lbClose.addEventListener("click", closeLB);
     lbBack.addEventListener("click", closeLB);
+
+    // ===== PAGE FLIP =====
+    let flipping = false;
+    function doFlip(dir, after){
+      if(flipping) return;
+      flipping = true;
+
+      pageFlip.classList.remove("next","prev","show");
+      void pageFlip.offsetWidth;
+
+      pageFlip.classList.add("show");
+      pageFlip.classList.add(dir === "next" ? "next" : "prev");
+
+      setTimeout(()=>{
+        after();
+        render();
+      }, 250);
+
+      setTimeout(()=>{
+        pageFlip.classList.remove("show","next","prev");
+        flipping = false;
+      }, 560);
+    }
 
     // ===== NAV =====
     const prevBtn = document.getElementById("prevBtn");
@@ -708,13 +936,15 @@
 
     function prev(){
       openBook();
-      i = (i - 1 + spreads.length) % spreads.length;
-      render();
+      doFlip("prev", ()=>{
+        i = (i - 1 + spreads.length) % spreads.length;
+      });
     }
     function next(){
       openBook();
-      i = (i + 1) % spreads.length;
-      render();
+      doFlip("next", ()=>{
+        i = (i + 1) % spreads.length;
+      });
     }
     prevBtn.addEventListener("click", prev);
     nextBtn.addEventListener("click", next);
@@ -729,7 +959,7 @@
       if(e.key === "Escape") closeLB();
     });
 
-    // Swipe (book area)
+    // Swipe
     let sx=0, sy=0, st=0;
     bookWrap.addEventListener("touchstart",(e)=>{
       const t = e.touches[0];
@@ -741,7 +971,7 @@
       const dx = t.clientX - sx;
       const dy = t.clientY - sy;
       const dt = Date.now() - st;
-      if(dt < 500 && Math.abs(dx) > 50 && Math.abs(dy) < 60){
+      if(dt < 520 && Math.abs(dx) > 50 && Math.abs(dy) < 70){
         if(dx < 0) next();
         else prev();
       }
@@ -775,7 +1005,6 @@
       updateSoundBtn();
     }
 
-    // safety: first interaction starts
     function firstGesture(){
       if(!musicOn) startMusic();
       window.removeEventListener("pointerdown", firstGesture);
