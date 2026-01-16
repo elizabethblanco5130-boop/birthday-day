@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>Facts — Vecna Case File</title>
 
-  <!-- Fonts -->
   <link href="https://fonts.cdnfonts.com/css/benguiat" rel="stylesheet">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,12 +23,17 @@
 
     *{ box-sizing:border-box; }
     html,body{ height:100%; }
+
+    /* ✅ IMPORTANTÍSIMO: ya no bloquea scroll */
     body{
       margin:0;
       background:#000;
       color:#fff;
-      overflow:hidden;
+      overflow-x:hidden;
+      overflow-y:auto;
       font-family: system-ui, -apple-system, Arial;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-y;
     }
 
     /* ===== VIDEO BACKGROUND ===== */
@@ -63,6 +67,7 @@
       opacity:.35;
       mix-blend-mode: screen;
       filter: blur(2px);
+      transition: opacity .6s ease;
     }
     .noise{
       position:fixed; inset:0; z-index:4;
@@ -70,6 +75,22 @@
       opacity:.10;
       background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.65'/%3E%3C/svg%3E");
     }
+
+    /* Idle / Red Alert mode */
+    .alertTint{
+      position:fixed; inset:0;
+      pointer-events:none;
+      z-index:35;
+      opacity:0;
+      background:
+        radial-gradient(circle at 60% 20%, rgba(255,0,0,.35), rgba(0,0,0,0)),
+        radial-gradient(circle at 20% 80%, rgba(255,0,0,.25), rgba(0,0,0,0)),
+        rgba(0,0,0,.20);
+      mix-blend-mode: screen;
+      transition: opacity .7s ease;
+    }
+    body.idle .alertTint{ opacity:1; }
+    body.idle .redMist{ opacity:.62; }
 
     /* Lightning flash */
     .flash{
@@ -84,7 +105,7 @@
     }
     body.flashing .flash{ opacity:1; }
 
-    /* Lightning cracks (SVG lines feeling) */
+    /* Lightning cracks */
     .cracks{
       position:fixed; inset:0; z-index:40;
       pointer-events:none;
@@ -113,7 +134,7 @@
       58%{ opacity:.18; filter: blur(6px); }
     }
 
-    /* Subtle shake on flashes */
+    /* Shake */
     @keyframes shake{
       0%{ transform: translate(0,0); }
       25%{ transform: translate(-1px,1px); }
@@ -121,22 +142,27 @@
       75%{ transform: translate(-1px,-1px); }
       100%{ transform: translate(0,0); }
     }
-    body.shake .stage{ animation: shake .18s linear 2; }
+    body.shake .panel{ animation: shake .18s linear 2; }
 
-    /* ===== TOP BAR ===== */
+    /* ===== TOP BAR (sticky) ===== */
     .top{
-      position:fixed;
-      left:14px; right:14px; top:14px;
-      display:flex; gap:10px;
-      align-items:center; justify-content:space-between;
-      z-index:80;
+      position:sticky;
+      top:0;
+      z-index:90;
+      padding:12px 14px 10px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
       flex-wrap:wrap;
+      background: linear-gradient(180deg, rgba(0,0,0,.75), rgba(0,0,0,0));
+      backdrop-filter: blur(10px);
     }
+
     .chip, .btn{
       border-radius:14px;
       border:1px solid rgba(255,0,0,.55);
       background: rgba(0,0,0,.45);
-      backdrop-filter: blur(10px);
       box-shadow: 0 0 18px rgba(255,0,0,.10);
       color: var(--txt);
       font-family:'Press Start 2P', monospace;
@@ -169,17 +195,17 @@
         -2px 0 rgba(255,0,0,.10);
     }
 
-    /* ===== MAIN STAGE ===== */
-    .stage{
-      position:fixed; inset:0;
-      display:grid;
-      place-items:center;
-      padding:74px 14px 86px;
+    /* ===== LAYOUT WRAPPER (scrollable) ===== */
+    .wrap{
+      position:relative;
       z-index:60;
+      padding:12px 14px 90px;
+      display:flex;
+      justify-content:center;
     }
 
     .panel{
-      width:min(980px, 96vw);
+      width:min(1040px, 100%);
       border-radius:22px;
       border:1px solid rgba(255,0,0,.55);
       background: rgba(0,0,0,.46);
@@ -230,7 +256,6 @@
       color: rgba(255,255,255,.88);
       text-align:center;
     }
-    .caseTitle b{ color: rgba(255,255,255,.98); }
 
     .panelBody{
       padding:14px;
@@ -239,7 +264,7 @@
       gap:12px;
     }
 
-    /* Left: narrative */
+    /* Left */
     .log{
       border-radius:18px;
       border:1px solid rgba(255,255,255,.10);
@@ -278,7 +303,7 @@
     }
     @keyframes blink{ 50%{ opacity:0; } }
 
-    /* Right: ritual + embed */
+    /* Right */
     .rightCol{
       display:flex;
       flex-direction:column;
@@ -302,17 +327,7 @@
       color: rgba(255,255,255,.92);
     }
 
-    .meter{
-      display:flex;
-      gap:8px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
-    .orbRow{
-      display:flex; gap:8px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
+    .orbRow{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
     .orb{
       width:14px; height:14px;
       border-radius:50%;
@@ -342,13 +357,13 @@
       box-shadow: 0 0 18px rgba(255,0,0,.14);
     }
     .ritualBtn:active{ transform: translateY(1px); }
+
     .ritualNote{
       margin-top:10px;
       font-family:'Press Start 2P', monospace;
       font-size:9px;
       line-height:1.6;
       color: rgba(255,255,255,.78);
-      opacity:.95;
     }
 
     .embed{
@@ -356,7 +371,7 @@
       border:1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.22);
       overflow:hidden;
-      min-height: 260px;
+      min-height: 280px;
       position:relative;
     }
     .embedCover{
@@ -385,13 +400,13 @@
     }
     iframe{
       width:100%;
-      height: 360px;
+      height: 420px;
       border:0;
       display:block;
       background:#000;
     }
 
-    /* ===== FLOATING OBJECTS ===== */
+    /* Floating objects layer */
     .floatLayer{
       position:fixed; inset:0;
       z-index:30;
@@ -431,18 +446,18 @@
       color: rgba(255,255,255,.82);
     }
 
+    /* disperse (no tapa el panel central) */
     .obj.clock{ left:16px; top:110px; animation: drift 9s ease-in-out infinite; }
     .obj.walkie{ left:16px; top:220px; transform: rotate(7deg); animation: drift 11s ease-in-out infinite; }
     .obj.cass{ right:16px; top:120px; transform: rotate(-10deg); animation: drift 10s ease-in-out infinite; }
     .obj.candle{ right:16px; top:230px; transform: rotate(10deg); animation: drift 12s ease-in-out infinite; }
-    .obj.portal{ left:16px; bottom:160px; transform: rotate(-10deg); animation: drift 13s ease-in-out infinite; opacity:.85; }
-
+    .obj.portal{ left:16px; bottom:130px; transform: rotate(-10deg); animation: drift 13s ease-in-out infinite; opacity:.85; }
     @keyframes drift{
       0%,100%{ transform: translate(0,0) rotate(var(--r, 0deg)); }
       50%{ transform: translate(12px,-16px) rotate(var(--r, 0deg)); }
     }
 
-    /* ===== SPORES CANVAS ===== */
+    /* SPORES */
     canvas#spores{
       position:fixed; inset:0;
       z-index:25;
@@ -450,20 +465,19 @@
       opacity:.95;
     }
 
-    /* ===== FOOTER ===== */
+    /* Footer hint */
     .footer{
-      position:fixed;
-      left:14px; right:14px; bottom:14px;
-      z-index:80;
+      position:sticky;
+      bottom:0;
+      z-index:90;
+      padding:10px 14px 14px;
       display:flex;
-      gap:10px;
-      align-items:center;
-      justify-content:space-between;
-      flex-wrap:wrap;
+      justify-content:center;
+      background: linear-gradient(0deg, rgba(0,0,0,.80), rgba(0,0,0,0));
+      backdrop-filter: blur(10px);
     }
     .footer .hint{
-      flex:1;
-      min-width: 260px;
+      width:min(1040px, 100%);
       border-radius:14px;
       border:1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.30);
@@ -474,10 +488,9 @@
       line-height:1.6;
       letter-spacing:.05em;
       text-align:center;
-      backdrop-filter: blur(10px);
     }
 
-    /* ===== MODAL ===== */
+    /* Modal */
     .modal{
       position:fixed; inset:0;
       display:none;
@@ -514,13 +527,14 @@
       color: rgba(255,255,255,.86);
       font-family: system-ui, -apple-system, Arial;
       font-size:15px;
+      white-space:pre-line;
     }
     .modal .close{
       margin-top:12px;
       width:100%;
     }
 
-    /* Click sparks */
+    /* Sparks */
     .spark{
       position:fixed;
       width:10px; height:10px;
@@ -537,10 +551,32 @@
       to{ opacity:0; transform: translate(-50%,-50%) scale(3.2); }
     }
 
-    /* responsive */
+    /* tiny trail sparkle (desktop vibe) */
+    .trail{
+      position:fixed;
+      pointer-events:none;
+      z-index:210;
+      transform: translate(-50%,-50%);
+      opacity:1;
+      animation: trail .7s ease-out forwards;
+      filter: drop-shadow(0 0 10px rgba(255,0,0,.25));
+    }
+    .trail::before{
+      content:"✦";
+      font-family:'Press Start 2P', monospace;
+      font-size:10px;
+      color: rgba(255,255,255,.92);
+      text-shadow: 0 0 10px rgba(255,0,0,.22);
+    }
+    @keyframes trail{
+      from{ opacity:1; transform: translate(-50%,-50%) scale(.9); }
+      to{ opacity:0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.5); }
+    }
+
+    /* Responsive */
     @media (max-width: 860px){
       .panelBody{ grid-template-columns: 1fr; }
-      iframe{ height: 320px; }
+      iframe{ height: 340px; }
       .obj{ width:78px; height:78px; }
       .title{ font-size:14px; }
     }
@@ -554,10 +590,7 @@
 </head>
 
 <body>
-
-  <!-- Background -->
   <div class="bg">
-    <!-- ✅ CAMBIA ESTE VIDEO POR EL TUYO (por ahora: vecna-bg.mp4) -->
     <video autoplay muted loop playsinline preload="auto" id="bgVid">
       <source src="vecna-bg.mp4" type="video/mp4">
     </video>
@@ -566,6 +599,7 @@
   <div class="vignette"></div>
   <div class="redMist"></div>
   <div class="noise"></div>
+  <div class="alertTint"></div>
 
   <div class="cracks">
     <div class="crack c1"></div>
@@ -577,80 +611,67 @@
 
   <canvas id="spores"></canvas>
 
-  <!-- Audio (dark ambience) -->
   <audio id="ambience" loop preload="auto">
-    <!-- ✅ Sube un mp3 oscuro e intenso con este nombre -->
     <source src="facts-dark.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- Top bar -->
   <div class="top">
     <a class="btn" href="index.html?v=1000">← VOLVER</a>
     <div class="chip title">VECNA CASE FILES</div>
     <button class="btn" id="soundBtn" type="button">MUSIC: OFF</button>
   </div>
 
-  <!-- Floating objects -->
   <div class="floatLayer" id="floatLayer">
-    <div class="obj clock" id="objClock" style="--r:-6deg" title="Clock">
-      <div class="ico">🕰️</div>
-      <div class="lbl">clock</div>
+    <div class="obj clock" id="objClock" style="--r:-6deg">
+      <div class="ico">🕰️</div><div class="lbl">clock</div>
     </div>
-    <div class="obj walkie" id="objWalkie" style="--r:7deg" title="Walkie">
-      <div class="ico">📻</div>
-      <div class="lbl">walkie</div>
+    <div class="obj walkie" id="objWalkie" style="--r:7deg">
+      <div class="ico">📻</div><div class="lbl">walkie</div>
     </div>
-    <div class="obj cass" id="objCass" style="--r:-10deg" title="Cassette">
-      <div class="ico">📼</div>
-      <div class="lbl">tape</div>
+    <div class="obj cass" id="objCass" style="--r:-10deg">
+      <div class="ico">📼</div><div class="lbl">tape</div>
     </div>
-    <div class="obj candle" id="objCandle" style="--r:10deg" title="Candle">
-      <div class="ico">🕯️</div>
-      <div class="lbl">candle</div>
+    <div class="obj candle" id="objCandle" style="--r:10deg">
+      <div class="ico">🕯️</div><div class="lbl">candle</div>
     </div>
-    <div class="obj portal" id="objPortal" style="--r:-10deg" title="Portal">
-      <div class="ico">🕳️</div>
-      <div class="lbl">portal</div>
+    <div class="obj portal" id="objPortal" style="--r:-10deg">
+      <div class="ico">🕳️</div><div class="lbl">portal</div>
     </div>
   </div>
 
-  <!-- Main -->
-  <div class="stage">
+  <div class="wrap">
     <div class="panel" id="panel">
       <div class="panelHead">
         <div class="stamp red">CONFIDENTIAL</div>
         <div class="caseTitle" id="caseTitle">
           <b>SUBJECT:</b> DAY • <b>STATUS:</b> TRACKED • <b>RULE:</b> NO SILENCE
         </div>
-        <div class="stamp cyan">EVIDENCE LOCKED</div>
+        <div class="stamp cyan" id="statusStamp">EVIDENCE LOCKED</div>
       </div>
 
       <div class="panelBody">
-        <!-- LEFT -->
         <div class="log">
           <div class="logTitle">INCIDENT LOG</div>
           <div class="logText" id="logText"></div><span class="caret" id="caret"></span>
         </div>
 
-        <!-- RIGHT -->
         <div class="rightCol">
           <div class="ritual" id="ritual">
             <h3>RITUAL: BREAK THE LOOP</h3>
 
-            <div class="meter">
-              <div class="orbRow" id="orbRow" aria-label="progress">
-                <div class="orb" id="orb1"></div>
-                <div class="orb" id="orb2"></div>
-                <div class="orb" id="orb3"></div>
-                <div class="orb" id="orb4"></div>
-                <div class="orb" id="orb5"></div>
-              </div>
+            <div class="orbRow" id="orbRow">
+              <div class="orb" id="orb1"></div>
+              <div class="orb" id="orb2"></div>
+              <div class="orb" id="orb3"></div>
+              <div class="orb" id="orb4"></div>
+              <div class="orb" id="orb5"></div>
             </div>
 
             <button class="ritualBtn" id="ritualBtn" type="button">HOLD TO UNLOCK</button>
             <div class="ritualNote" id="ritualNote">
-              Mantén presionado para “abrir el archivo”.<br>
-              (La música ayuda a cortar la conexión.)
+              1) Prende la música (arriba).<br>
+              2) Encuentra una “señal” (hint: tape/portal).<br>
+              3) Mantén presionado para abrir el archivo.
             </div>
           </div>
 
@@ -659,11 +680,10 @@
               <div>
                 <div class="big">FILE SEALED</div>
                 <div class="small">
-                  Completa el ritual arriba para ver el video.
+                  Completa el ritual para ver el video.
                 </div>
               </div>
             </div>
-            <!-- IFRAME SE INSERTA POR JS cuando se desbloquea -->
             <div id="embedMount"></div>
           </div>
         </div>
@@ -671,15 +691,13 @@
     </div>
   </div>
 
-  <!-- Footer -->
   <div class="footer">
     <div class="hint">
-      TIP: toca objetos para mensajes. <b>Reloj (7 taps)</b> = señal oculta.
-      <br>Si se prende rojo… no te quedes quieta.
+      Si la pantalla se pone roja: <b>toca cualquier cosa</b> o prende MUSIC.
+      • Reloj (7 taps) = secreto • Tape (3 taps) = señal • Portal (hold) = llave
     </div>
   </div>
 
-  <!-- Modal -->
   <div class="modal" id="modal" aria-hidden="true">
     <div class="backdrop" id="modalBack"></div>
     <div class="box">
@@ -693,11 +711,10 @@
     // =========================
     // CONFIG
     // =========================
-    // ✅ Tu Drive link (ID ya puesto): 1PNAnsFPvncZiq-sJuf-fGuq8tRrIi2w6
     const DRIVE_URL = "https://drive.google.com/file/d/1PNAnsFPvncZiq-sJuf-fGuq8tRrIi2w6/preview";
 
     // =========================
-    // UTIL: sparks + modal
+    // SPARK + MODAL
     // =========================
     function spark(x,y){
       const s = document.createElement("div");
@@ -706,6 +723,16 @@
       s.style.top  = y + "px";
       document.body.appendChild(s);
       setTimeout(()=>s.remove(), 650);
+    }
+    function trail(x,y){
+      const t = document.createElement("div");
+      t.className = "trail";
+      t.style.left = x + "px";
+      t.style.top  = y + "px";
+      t.style.setProperty("--dx", (Math.random()*22-11)+"px");
+      t.style.setProperty("--dy", (Math.random()*26-18)+"px");
+      document.body.appendChild(t);
+      t.addEventListener("animationend", ()=>t.remove());
     }
 
     const modal = document.getElementById("modal");
@@ -728,21 +755,21 @@
     modalBack.addEventListener("click", closeModal);
 
     // =========================
-    // AUDIO (iPhone-safe)
+    // AUDIO (iPhone safe)
     // =========================
     const ambience = document.getElementById("ambience");
     const soundBtn = document.getElementById("soundBtn");
+    const statusStamp = document.getElementById("statusStamp");
     let musicOn = false;
     let started = false;
 
     function updateSoundBtn(){
       soundBtn.textContent = musicOn ? "MUSIC: ON" : "MUSIC: OFF";
     }
-
     function startMusic(){
       if(!ambience) return;
       if(!started){
-        ambience.volume = 0.70; // intenso
+        ambience.volume = 0.70;
         started = true;
       }
       ambience.play().catch(()=>{});
@@ -756,7 +783,6 @@
       updateSoundBtn();
     }
 
-    // first real gesture anywhere triggers audio attempt
     function firstGesture(){
       if(!musicOn) startMusic();
       window.removeEventListener("pointerdown", firstGesture);
@@ -775,7 +801,38 @@
     updateSoundBtn();
 
     // =========================
-    // SPORES CANVAS (Upside Down feel)
+    // IDLE RED ALERT (6.5s)
+    // =========================
+    let idleTimer = null;
+    function flashOnce(){
+      document.body.classList.add("flashing","shake");
+      setTimeout(()=> document.body.classList.remove("flashing"), 120);
+      setTimeout(()=> document.body.classList.remove("shake"), 220);
+    }
+    function setIdle(on){
+      document.body.classList.toggle("idle", on);
+      if(on) flashOnce();
+    }
+    function resetIdle(){
+      setIdle(false);
+      clearTimeout(idleTimer);
+      idleTimer = setTimeout(()=>{
+        setIdle(true);
+      }, 6500);
+    }
+    ["pointerdown","mousemove","touchstart","keydown","scroll"].forEach(ev=>{
+      window.addEventListener(ev, resetIdle, {passive:true});
+    });
+    resetIdle();
+
+    // random flashes, more intense when idle
+    setInterval(()=>{
+      const p = document.body.classList.contains("idle") ? 0.45 : (musicOn ? 0.18 : 0.28);
+      if(Math.random() < p) flashOnce();
+    }, 2300);
+
+    // =========================
+    // SPORES CANVAS
     // =========================
     const canvas = document.getElementById("spores");
     const ctx = canvas.getContext("2d");
@@ -829,7 +886,6 @@
         ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
         ctx.fill();
 
-        // red embers
         if(Math.random() < 0.006){
           ctx.beginPath();
           ctx.fillStyle = `rgba(255,0,0,${rand(0.08,0.22)})`;
@@ -842,7 +898,7 @@
     draw();
 
     // =========================
-    // NARRATIVE TYPING
+    // NARRATIVE TYPING + GLITCH
     // =========================
     const logTextEl = document.getElementById("logText");
     const caret = document.getElementById("caret");
@@ -869,7 +925,6 @@
       typing = true;
       logTextEl.textContent = "";
       caret.style.display = "inline-block";
-
       for(const l of lines){
         await typeLine(l);
         logTextEl.textContent += "\n";
@@ -887,25 +942,7 @@
     typeAll();
 
     // =========================
-    // LIGHTNING SCHEDULER (red)
-    // =========================
-    function flashOnce(){
-      document.body.classList.add("flashing","shake");
-      setTimeout(()=> document.body.classList.remove("flashing"), 120);
-      setTimeout(()=> document.body.classList.remove("shake"), 220);
-    }
-
-    // random flashes
-    setInterval(()=>{
-      // more intense when music is OFF
-      const p = musicOn ? 0.18 : 0.32;
-      if(Math.random() < p){
-        flashOnce();
-      }
-    }, 2300);
-
-    // =========================
-    // OBJECTS (messages + clock 7 taps)
+    // OBJECTS + SECRETS
     // =========================
     const objClock = document.getElementById("objClock");
     const objWalkie = document.getElementById("objWalkie");
@@ -914,54 +951,83 @@
     const objPortal = document.getElementById("objPortal");
 
     let clockTaps = 0;
+    let tapeTaps = 0;         // ✅ nuevo
+    let candleTaps = 0;       // ✅ nuevo
+    let portalUnlocked = false; // ✅ nuevo (hold)
+    let signalFound = false;  // ✅ requisito
 
     function onObjClick(e, title, text){
       const x = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? (window.innerWidth/2);
       const y = e.clientY ?? (e.touches && e.touches[0]?.clientY) ?? 120;
       spark(x,y);
-      // try start music (iPhone friendly)
       if(!musicOn) startMusic();
       openModal(title, text);
     }
 
     objWalkie.addEventListener("click", (e)=> onObjClick(e,
       "WALKIE TRANSMISSION",
-      "📡 “Day… ¿me copias?”\n\nSi escuchas estática: RESPONDE con música.\nLa canción es la cuerda de regreso."
+      "📡 “Day… ¿me copias?”\n\nSi escuchas estática:\nRESPONDE con música.\nLa canción es la cuerda de regreso."
     ));
 
-    objCass.addEventListener("click", (e)=> onObjClick(e,
-      "CASSETTE EVIDENCE",
-      "Una cinta etiquetada: “PLAY ME WHEN IT HURTS”.\n\nLa música no es nostalgia.\nEs supervivencia."
-    ));
+    objCass.addEventListener("click", (e)=>{
+      spark(e.clientX, e.clientY);
+      if(!musicOn) startMusic();
+      tapeTaps++;
+      if(tapeTaps >= 3){
+        tapeTaps = 0;
+        signalFound = true;
+        statusStamp.textContent = "SIGNAL FOUND";
+        flashOnce();
+        openModal("SIGNAL ACQUIRED", "Encontraste la señal.\nAhora mantén el botón para abrir el archivo.");
+      }else{
+        openModal("CASSETTE", "Una cinta etiquetada:\n“PLAY ME WHEN IT HURTS”.\n\n(tócala 3 veces)");
+      }
+    });
 
-    objCandle.addEventListener("click", (e)=> onObjClick(e,
-      "CANDLE NOTE",
-      "La llama tiembla.\n\nSi la luz parpadea, no mires arriba.\nNo es el techo lo que está vivo."
-    ));
+    objCandle.addEventListener("click", (e)=>{
+      spark(e.clientX, e.clientY);
+      candleTaps++;
+      if(candleTaps >= 5){
+        candleTaps = 0;
+        flashOnce();
+        openModal("CANDLE NOTE", "La llama parpadea.\n\nNo es el techo lo que está vivo.\n(Easter: desbloqueaste un flash extra.)");
+      }else{
+        openModal("CANDLE", "Una luz pequeña.\nUn aviso enorme.\n\n(tócala 5 veces)");
+      }
+    });
 
-    objPortal.addEventListener("click", (e)=> onObjClick(e,
-      "PORTAL RESIDUE",
-      "El aire aquí se siente… al revés.\n\nRegla simple:\nNo camines en silencio."
-    ));
+    // portal hold to "unlock"
+    let portalHoldTimer = null;
+    objPortal.addEventListener("pointerdown", (e)=>{
+      spark(e.clientX, e.clientY);
+      if(!musicOn) startMusic();
+      portalHoldTimer = setTimeout(()=>{
+        portalUnlocked = true;
+        signalFound = true;
+        statusStamp.textContent = "KEY FOUND";
+        flashOnce();
+        openModal("PORTAL KEY", "Sostuviste el portal.\nEso cuenta como “señal”.\nAhora abre el archivo.");
+      }, 650);
+    });
+    ["pointerup","pointercancel","pointerleave"].forEach(ev=>{
+      objPortal.addEventListener(ev, ()=>{ if(portalHoldTimer) clearTimeout(portalHoldTimer); });
+    });
 
     objClock.addEventListener("click", (e)=>{
       spark(e.clientX, e.clientY);
       if(!musicOn) startMusic();
-
       clockTaps++;
       if(clockTaps >= 7){
         clockTaps = 0;
         flashOnce();
-        openModal("YOU ALMOST LOST HER.",
-          "El reloj intentó cerrar la puerta.\n\nPero la música la sostuvo.\n\nAbre el archivo… rápido."
-        );
+        openModal("YOU ALMOST LOST HER.", "El reloj intentó cerrar la puerta.\n\nPero la música la sostuvo.");
       }else{
         openModal("CLOCK WARNING", "Tick…\nTock…\n\nNo le des tiempo a Vecna.");
       }
     });
 
     // =========================
-    // RITUAL UNLOCK (hold)
+    // RITUAL UNLOCK (hold) + REQUIREMENTS
     // =========================
     const ritualBtn = document.getElementById("ritualBtn");
     const embedCover = document.getElementById("embedCover");
@@ -986,7 +1052,6 @@
       if(unlocked) return;
       unlocked = true;
 
-      // insert iframe
       embedMount.innerHTML = `
         <iframe
           src="${DRIVE_URL}"
@@ -995,27 +1060,38 @@
           title="Facts Video">
         </iframe>
       `;
-
       embedCover.style.display = "none";
+      statusStamp.textContent = "FILE OPENED";
       flashOnce();
-      openModal("FILE OPENED", "Acceso concedido.\n\nSi el ruido vuelve… presiona MUSIC.");
+
+      // “glitch” the log quickly
+      const old = logTextEl.textContent;
+      logTextEl.textContent = old + "\n\nACCESS GRANTED.";
+      openModal("FILE OPENED", "Acceso concedido.\n\nSi el rojo vuelve…\nprende MUSIC y toca algo.");
     }
 
     function startHold(){
       if(unlocked) return;
 
-      if(!musicOn) startMusic(); // help iPhone
+      // ✅ condiciones para desbloquear
+      if(!musicOn){
+        openModal("MUSIC REQUIRED", "Primero prende MUSIC (arriba).\nSafari/iPhone lo necesita.");
+        ritualBtn.textContent = "HOLD TO UNLOCK";
+        return;
+      }
+      if(!signalFound){
+        openModal("SIGNAL MISSING", "Falta una señal.\n\nHint: toca el cassette 3 veces\nO sostiene el portal.");
+        ritualBtn.textContent = "HOLD TO UNLOCK";
+        return;
+      }
+
       holdProgress = 0;
       setOrbs(0);
       ritualBtn.textContent = "UNLOCKING…";
-
       holdTimer = setInterval(()=>{
         holdProgress++;
         setOrbs(holdProgress);
-
-        // small chance flash while unlocking
         if(Math.random() < 0.35) flashOnce();
-
         if(holdProgress >= 5){
           clearInterval(holdTimer);
           holdTimer = null;
@@ -1036,7 +1112,6 @@
       ritualBtn.textContent = "HOLD TO UNLOCK";
     }
 
-    // pointer events
     ritualBtn.addEventListener("pointerdown", (e)=>{
       spark(e.clientX, e.clientY);
       startHold();
@@ -1045,7 +1120,6 @@
     ritualBtn.addEventListener("pointercancel", cancelHold);
     ritualBtn.addEventListener("pointerleave", cancelHold);
 
-    // touch fallback
     ritualBtn.addEventListener("touchstart", (e)=>{
       const t = e.touches[0];
       spark(t.clientX, t.clientY);
@@ -1053,12 +1127,28 @@
     }, {passive:true});
     ritualBtn.addEventListener("touchend", cancelHold, {passive:true});
 
-    // global sparks on clicks (for vibe)
+    // =========================
+    // GLOBAL FX + TRAIL (desktop)
+    // =========================
+    let lastTrail = 0;
+    document.addEventListener("pointermove", (e)=>{
+      // no spamear en móvil
+      if(e.pointerType !== "mouse") return;
+      const now = Date.now();
+      if(now - lastTrail < 35) return;
+      lastTrail = now;
+      trail(e.clientX, e.clientY);
+    }, {passive:true});
+
+    // any click makes sparks + resets idle
     document.addEventListener("click", (e)=>{
-      // avoid double sparks on ritual button
-      if(e.target === ritualBtn) return;
+      resetIdle();
       spark(e.clientX, e.clientY);
     }, {passive:true});
+
+    // when user touches screen in idle, snap back
+    document.addEventListener("pointerdown", ()=> setIdle(false), {passive:true});
+    document.addEventListener("touchstart", ()=> setIdle(false), {passive:true});
   </script>
 </body>
 </html>
