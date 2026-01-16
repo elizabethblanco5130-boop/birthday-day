@@ -22,7 +22,7 @@
 
   <!-- BARRA SUPERIOR -->
   <header class="hub-top">
-    <a class="hub-back" href="index.html">←</a>
+    <a class="hub-back" href="index.html?v=1000" aria-label="Volver">←</a>
     <div class="hub-title">HAWKINS HUB</div>
     <button class="hub-worldbtn" id="worldBtn" type="button">WORLD: NORMAL</button>
   </header>
@@ -30,27 +30,28 @@
   <!-- ICONOS -->
   <main class="hub-stage" id="stage">
 
-    <a class="hub-icon float1" href="story.html" data-spark="ink" aria-label="Tu historia">
+    <a class="hub-icon float1" href="story.html?v=1000" data-spark="ink" aria-label="Tu historia">
       <img src="img/tape.png" alt="Tape">
       <span>Historia</span>
     </a>
 
-    <a class="hub-icon float2" href="facts.html" data-spark="light" aria-label="Luces">
+    <a class="hub-icon float2" href="facts.html?v=1000" data-spark="light" aria-label="Luces">
       <img src="img/lights.png" alt="Lights">
       <span>Luces</span>
     </a>
 
-    <a class="hub-icon float3" href="playlist.html" data-spark="ink" aria-label="Playlist">
+    <a class="hub-icon float3" href="playlist.html?v=1000" data-spark="ink" aria-label="Playlist">
       <img src="img/radio.png" alt="Radio">
       <span>Mixtape</span>
     </a>
 
-    <a class="hub-icon float4" href="gallery.html" data-spark="ash" aria-label="Edits">
+    <!-- ✅ EDlTS DEL HUB (álbum libro) -->
+    <a class="hub-icon float4" href="edits-hub.html?v=1000" data-spark="ash" aria-label="Edits">
       <img src="img/portal.png" alt="Portal">
       <span>Edits</span>
     </a>
 
-    <a class="hub-icon float5" href="lab.html" data-spark="ink" aria-label="Lab">
+    <a class="hub-icon float5" href="lab.html?v=1000" data-spark="ink" aria-label="Lab">
       <img src="img/lab.png" alt="Lab">
       <span>Lab</span>
     </a>
@@ -63,5 +64,24 @@
   </main>
 
   <script src="hub.js?v=20"></script>
+
+  <script>
+    // ✅ iPhone/Safari: la música solo suena después de un toque real
+    const hubMusic = document.getElementById("hubMusic");
+    let hubStarted = false;
+
+    function startHubMusic(){
+      if(!hubMusic || hubStarted) return;
+      hubMusic.volume = 0.35;
+      hubMusic.play().catch(()=>{});
+      hubStarted = true;
+    }
+
+    // primer toque en cualquier parte de la página
+    window.addEventListener("pointerdown", startHubMusic, { once:true });
+    window.addEventListener("touchstart", startHubMusic, { once:true });
+    window.addEventListener("click", startHubMusic, { once:true });
+  </script>
+
 </body>
 </html>
