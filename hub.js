@@ -86,3 +86,18 @@ stage.addEventListener("click", (e) => {
   const mode = target?.dataset?.spark || "ash";
   spawnSparkBurst(e.clientX, e.clientY, mode);
 });
+
+
+// =====================================================
+// ✅ ADD-ON (NO borra nada): Edits del HUB → edits-hub.html
+// =====================================================
+// Esto fuerza que el icono "Edits" del hub vaya al álbum libro,
+// aunque el href en el HTML todavía diga gallery.html.
+stage.addEventListener("click", (e) => {
+  const editsIcon = e.target.closest('a.hub-icon.float4');
+  if(!editsIcon) return;
+
+  // Si el usuario toca "Edits", lo mandamos al álbum
+  e.preventDefault();
+  window.location.href = "edits-hub.html?v=1000";
+}, true);
