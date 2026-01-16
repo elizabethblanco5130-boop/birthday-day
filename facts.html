@@ -3,535 +3,524 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>Facts — Vecna Case File</title>
+  <title>ARCADE QUEST — Dayanara</title>
 
-  <link href="https://fonts.cdnfonts.com/css/benguiat" rel="stylesheet">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --red: rgba(255,0,0,.75);
-      --red2: rgba(255,0,0,.28);
-      --glass: rgba(0,0,0,.55);
-      --glass2: rgba(0,0,0,.30);
+      --bg: #000;
+      --panel: rgba(0,0,0,.55);
+      --panel2: rgba(0,0,0,.35);
+      --line: rgba(255,255,255,.14);
+      --neon1: rgba(0,255,255,.70);
+      --neon2: rgba(255,0,153,.75);
+      --neon3: rgba(255,255,0,.65);
       --txt: rgba(255,255,255,.92);
-      --muted: rgba(255,255,255,.78);
-      --cyan: rgba(0,255,255,.16);
+      --muted: rgba(255,255,255,.76);
     }
 
     *{ box-sizing:border-box; }
     html,body{ height:100%; }
-
-    /* ✅ IMPORTANTÍSIMO: ya no bloquea scroll */
     body{
       margin:0;
       background:#000;
       color:#fff;
-      overflow-x:hidden;
-      overflow-y:auto;
       font-family: system-ui, -apple-system, Arial;
-      -webkit-overflow-scrolling: touch;
-      touch-action: pan-y;
+      overflow-x:hidden;
     }
 
-    /* ===== VIDEO BACKGROUND ===== */
-    .bg{
+    /* ===== BACKGROUND SLOT (YOU WILL REPLACE) ===== */
+    .bg-slot{
       position:fixed; inset:0;
       z-index:0;
       background:#000;
-      overflow:hidden;
     }
-    .bg video{
+    /* Deja esto: tú luego pones background-image/video aquí */
+    .bg-slot::after{
+      content:"";
       position:absolute; inset:0;
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      filter: contrast(1.05) saturate(.9) brightness(.65);
-      transform: scale(1.02);
-    }
-
-    /* overlays */
-    .vignette{
-      position:fixed; inset:0; z-index:2;
-      pointer-events:none;
       background:
-        radial-gradient(ellipse at 40% 30%, rgba(0,0,0,.10), rgba(0,0,0,.78)),
-        radial-gradient(ellipse at 70% 70%, rgba(0,0,0,.18), rgba(0,0,0,.88));
-    }
-    .redMist{
-      position:fixed; inset:0; z-index:3;
+        radial-gradient(circle at 30% 20%, rgba(255,0,153,.14), rgba(0,0,0,.80)),
+        radial-gradient(circle at 70% 70%, rgba(0,255,255,.10), rgba(0,0,0,.88));
+      opacity:.85;
       pointer-events:none;
-      background: radial-gradient(circle at 22% 70%, rgba(255,0,0,.12), rgba(0,0,0,0));
-      opacity:.35;
-      mix-blend-mode: screen;
-      filter: blur(2px);
-      transition: opacity .6s ease;
-    }
-    .noise{
-      position:fixed; inset:0; z-index:4;
-      pointer-events:none;
-      opacity:.10;
-      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.65'/%3E%3C/svg%3E");
     }
 
-    /* Idle / Red Alert mode */
-    .alertTint{
+    /* CRT scanlines */
+    .crt{
       position:fixed; inset:0;
+      z-index:5;
       pointer-events:none;
-      z-index:35;
-      opacity:0;
       background:
-        radial-gradient(circle at 60% 20%, rgba(255,0,0,.35), rgba(0,0,0,0)),
-        radial-gradient(circle at 20% 80%, rgba(255,0,0,.25), rgba(0,0,0,0)),
-        rgba(0,0,0,.20);
-      mix-blend-mode: screen;
-      transition: opacity .7s ease;
+        repeating-linear-gradient(
+          to bottom,
+          rgba(255,255,255,.05),
+          rgba(255,255,255,.05) 1px,
+          rgba(0,0,0,0) 3px,
+          rgba(0,0,0,0) 6px
+        );
+      opacity:.10;
+      mix-blend-mode: overlay;
     }
-    body.idle .alertTint{ opacity:1; }
-    body.idle .redMist{ opacity:.62; }
 
-    /* Lightning flash */
-    .flash{
-      position:fixed; inset:0; z-index:50;
+    .vignette{
+      position:fixed; inset:0;
+      z-index:6;
       pointer-events:none;
-      opacity:0;
-      background:
-        radial-gradient(circle at 70% 30%, rgba(255,0,0,.45), rgba(255,0,0,0)),
-        radial-gradient(circle at 20% 80%, rgba(255,0,0,.25), rgba(0,0,0,0));
-      mix-blend-mode: screen;
-      transition: opacity .12s ease;
+      background: radial-gradient(ellipse at center, rgba(0,0,0,.08), rgba(0,0,0,.78));
     }
-    body.flashing .flash{ opacity:1; }
 
-    /* Lightning cracks */
-    .cracks{
-      position:fixed; inset:0; z-index:40;
+    /* ===== LAYOUT ===== */
+    .wrap{
+      position:relative;
+      z-index:10;
+      min-height:100%;
+      padding:16px 14px 18px;
+      display:grid;
+      place-items:center;
+    }
+
+    .cabinet{
+      width:min(1100px, 96vw);
+      border-radius:26px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.35);
+      backdrop-filter: blur(10px);
+      box-shadow:
+        0 0 0 2px rgba(255,0,153,.10),
+        0 0 40px rgba(255,0,153,.10),
+        0 0 34px rgba(0,255,255,.08);
+      overflow:hidden;
+      position:relative;
+    }
+
+    /* Neon frame */
+    .cabinet::before{
+      content:"";
+      position:absolute; inset:0;
+      border-radius:26px;
       pointer-events:none;
-      opacity:.9;
-      filter: drop-shadow(0 0 20px rgba(255,0,0,.22));
-    }
-    .crack{
-      position:absolute;
-      width:240px; height:240px;
-      border:1px solid rgba(255,0,0,.18);
-      border-radius:18px;
-      background:
-        linear-gradient(120deg, rgba(255,0,0,.0), rgba(255,0,0,.22), rgba(255,0,0,.0));
-      transform: rotate(18deg);
-      opacity:0;
-      animation: crack 6.8s ease-in-out infinite;
-    }
-    .crack.c1{ left:8%; top:12%; animation-delay: .4s; }
-    .crack.c2{ right:10%; top:24%; animation-delay: 1.3s; transform: rotate(-14deg); width:280px; height:280px; }
-    .crack.c3{ left:14%; bottom:12%; animation-delay: 2.0s; transform: rotate(8deg); width:320px; height:220px; }
-    .crack.c4{ right:12%; bottom:16%; animation-delay: 3.1s; transform: rotate(-8deg); width:240px; height:300px; }
-    @keyframes crack{
-      0%,100%{ opacity:0; filter: blur(8px); }
-      44%{ opacity:0; }
-      50%{ opacity:.85; filter: blur(0px); }
-      58%{ opacity:.18; filter: blur(6px); }
+      box-shadow:
+        inset 0 0 0 2px rgba(0,255,255,.12),
+        inset 0 0 0 1px rgba(255,0,153,.10);
     }
 
-    /* Shake */
-    @keyframes shake{
-      0%{ transform: translate(0,0); }
-      25%{ transform: translate(-1px,1px); }
-      50%{ transform: translate(1px,-1px); }
-      75%{ transform: translate(-1px,-1px); }
-      100%{ transform: translate(0,0); }
-    }
-    body.shake .panel{ animation: shake .18s linear 2; }
-
-    /* ===== TOP BAR (sticky) ===== */
+    /* Header */
     .top{
-      position:sticky;
-      top:0;
-      z-index:90;
-      padding:12px 14px 10px;
       display:flex;
       gap:10px;
       align-items:center;
       justify-content:space-between;
-      flex-wrap:wrap;
-      background: linear-gradient(180deg, rgba(0,0,0,.75), rgba(0,0,0,0));
-      backdrop-filter: blur(10px);
+      padding:14px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.45);
     }
 
-    .chip, .btn{
+    .title{
+      font-family:'Press Start 2P', monospace;
+      font-size:14px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:var(--txt);
+      text-shadow:
+        0 0 16px rgba(255,0,153,.18),
+        2px 0 rgba(0,255,255,.14),
+        -2px 0 rgba(255,0,153,.14);
+    }
+
+    .pill{
+      padding:10px 12px;
       border-radius:14px;
-      border:1px solid rgba(255,0,0,.55);
-      background: rgba(0,0,0,.45);
-      box-shadow: 0 0 18px rgba(255,0,0,.10);
-      color: var(--txt);
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.35);
+      color: rgba(255,255,255,.86);
       font-family:'Press Start 2P', monospace;
       font-size:10px;
       letter-spacing:.06em;
-      text-transform: uppercase;
-      padding:12px 14px;
+      text-transform:uppercase;
       user-select:none;
-    }
-    .btn{
-      cursor:pointer;
-      text-decoration:none;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-    }
-    .btn:active{ transform: translateY(1px); }
-
-    .title{
-      flex:1;
-      min-width: 220px;
-      text-align:center;
-      font-family: 'Benguiat', serif;
-      font-size:18px;
-      letter-spacing:.10em;
-      text-shadow:
-        0 0 18px rgba(255,0,0,.22),
-        2px 0 rgba(0,255,255,.10),
-        -2px 0 rgba(255,0,0,.10);
-    }
-
-    /* ===== LAYOUT WRAPPER (scrollable) ===== */
-    .wrap{
-      position:relative;
-      z-index:60;
-      padding:12px 14px 90px;
-      display:flex;
-      justify-content:center;
-    }
-
-    .panel{
-      width:min(1040px, 100%);
-      border-radius:22px;
-      border:1px solid rgba(255,0,0,.55);
-      background: rgba(0,0,0,.46);
-      backdrop-filter: blur(12px);
-      box-shadow: 0 0 40px rgba(255,0,0,.12);
-      overflow:hidden;
-    }
-
-    .panelHead{
-      padding:14px 14px 12px;
-      border-bottom:1px solid rgba(255,255,255,.08);
       display:flex;
       gap:10px;
-      align-items:flex-start;
-      justify-content:space-between;
+      align-items:center;
       flex-wrap:wrap;
+      justify-content:flex-end;
     }
 
-    .stamp{
-      border:1px dashed rgba(255,255,255,.20);
-      background: rgba(0,0,0,.25);
+    .btnLink{
+      text-decoration:none;
+      color:#fff;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.35);
       padding:10px 12px;
       border-radius:14px;
       font-family:'Press Start 2P', monospace;
-      font-size:9px;
-      letter-spacing:.06em;
-      opacity:.9;
-      transform: rotate(-2deg);
-      white-space:nowrap;
-    }
-    .stamp.red{
-      border-color: rgba(255,0,0,.45);
-      box-shadow: 0 0 14px rgba(255,0,0,.14);
-    }
-    .stamp.cyan{
-      border-color: rgba(0,255,255,.25);
-      box-shadow: 0 0 14px rgba(0,255,255,.10);
-      transform: rotate(2deg);
-    }
-
-    .caseTitle{
-      flex:1;
-      min-width: 220px;
-      font-family:'Press Start 2P', monospace;
       font-size:10px;
-      letter-spacing:.08em;
-      line-height:1.7;
-      color: rgba(255,255,255,.88);
-      text-align:center;
+      letter-spacing:.06em;
+      text-transform:uppercase;
     }
+    .btnLink:active{ transform: translateY(1px); }
 
-    .panelBody{
-      padding:14px;
+    /* Main grid */
+    .grid{
       display:grid;
       grid-template-columns: 1.1fr .9fr;
       gap:12px;
+      padding:14px;
     }
 
-    /* Left */
-    .log{
-      border-radius:18px;
+    /* Left: screen */
+    .screen{
+      border-radius:20px;
       border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.25);
-      padding:14px 14px 12px;
-      min-height: 320px;
+      background: rgba(0,0,0,.45);
+      box-shadow: inset 0 0 0 1px rgba(255,0,153,.06);
+      padding:14px;
       position:relative;
       overflow:hidden;
+      min-height:420px;
     }
-    .logTitle{
+
+    .screenHdr{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:12px;
+    }
+
+    .userTag{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    .avatar{
+      width:42px; height:42px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(0,255,255,.14), rgba(0,0,0,.55));
+      display:grid;
+      place-items:center;
+      font-family:'Press Start 2P', monospace;
+      font-size:12px;
+      color: rgba(255,255,255,.92);
+      text-shadow: 0 0 14px rgba(0,255,255,.14);
+    }
+
+    .uname{
       font-family:'Press Start 2P', monospace;
       font-size:10px;
-      letter-spacing:.08em;
-      text-transform: uppercase;
+      letter-spacing:.06em;
+      text-transform:uppercase;
       color: rgba(255,255,255,.90);
-      margin:0 0 10px;
-      text-shadow: 0 0 14px rgba(255,0,0,.14);
+      line-height:1.5;
     }
-    .logText{
+    .role{
+      font-family:'Press Start 2P', monospace;
+      font-size:9px;
+      opacity:.82;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      color: rgba(255,255,255,.78);
+    }
+
+    .bars{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .bar{
+      width:190px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.35);
+      overflow:hidden;
+      padding:8px 10px;
+    }
+    .bar .lbl{
+      font-family:'Press Start 2P', monospace;
+      font-size:8px;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      opacity:.88;
+      margin-bottom:8px;
+    }
+    .meter{
+      height:10px;
+      border-radius:999px;
+      background: rgba(255,255,255,.08);
+      overflow:hidden;
+    }
+    .fill{
+      height:100%;
+      width:50%;
+      background: linear-gradient(90deg, rgba(0,255,255,.75), rgba(255,0,153,.70));
+      box-shadow: 0 0 16px rgba(0,255,255,.12);
+      transition: width .35s ease;
+    }
+
+    /* Narrative console */
+    .console{
+      margin-top:12px;
+      border-radius:18px;
+      border:1px dashed rgba(255,255,255,.14);
+      background: rgba(0,0,0,.25);
+      padding:12px;
+      min-height: 170px;
+    }
+    .consoleTitle{
+      font-family:'Press Start 2P', monospace;
+      font-size:9px;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      opacity:.9;
+      margin-bottom:10px;
+    }
+    .text{
       font-family:'Press Start 2P', monospace;
       font-size:10px;
-      line-height:1.9;
+      line-height:1.85;
       letter-spacing:.04em;
-      color: rgba(255,255,255,.86);
+      color: rgba(255,255,255,.88);
       white-space:pre-wrap;
-      min-height: 220px;
+      min-height: 98px;
     }
     .caret{
       display:inline-block;
-      width:10px;
-      height:12px;
+      width:10px; height:12px;
       margin-left:4px;
-      background: rgba(255,255,255,.8);
+      background: rgba(255,255,255,.80);
       animation: blink .9s step-end infinite;
       vertical-align: -2px;
     }
     @keyframes blink{ 50%{ opacity:0; } }
 
-    /* Right */
-    .rightCol{
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-    }
-
-    .ritual{
+    /* Combat area */
+    .arena{
+      margin-top:12px;
       border-radius:18px;
-      border:1px solid rgba(255,0,0,.40);
-      background: rgba(0,0,0,.28);
-      padding:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.30);
+      padding:12px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      align-items:center;
+    }
+    .enemy{
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.25);
+      padding:10px;
+      min-height:92px;
       position:relative;
       overflow:hidden;
     }
-    .ritual h3{
-      margin:0 0 10px;
-      font-family:'Press Start 2P', monospace;
-      font-size:10px;
-      letter-spacing:.08em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,.92);
-    }
-
-    .orbRow{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
-    .orb{
-      width:14px; height:14px;
-      border-radius:50%;
-      border:1px solid rgba(255,255,255,.18);
-      background: rgba(0,0,0,.35);
-      box-shadow: inset 0 0 0 2px rgba(255,0,0,.06);
-    }
-    .orb.on{
-      background: rgba(255,0,0,.55);
-      box-shadow: 0 0 18px rgba(255,0,0,.22), 0 0 10px rgba(0,255,255,.10);
-      border-color: rgba(255,0,0,.55);
-    }
-
-    .ritualBtn{
-      margin-top:12px;
-      width:100%;
-      padding:12px 14px;
-      border-radius:14px;
-      border:2px solid rgba(255,0,0,.65);
-      background: rgba(0,0,0,.45);
-      color:#fff;
-      font-family:'Press Start 2P', monospace;
-      font-size:10px;
-      letter-spacing:.06em;
-      text-transform: uppercase;
-      cursor:pointer;
-      box-shadow: 0 0 18px rgba(255,0,0,.14);
-    }
-    .ritualBtn:active{ transform: translateY(1px); }
-
-    .ritualNote{
-      margin-top:10px;
+    .enemyName{
       font-family:'Press Start 2P', monospace;
       font-size:9px;
-      line-height:1.6;
-      color: rgba(255,255,255,.78);
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      opacity:.92;
+      margin-bottom:8px;
     }
-
-    .embed{
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.22);
-      overflow:hidden;
-      min-height: 280px;
-      position:relative;
-    }
-    .embedCover{
-      position:absolute; inset:0;
-      display:grid;
-      place-items:center;
-      text-align:center;
-      padding:16px;
-      background:
-        radial-gradient(circle at 30% 30%, rgba(255,0,0,.10), rgba(0,0,0,.60));
-    }
-    .embedCover .big{
+    .enemyHP{
       font-family:'Press Start 2P', monospace;
-      font-size:10px;
-      letter-spacing:.08em;
-      line-height:1.8;
-      color: rgba(255,255,255,.86);
-      text-transform: uppercase;
-    }
-    .embedCover .small{
-      margin-top:10px;
-      font-family: system-ui, -apple-system, Arial;
-      font-size:14px;
-      color: rgba(255,255,255,.80);
-      line-height:1.35;
-    }
-    iframe{
-      width:100%;
-      height: 420px;
-      border:0;
-      display:block;
-      background:#000;
+      font-size:8px;
+      opacity:.85;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      margin-top:8px;
     }
 
-    /* Floating objects layer */
-    .floatLayer{
-      position:fixed; inset:0;
-      z-index:30;
-      pointer-events:none;
-    }
-    .obj{
-      position:absolute;
-      width:86px; height:86px;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-      backdrop-filter: blur(6px);
-      box-shadow: inset 0 0 0 1px rgba(255,0,0,.10);
-      pointer-events:auto;
-      cursor:pointer;
-      user-select:none;
-      display:grid;
-      place-items:center;
+    .enemyMeter{
+      height:10px;
+      border-radius:999px;
+      background: rgba(255,255,255,.08);
       overflow:hidden;
-      transform: rotate(-6deg);
-      transition: transform .18s ease, opacity .25s ease, filter .25s ease;
     }
-    .obj:active{ transform: rotate(-6deg) scale(.98); }
-    .obj .ico{
-      font-size: 28px;
-      filter: drop-shadow(0 0 12px rgba(255,0,0,.18));
-      opacity:.95;
+    .enemyFill{
+      height:100%;
+      width:100%;
+      background: linear-gradient(90deg, rgba(255,0,153,.80), rgba(255,255,0,.55));
+      transition: width .35s ease;
     }
-    .obj .lbl{
-      position:absolute; left:10px; right:10px; bottom:9px;
-      text-align:center;
+
+    .qte{
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.25);
+      padding:10px;
+      min-height:92px;
+    }
+    .qteTitle{
       font-family:'Press Start 2P', monospace;
       font-size:8px;
       letter-spacing:.06em;
-      opacity:.82;
-      text-transform: uppercase;
-      color: rgba(255,255,255,.82);
+      text-transform:uppercase;
+      opacity:.85;
+      margin-bottom:8px;
+    }
+    .qbar{
+      height:12px;
+      border-radius:999px;
+      background: rgba(255,255,255,.08);
+      overflow:hidden;
+      position:relative;
+    }
+    .qtarget{
+      position:absolute;
+      left:60%;
+      width:18%;
+      top:0; bottom:0;
+      background: rgba(255,255,0,.28);
+      box-shadow: 0 0 18px rgba(255,255,0,.10);
+    }
+    .qdot{
+      position:absolute;
+      width:10px; height:12px;
+      border-radius:999px;
+      background: rgba(0,255,255,.75);
+      left:0%;
+      box-shadow: 0 0 18px rgba(0,255,255,.12);
     }
 
-    /* disperse (no tapa el panel central) */
-    .obj.clock{ left:16px; top:110px; animation: drift 9s ease-in-out infinite; }
-    .obj.walkie{ left:16px; top:220px; transform: rotate(7deg); animation: drift 11s ease-in-out infinite; }
-    .obj.cass{ right:16px; top:120px; transform: rotate(-10deg); animation: drift 10s ease-in-out infinite; }
-    .obj.candle{ right:16px; top:230px; transform: rotate(10deg); animation: drift 12s ease-in-out infinite; }
-    .obj.portal{ left:16px; bottom:130px; transform: rotate(-10deg); animation: drift 13s ease-in-out infinite; opacity:.85; }
-    @keyframes drift{
-      0%,100%{ transform: translate(0,0) rotate(var(--r, 0deg)); }
-      50%{ transform: translate(12px,-16px) rotate(var(--r, 0deg)); }
-    }
-
-    /* SPORES */
-    canvas#spores{
-      position:fixed; inset:0;
-      z-index:25;
-      pointer-events:none;
-      opacity:.95;
-    }
-
-    /* Footer hint */
-    .footer{
-      position:sticky;
-      bottom:0;
-      z-index:90;
-      padding:10px 14px 14px;
-      display:flex;
-      justify-content:center;
-      background: linear-gradient(0deg, rgba(0,0,0,.80), rgba(0,0,0,0));
-      backdrop-filter: blur(10px);
-    }
-    .footer .hint{
-      width:min(1040px, 100%);
+    .qbtn{
+      margin-top:10px;
+      width:100%;
+      padding:10px 12px;
       border-radius:14px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.30);
-      padding:12px 14px;
-      color: rgba(255,255,255,.86);
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.35);
+      color:#fff;
       font-family:'Press Start 2P', monospace;
       font-size:9px;
-      line-height:1.6;
-      letter-spacing:.05em;
-      text-align:center;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      cursor:pointer;
+    }
+    .qbtn:active{ transform: translateY(1px); }
+
+    /* Right: controls + inventory */
+    .side{
+      border-radius:20px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.45);
+      padding:14px;
+      min-height:420px;
+      overflow:hidden;
     }
 
-    /* Modal */
-    .modal{
-      position:fixed; inset:0;
-      display:none;
-      z-index:120;
-    }
-    .modal.show{ display:block; }
-    .modal .backdrop{
-      position:absolute; inset:0;
-      background: rgba(0,0,0,.72);
-      backdrop-filter: blur(6px);
-    }
-    .modal .box{
-      position:absolute;
-      left:50%; top:50%;
-      transform: translate(-50%,-50%);
-      width:min(92vw, 520px);
-      border-radius:18px;
-      border:1px solid rgba(255,0,0,.55);
-      background: rgba(0,0,0,.58);
-      box-shadow: 0 0 30px rgba(255,0,0,.18);
-      padding:16px;
-    }
-    .modal h3{
-      margin:0 0 10px;
+    .menuTitle{
       font-family:'Press Start 2P', monospace;
-      font-size:11px;
+      font-size:10px;
       letter-spacing:.08em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,.92);
+      text-transform:uppercase;
+      opacity:.92;
+      margin-bottom:12px;
+      text-shadow: 0 0 14px rgba(255,0,153,.14);
     }
-    .modal p{
-      margin:0;
-      line-height:1.65;
+
+    .actions{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-bottom:12px;
+    }
+    .abtn{
+      padding:12px 12px;
+      border-radius:16px;
+      border:1px solid rgba(255,0,153,.45);
+      background: rgba(0,0,0,.35);
+      color:#fff;
+      font-family:'Press Start 2P', monospace;
+      font-size:9px;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      cursor:pointer;
+      user-select:none;
+      box-shadow: 0 0 18px rgba(255,0,153,.08);
+      position:relative;
+      overflow:hidden;
+    }
+    .abtn::after{
+      content:"";
+      position:absolute; inset:-2px;
+      background: linear-gradient(90deg, rgba(0,255,255,.12), rgba(255,0,153,.14), rgba(0,255,255,.12));
+      opacity:.18;
+      filter: blur(10px);
+      pointer-events:none;
+    }
+    .abtn.main{ border:2px solid rgba(0,255,255,.35); }
+    .abtn:active{ transform: translateY(1px); }
+
+    .inv{
+      border-radius:18px;
+      border:1px dashed rgba(255,255,255,.14);
+      background: rgba(0,0,0,.25);
+      padding:12px;
+      min-height: 180px;
+    }
+    .invHdr{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      margin-bottom:10px;
+    }
+    .invHdr .k{
+      font-family:'Press Start 2P', monospace;
+      font-size:9px;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      opacity:.88;
+    }
+    .invList{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:8px;
+    }
+    .item{
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.25);
+      padding:10px 10px;
+      font-family:'Press Start 2P', monospace;
+      font-size:8px;
+      letter-spacing:.06em;
+      text-transform:uppercase;
       color: rgba(255,255,255,.86);
-      font-family: system-ui, -apple-system, Arial;
-      font-size:15px;
-      white-space:pre-line;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
     }
-    .modal .close{
+    .item b{
+      font-weight:700;
+      color: rgba(255,255,255,.95);
+    }
+
+    .footer{
       margin-top:12px;
-      width:100%;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.25);
+      padding:12px;
+      font-family:'Press Start 2P', monospace;
+      font-size:8px;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      color: rgba(255,255,255,.78);
+      line-height:1.65;
+      opacity:.92;
     }
 
     /* Sparks */
@@ -539,8 +528,8 @@
       position:fixed;
       width:10px; height:10px;
       border-radius:50%;
-      background: rgba(255,0,0,.85);
-      box-shadow: 0 0 14px rgba(255,0,0,.8), 0 0 24px rgba(0,255,255,.18);
+      background: rgba(255,0,153,.85);
+      box-shadow: 0 0 14px rgba(255,0,153,.75), 0 0 24px rgba(0,255,255,.25);
       pointer-events:none;
       transform: translate(-50%,-50%);
       animation: pop .6s ease-out forwards;
@@ -551,171 +540,128 @@
       to{ opacity:0; transform: translate(-50%,-50%) scale(3.2); }
     }
 
-    /* tiny trail sparkle (desktop vibe) */
-    .trail{
-      position:fixed;
-      pointer-events:none;
-      z-index:210;
-      transform: translate(-50%,-50%);
-      opacity:1;
-      animation: trail .7s ease-out forwards;
-      filter: drop-shadow(0 0 10px rgba(255,0,0,.25));
-    }
-    .trail::before{
-      content:"✦";
-      font-family:'Press Start 2P', monospace;
-      font-size:10px;
-      color: rgba(255,255,255,.92);
-      text-shadow: 0 0 10px rgba(255,0,0,.22);
-    }
-    @keyframes trail{
-      from{ opacity:1; transform: translate(-50%,-50%) scale(.9); }
-      to{ opacity:0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.5); }
-    }
-
     /* Responsive */
-    @media (max-width: 860px){
-      .panelBody{ grid-template-columns: 1fr; }
-      iframe{ height: 340px; }
-      .obj{ width:78px; height:78px; }
-      .title{ font-size:14px; }
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: 1fr; }
+      .bar{ width: 100%; }
+      .actions{ grid-template-columns: 1fr; }
+      .arena{ grid-template-columns: 1fr; }
     }
     @media (max-width: 420px){
       .title{ font-size:12px; }
-      .caseTitle{ font-size:9px; }
-      .logText{ font-size:9px; }
-      iframe{ height: 300px; }
+      .screen{ min-height: 420px; }
+      .side{ min-height: 360px; }
+      .invList{ grid-template-columns: 1fr; }
     }
   </style>
 </head>
 
 <body>
-  <div class="bg">
-    <video autoplay muted loop playsinline preload="auto" id="bgVid">
-      <source src="vecna-bg.mp4" type="video/mp4">
-    </video>
-  </div>
+  <!-- Background slot (you replace later) -->
+  <div class="bg-slot" id="bgSlot"></div>
 
+  <div class="crt"></div>
   <div class="vignette"></div>
-  <div class="redMist"></div>
-  <div class="noise"></div>
-  <div class="alertTint"></div>
-
-  <div class="cracks">
-    <div class="crack c1"></div>
-    <div class="crack c2"></div>
-    <div class="crack c3"></div>
-    <div class="crack c4"></div>
-  </div>
-  <div class="flash"></div>
-
-  <canvas id="spores"></canvas>
-
-  <audio id="ambience" loop preload="auto">
-    <source src="facts-dark.mp3" type="audio/mpeg">
-  </audio>
-
-  <div class="top">
-    <a class="btn" href="index.html?v=1000">← VOLVER</a>
-    <div class="chip title">VECNA CASE FILES</div>
-    <button class="btn" id="soundBtn" type="button">MUSIC: OFF</button>
-  </div>
-
-  <div class="floatLayer" id="floatLayer">
-    <div class="obj clock" id="objClock" style="--r:-6deg">
-      <div class="ico">🕰️</div><div class="lbl">clock</div>
-    </div>
-    <div class="obj walkie" id="objWalkie" style="--r:7deg">
-      <div class="ico">📻</div><div class="lbl">walkie</div>
-    </div>
-    <div class="obj cass" id="objCass" style="--r:-10deg">
-      <div class="ico">📼</div><div class="lbl">tape</div>
-    </div>
-    <div class="obj candle" id="objCandle" style="--r:10deg">
-      <div class="ico">🕯️</div><div class="lbl">candle</div>
-    </div>
-    <div class="obj portal" id="objPortal" style="--r:-10deg">
-      <div class="ico">🕳️</div><div class="lbl">portal</div>
-    </div>
-  </div>
 
   <div class="wrap">
-    <div class="panel" id="panel">
-      <div class="panelHead">
-        <div class="stamp red">CONFIDENTIAL</div>
-        <div class="caseTitle" id="caseTitle">
-          <b>SUBJECT:</b> DAY • <b>STATUS:</b> TRACKED • <b>RULE:</b> NO SILENCE
+    <div class="cabinet">
+
+      <div class="top">
+        <a class="btnLink" href="index.html?v=1000">← VOLVER</a>
+        <div class="title">ARCADE QUEST</div>
+        <div class="pill">
+          <span>PLAYER:</span> <b id="playerName">DAYANARA</b>
+          <span>TAG:</span> <b id="playerTag">@DAYA_DUNGEONRUN</b>
         </div>
-        <div class="stamp cyan" id="statusStamp">EVIDENCE LOCKED</div>
       </div>
 
-      <div class="panelBody">
-        <div class="log">
-          <div class="logTitle">INCIDENT LOG</div>
-          <div class="logText" id="logText"></div><span class="caret" id="caret"></span>
-        </div>
-
-        <div class="rightCol">
-          <div class="ritual" id="ritual">
-            <h3>RITUAL: BREAK THE LOOP</h3>
-
-            <div class="orbRow" id="orbRow">
-              <div class="orb" id="orb1"></div>
-              <div class="orb" id="orb2"></div>
-              <div class="orb" id="orb3"></div>
-              <div class="orb" id="orb4"></div>
-              <div class="orb" id="orb5"></div>
-            </div>
-
-            <button class="ritualBtn" id="ritualBtn" type="button">HOLD TO UNLOCK</button>
-            <div class="ritualNote" id="ritualNote">
-              1) Prende la música (arriba).<br>
-              2) Encuentra una “señal” (hint: tape/portal).<br>
-              3) Mantén presionado para abrir el archivo.
-            </div>
-          </div>
-
-          <div class="embed" id="embedBox">
-            <div class="embedCover" id="embedCover">
+      <div class="grid">
+        <!-- LEFT -->
+        <section class="screen">
+          <div class="screenHdr">
+            <div class="userTag">
+              <div class="avatar" id="avatar">D</div>
               <div>
-                <div class="big">FILE SEALED</div>
-                <div class="small">
-                  Completa el ritual para ver el video.
-                </div>
+                <div class="uname" id="uname">DAYANARA ANAHI</div>
+                <div class="role" id="role">CLASS: THE BARD OF HAWKINS • LVL <span id="lvl">1</span></div>
               </div>
             </div>
-            <div id="embedMount"></div>
+
+            <div class="bars">
+              <div class="bar">
+                <div class="lbl">HP <span id="hpTxt">30/30</span></div>
+                <div class="meter"><div class="fill" id="hpFill" style="width:100%"></div></div>
+              </div>
+              <div class="bar">
+                <div class="lbl">MANA <span id="mpTxt">12/12</span></div>
+                <div class="meter"><div class="fill" id="mpFill" style="width:100%"></div></div>
+              </div>
+              <div class="bar">
+                <div class="lbl">XP <span id="xpTxt">0/20</span></div>
+                <div class="meter"><div class="fill" id="xpFill" style="width:0%"></div></div>
+              </div>
+            </div>
           </div>
-        </div>
+
+          <div class="console">
+            <div class="consoleTitle">CONSOLE</div>
+            <div class="text" id="text"></div><span class="caret" id="caret"></span>
+          </div>
+
+          <div class="arena">
+            <div class="enemy">
+              <div class="enemyName" id="enemyName">ENCOUNTER: DEMODOG</div>
+              <div class="enemyMeter"><div class="enemyFill" id="enemyFill" style="width:100%"></div></div>
+              <div class="enemyHP" id="enemyHP">HP 18/18</div>
+            </div>
+
+            <div class="qte">
+              <div class="qteTitle">CRITICAL MINI-GAME (press STOP)</div>
+              <div class="qbar" id="qbar">
+                <div class="qtarget"></div>
+                <div class="qdot" id="qdot"></div>
+              </div>
+              <button class="qbtn" id="qbtn" type="button">STOP</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- RIGHT -->
+        <aside class="side">
+          <div class="menuTitle">COMMANDS</div>
+
+          <div class="actions">
+            <button class="abtn main" id="attackBtn" type="button">ATTACK</button>
+            <button class="abtn" id="spellBtn" type="button">SPELL</button>
+            <button class="abtn" id="itemBtn" type="button">ITEM</button>
+            <button class="abtn" id="runBtn" type="button">RUN</button>
+          </div>
+
+          <div class="inv">
+            <div class="invHdr">
+              <div class="k">INVENTORY</div>
+              <div class="k">GOLD: <span id="gold">15</span></div>
+            </div>
+            <div class="invList" id="invList">
+              <div class="item"><span>🎲 D20</span><b>1</b></div>
+              <div class="item"><span>📼 MIXTAPE</span><b>1</b></div>
+              <div class="item"><span>🗝️ KEY</span><b id="keys">0</b></div>
+              <div class="item"><span>🧪 POTION</span><b id="pots">1</b></div>
+            </div>
+          </div>
+
+          <div class="footer" id="footerHint">
+            tip: usa SPELL cuando el enemigo esté al 50% •
+            encuentra 2 llaves para abrir el portal final.
+          </div>
+        </aside>
       </div>
-    </div>
-  </div>
 
-  <div class="footer">
-    <div class="hint">
-      Si la pantalla se pone roja: <b>toca cualquier cosa</b> o prende MUSIC.
-      • Reloj (7 taps) = secreto • Tape (3 taps) = señal • Portal (hold) = llave
-    </div>
-  </div>
-
-  <div class="modal" id="modal" aria-hidden="true">
-    <div class="backdrop" id="modalBack"></div>
-    <div class="box">
-      <h3 id="modalTitle">SEÑAL</h3>
-      <p id="modalText">...</p>
-      <button class="btn close" id="modalClose" type="button">CERRAR</button>
     </div>
   </div>
 
   <script>
-    // =========================
-    // CONFIG
-    // =========================
-    const DRIVE_URL = "https://drive.google.com/file/d/1PNAnsFPvncZiq-sJuf-fGuq8tRrIi2w6/preview";
-
-    // =========================
-    // SPARK + MODAL
-    // =========================
+    // ========== SPARK FX ==========
     function spark(x,y){
       const s = document.createElement("div");
       s.className = "spark";
@@ -724,431 +670,272 @@
       document.body.appendChild(s);
       setTimeout(()=>s.remove(), 650);
     }
-    function trail(x,y){
-      const t = document.createElement("div");
-      t.className = "trail";
-      t.style.left = x + "px";
-      t.style.top  = y + "px";
-      t.style.setProperty("--dx", (Math.random()*22-11)+"px");
-      t.style.setProperty("--dy", (Math.random()*26-18)+"px");
-      document.body.appendChild(t);
-      t.addEventListener("animationend", ()=>t.remove());
+    document.addEventListener("click",(e)=>spark(e.clientX,e.clientY),{passive:true});
+
+    // ========== GAME STATE ==========
+    const state = {
+      name: "DAYANARA",
+      tag: "@DAYA_DUNGEONRUN",
+      class: "BARD OF HAWKINS",
+      lvl: 1,
+      hp: 30, hpMax: 30,
+      mp: 12, mpMax: 12,
+      xp: 0, xpMax: 20,
+      gold: 15,
+      keys: 0,
+      pots: 1,
+      enemy: { name:"DEMODog", hp: 18, hpMax:18 },
+      seenSecrets: new Set(),
+      qteRunning: true,
+      qpos: 0,
+      qdir: 1,
+      canAct: true
+    };
+
+    // UI refs
+    const el = (id)=>document.getElementById(id);
+    const hpTxt = el("hpTxt"), mpTxt = el("mpTxt"), xpTxt = el("xpTxt");
+    const hpFill = el("hpFill"), mpFill = el("mpFill"), xpFill = el("xpFill");
+    const lvl = el("lvl");
+    const enemyName = el("enemyName"), enemyFill = el("enemyFill"), enemyHP = el("enemyHP");
+    const text = el("text"), caret = el("caret");
+    const keys = el("keys"), pots = el("pots"), gold = el("gold");
+    const footerHint = el("footerHint");
+
+    function clamp(n,a,b){ return Math.max(a, Math.min(b,n)); }
+    function pct(cur,max){ return Math.round((cur/max)*100); }
+
+    function render(){
+      hpTxt.textContent = `${state.hp}/${state.hpMax}`;
+      mpTxt.textContent = `${state.mp}/${state.mpMax}`;
+      xpTxt.textContent = `${state.xp}/${state.xpMax}`;
+      hpFill.style.width = pct(state.hp,state.hpMax) + "%";
+      mpFill.style.width = pct(state.mp,state.mpMax) + "%";
+      xpFill.style.width = pct(state.xp,state.xpMax) + "%";
+      lvl.textContent = state.lvl;
+
+      enemyName.textContent = `ENCOUNTER: ${state.enemy.name.toUpperCase()}`;
+      enemyFill.style.width = pct(state.enemy.hp,state.enemy.hpMax) + "%";
+      enemyHP.textContent = `HP ${state.enemy.hp}/${state.enemy.hpMax}`;
+
+      keys.textContent = state.keys;
+      pots.textContent = state.pots;
+      gold.textContent = state.gold;
     }
 
-    const modal = document.getElementById("modal");
-    const modalTitle = document.getElementById("modalTitle");
-    const modalText = document.getElementById("modalText");
-    const modalClose = document.getElementById("modalClose");
-    const modalBack = document.getElementById("modalBack");
-
-    function openModal(title, text){
-      modalTitle.textContent = title;
-      modalText.textContent = text;
-      modal.classList.add("show");
-      modal.setAttribute("aria-hidden","false");
-    }
-    function closeModal(){
-      modal.classList.remove("show");
-      modal.setAttribute("aria-hidden","true");
-    }
-    modalClose.addEventListener("click", closeModal);
-    modalBack.addEventListener("click", closeModal);
-
-    // =========================
-    // AUDIO (iPhone safe)
-    // =========================
-    const ambience = document.getElementById("ambience");
-    const soundBtn = document.getElementById("soundBtn");
-    const statusStamp = document.getElementById("statusStamp");
-    let musicOn = false;
-    let started = false;
-
-    function updateSoundBtn(){
-      soundBtn.textContent = musicOn ? "MUSIC: ON" : "MUSIC: OFF";
-    }
-    function startMusic(){
-      if(!ambience) return;
-      if(!started){
-        ambience.volume = 0.70;
-        started = true;
-      }
-      ambience.play().catch(()=>{});
-      musicOn = true;
-      updateSoundBtn();
-    }
-    function stopMusic(){
-      if(!ambience) return;
-      ambience.pause();
-      musicOn = false;
-      updateSoundBtn();
-    }
-
-    function firstGesture(){
-      if(!musicOn) startMusic();
-      window.removeEventListener("pointerdown", firstGesture);
-      window.removeEventListener("touchstart", firstGesture);
-      window.removeEventListener("click", firstGesture);
-    }
-    window.addEventListener("pointerdown", firstGesture, {once:true});
-    window.addEventListener("touchstart", firstGesture, {once:true, passive:true});
-    window.addEventListener("click", firstGesture, {once:true});
-
-    soundBtn.addEventListener("click", (e)=>{
-      spark(e.clientX, e.clientY);
-      if(!musicOn) startMusic();
-      else stopMusic();
-    });
-    updateSoundBtn();
-
-    // =========================
-    // IDLE RED ALERT (6.5s)
-    // =========================
-    let idleTimer = null;
-    function flashOnce(){
-      document.body.classList.add("flashing","shake");
-      setTimeout(()=> document.body.classList.remove("flashing"), 120);
-      setTimeout(()=> document.body.classList.remove("shake"), 220);
-    }
-    function setIdle(on){
-      document.body.classList.toggle("idle", on);
-      if(on) flashOnce();
-    }
-    function resetIdle(){
-      setIdle(false);
-      clearTimeout(idleTimer);
-      idleTimer = setTimeout(()=>{
-        setIdle(true);
-      }, 6500);
-    }
-    ["pointerdown","mousemove","touchstart","keydown","scroll"].forEach(ev=>{
-      window.addEventListener(ev, resetIdle, {passive:true});
-    });
-    resetIdle();
-
-    // random flashes, more intense when idle
-    setInterval(()=>{
-      const p = document.body.classList.contains("idle") ? 0.45 : (musicOn ? 0.18 : 0.28);
-      if(Math.random() < p) flashOnce();
-    }, 2300);
-
-    // =========================
-    // SPORES CANVAS
-    // =========================
-    const canvas = document.getElementById("spores");
-    const ctx = canvas.getContext("2d");
-    let W=0, H=0, dpr=1;
-    const spores = [];
-    const COUNT = 160;
-
-    function resize(){
-      dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
-      W = Math.floor(window.innerWidth);
-      H = Math.floor(window.innerHeight);
-      canvas.width = Math.floor(W*dpr);
-      canvas.height = Math.floor(H*dpr);
-      canvas.style.width = W+"px";
-      canvas.style.height = H+"px";
-      ctx.setTransform(dpr,0,0,dpr,0,0);
-    }
-    window.addEventListener("resize", resize);
-    resize();
-
-    function rand(a,b){ return a + Math.random()*(b-a); }
-    function seed(){
-      spores.length = 0;
-      for(let i=0;i<COUNT;i++){
-        spores.push({
-          x: rand(0,W),
-          y: rand(0,H),
-          r: rand(0.7, 2.6),
-          vx: rand(-0.10, 0.14),
-          vy: rand(-0.22, -0.06),
-          a: rand(0.05, 0.22),
-          tw: rand(0, Math.PI*2)
-        });
-      }
-    }
-    seed();
-
-    function draw(){
-      ctx.clearRect(0,0,W,H);
-      for(const p of spores){
-        p.tw += 0.02;
-        p.x += p.vx + Math.sin(p.tw)*0.07;
-        p.y += p.vy;
-
-        if(p.x < -10) p.x = W+10;
-        if(p.x > W+10) p.x = -10;
-        if(p.y < -12) p.y = H+12;
-
-        ctx.beginPath();
-        ctx.fillStyle = `rgba(255,255,255,${p.a})`;
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-        ctx.fill();
-
-        if(Math.random() < 0.006){
-          ctx.beginPath();
-          ctx.fillStyle = `rgba(255,0,0,${rand(0.08,0.22)})`;
-          ctx.arc(p.x+rand(-2,2), p.y+rand(-2,2), p.r+rand(0.6,1.8), 0, Math.PI*2);
-          ctx.fill();
-        }
-      }
-      requestAnimationFrame(draw);
-    }
-    draw();
-
-    // =========================
-    // NARRATIVE TYPING + GLITCH
-    // =========================
-    const logTextEl = document.getElementById("logText");
-    const caret = document.getElementById("caret");
-    const lines = [
-      "CASE FILE: SUBJECT — DAY",
-      "",
-      "EVIDENCE: MUSIC BREAKS THE CONNECTION.",
-      "WARNING: SILENCE AMPLIFIES THE SIGNAL.",
-      "",
-      "NOTE:",
-      "“When the noise gets too loud, this is what brings her back.”",
-      "",
-      "PROTOCOL:",
-      "- Do not stare at the clocks.",
-      "- Do not follow the whispers.",
-      "- If red lightning starts… MOVE.",
-      "",
-      "STATUS: WAITING FOR USER ACTION…"
-    ];
-
+    // ========== TYPING TEXT ==========
     let typing = false;
-    async function typeAll(){
-      if(typing) return;
+    const queue = [];
+    function say(msg){
+      queue.push(msg);
+      if(!typing) runQueue();
+    }
+    async function runQueue(){
       typing = true;
-      logTextEl.textContent = "";
+      while(queue.length){
+        const msg = queue.shift();
+        await typeMsg(msg);
+        await sleep(220);
+      }
+      typing = false;
+    }
+    function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+    async function typeMsg(msg){
       caret.style.display = "inline-block";
-      for(const l of lines){
-        await typeLine(l);
-        logTextEl.textContent += "\n";
-        await sleep(120);
+      text.textContent = "";
+      for(let i=0;i<msg.length;i++){
+        text.textContent += msg[i];
+        await sleep(10 + Math.random()*18);
       }
       caret.style.display = "none";
     }
-    function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
-    async function typeLine(line){
-      for(let i=0;i<line.length;i++){
-        logTextEl.textContent += line[i];
-        await sleep(14 + Math.random()*20);
+
+    // ========== QTE ==========
+    const qdot = el("qdot");
+    let qAnim = null;
+    function startQTE(){
+      if(qAnim) cancelAnimationFrame(qAnim);
+      state.qteRunning = true;
+      function step(){
+        if(!state.qteRunning) return;
+        state.qpos += state.qdir * 1.6;
+        if(state.qpos >= 100){ state.qpos = 100; state.qdir = -1; }
+        if(state.qpos <= 0){ state.qpos = 0; state.qdir = 1; }
+        qdot.style.left = `calc(${state.qpos}% - 5px)`;
+        qAnim = requestAnimationFrame(step);
       }
+      step();
     }
-    typeAll();
+    startQTE();
 
-    // =========================
-    // OBJECTS + SECRETS
-    // =========================
-    const objClock = document.getElementById("objClock");
-    const objWalkie = document.getElementById("objWalkie");
-    const objCass = document.getElementById("objCass");
-    const objCandle = document.getElementById("objCandle");
-    const objPortal = document.getElementById("objPortal");
-
-    let clockTaps = 0;
-    let tapeTaps = 0;         // ✅ nuevo
-    let candleTaps = 0;       // ✅ nuevo
-    let portalUnlocked = false; // ✅ nuevo (hold)
-    let signalFound = false;  // ✅ requisito
-
-    function onObjClick(e, title, text){
-      const x = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? (window.innerWidth/2);
-      const y = e.clientY ?? (e.touches && e.touches[0]?.clientY) ?? 120;
-      spark(x,y);
-      if(!musicOn) startMusic();
-      openModal(title, text);
+    function checkQTE(){
+      // target is approx 60%..78% based on CSS .qtarget
+      const good = (state.qpos >= 60 && state.qpos <= 78);
+      return good ? 2 : 1; // crit multiplier
     }
 
-    objWalkie.addEventListener("click", (e)=> onObjClick(e,
-      "WALKIE TRANSMISSION",
-      "📡 “Day… ¿me copias?”\n\nSi escuchas estática:\nRESPONDE con música.\nLa canción es la cuerda de regreso."
-    ));
+    // ========== COMBAT ==========
+    function enemyTurn(){
+      if(state.enemy.hp <= 0) return;
+      const dmg = Math.floor(2 + Math.random()*5); // 2..6
+      state.hp = clamp(state.hp - dmg, 0, state.hpMax);
+      render();
+      say(`ENEMY STRIKES!\n-${dmg} HP.\n\n(Stay loud. Keep moving.)`);
 
-    objCass.addEventListener("click", (e)=>{
-      spark(e.clientX, e.clientY);
-      if(!musicOn) startMusic();
-      tapeTaps++;
-      if(tapeTaps >= 3){
-        tapeTaps = 0;
-        signalFound = true;
-        statusStamp.textContent = "SIGNAL FOUND";
-        flashOnce();
-        openModal("SIGNAL ACQUIRED", "Encontraste la señal.\nAhora mantén el botón para abrir el archivo.");
-      }else{
-        openModal("CASSETTE", "Una cinta etiquetada:\n“PLAY ME WHEN IT HURTS”.\n\n(tócala 3 veces)");
+      if(state.hp <= 0){
+        state.canAct = false;
+        say(`GAME OVER.\n\nDayanara respawns at the arcade.\nPress RUN to restart.`);
       }
-    });
-
-    objCandle.addEventListener("click", (e)=>{
-      spark(e.clientX, e.clientY);
-      candleTaps++;
-      if(candleTaps >= 5){
-        candleTaps = 0;
-        flashOnce();
-        openModal("CANDLE NOTE", "La llama parpadea.\n\nNo es el techo lo que está vivo.\n(Easter: desbloqueaste un flash extra.)");
-      }else{
-        openModal("CANDLE", "Una luz pequeña.\nUn aviso enorme.\n\n(tócala 5 veces)");
-      }
-    });
-
-    // portal hold to "unlock"
-    let portalHoldTimer = null;
-    objPortal.addEventListener("pointerdown", (e)=>{
-      spark(e.clientX, e.clientY);
-      if(!musicOn) startMusic();
-      portalHoldTimer = setTimeout(()=>{
-        portalUnlocked = true;
-        signalFound = true;
-        statusStamp.textContent = "KEY FOUND";
-        flashOnce();
-        openModal("PORTAL KEY", "Sostuviste el portal.\nEso cuenta como “señal”.\nAhora abre el archivo.");
-      }, 650);
-    });
-    ["pointerup","pointercancel","pointerleave"].forEach(ev=>{
-      objPortal.addEventListener(ev, ()=>{ if(portalHoldTimer) clearTimeout(portalHoldTimer); });
-    });
-
-    objClock.addEventListener("click", (e)=>{
-      spark(e.clientX, e.clientY);
-      if(!musicOn) startMusic();
-      clockTaps++;
-      if(clockTaps >= 7){
-        clockTaps = 0;
-        flashOnce();
-        openModal("YOU ALMOST LOST HER.", "El reloj intentó cerrar la puerta.\n\nPero la música la sostuvo.");
-      }else{
-        openModal("CLOCK WARNING", "Tick…\nTock…\n\nNo le des tiempo a Vecna.");
-      }
-    });
-
-    // =========================
-    // RITUAL UNLOCK (hold) + REQUIREMENTS
-    // =========================
-    const ritualBtn = document.getElementById("ritualBtn");
-    const embedCover = document.getElementById("embedCover");
-    const embedMount = document.getElementById("embedMount");
-    const orbs = [
-      document.getElementById("orb1"),
-      document.getElementById("orb2"),
-      document.getElementById("orb3"),
-      document.getElementById("orb4"),
-      document.getElementById("orb5"),
-    ];
-
-    let holdTimer = null;
-    let holdProgress = 0;
-    let unlocked = false;
-
-    function setOrbs(n){
-      orbs.forEach((o,idx)=> o.classList.toggle("on", idx < n));
     }
 
-    function unlock(){
-      if(unlocked) return;
-      unlocked = true;
+    function winFight(){
+      state.canAct = false;
+      const gain = 9 + Math.floor(Math.random()*6); // 9..14
+      state.xp += gain;
+      state.gold += 7;
+      state.keys += (Math.random() < 0.5 ? 1 : 0);
 
-      embedMount.innerHTML = `
-        <iframe
-          src="${DRIVE_URL}"
-          allow="autoplay; encrypted-media"
-          allowfullscreen
-          title="Facts Video">
-        </iframe>
-      `;
-      embedCover.style.display = "none";
-      statusStamp.textContent = "FILE OPENED";
-      flashOnce();
+      // level up
+      while(state.xp >= state.xpMax){
+        state.xp -= state.xpMax;
+        state.lvl++;
+        state.xpMax += 10;
+        state.hpMax += 6;
+        state.mpMax += 3;
+        state.hp = state.hpMax;
+        state.mp = state.mpMax;
+      }
 
-      // “glitch” the log quickly
-      const old = logTextEl.textContent;
-      logTextEl.textContent = old + "\n\nACCESS GRANTED.";
-      openModal("FILE OPENED", "Acceso concedido.\n\nSi el rojo vuelve…\nprende MUSIC y toca algo.");
+      render();
+      say(`VICTORY!\n+${gain} XP • +7 GOLD\n\nLOOT CHECK: KEY? ${state.keys>0?"YES":"NO"}\nPress ATTACK to continue.`);
     }
 
-    function startHold(){
-      if(unlocked) return;
+    function spawnEnemy(){
+      const pool = [
+        { name:"Demodog", hp:18 },
+        { name:"Mind-Spore", hp:16 },
+        { name:"Bat Swarm", hp:20 },
+        { name:"Mini-Vecna Echo", hp:22 }
+      ];
+      const pick = pool[Math.floor(Math.random()*pool.length)];
+      state.enemy = { name: pick.name, hp: pick.hp, hpMax: pick.hp };
+      state.canAct = true;
+      render();
+      say(`NEW ENCOUNTER!\n${pick.name.toUpperCase()} appears.\n\nChoose your move.`);
+    }
 
-      // ✅ condiciones para desbloquear
-      if(!musicOn){
-        openModal("MUSIC REQUIRED", "Primero prende MUSIC (arriba).\nSafari/iPhone lo necesita.");
-        ritualBtn.textContent = "HOLD TO UNLOCK";
+    // Actions
+    el("attackBtn").addEventListener("click", ()=>{
+      if(!state.canAct){
+        // if victory screen, continue
+        spawnEnemy();
         return;
       }
-      if(!signalFound){
-        openModal("SIGNAL MISSING", "Falta una señal.\n\nHint: toca el cassette 3 veces\nO sostiene el portal.");
-        ritualBtn.textContent = "HOLD TO UNLOCK";
+      const mult = checkQTE();
+      const base = 4 + Math.floor(Math.random()*5); // 4..8
+      const dmg = base * mult;
+
+      state.enemy.hp = clamp(state.enemy.hp - dmg, 0, state.enemy.hpMax);
+      render();
+
+      say(mult===2
+        ? `CRITICAL HIT!\n-${dmg} DMG.\n\nDayanara swings like a legend.`
+        : `ATTACK!\n-${dmg} DMG.\n\nArcade lights flicker...`
+      );
+
+      if(state.enemy.hp <= 0){
+        winFight();
+        return;
+      }
+      setTimeout(enemyTurn, 520);
+    });
+
+    el("spellBtn").addEventListener("click", ()=>{
+      if(!state.canAct) return;
+      if(state.mp < 4){
+        say("NOT ENOUGH MANA.\n\nFind a mixtape or use an item.");
+        return;
+      }
+      state.mp -= 4;
+      const dmg = 8 + Math.floor(Math.random()*7); // 8..14
+      state.enemy.hp = clamp(state.enemy.hp - dmg, 0, state.enemy.hpMax);
+      render();
+      say(`SPELL: “SONG OF RETURN”\n-${dmg} DMG.\n\nGood choice.`);
+      if(state.enemy.hp <= 0){
+        winFight();
+        return;
+      }
+      setTimeout(enemyTurn, 520);
+    });
+
+    el("itemBtn").addEventListener("click", ()=>{
+      if(!state.canAct){
+        say("NO ITEMS RIGHT NOW.\nPress ATTACK to continue.");
+        return;
+      }
+      if(state.pots <= 0){
+        say("NO POTIONS.\n\nTry SPELL or RUN.");
+        return;
+      }
+      state.pots--;
+      state.hp = clamp(state.hp + 14, 0, state.hpMax);
+      render();
+      say("ITEM: POTION\n+14 HP.\n\nDayanara refuses to go down.");
+      setTimeout(enemyTurn, 520);
+    });
+
+    el("runBtn").addEventListener("click", ()=>{
+      // restart if dead
+      if(state.hp <= 0){
+        state.hp = 30; state.hpMax = 30;
+        state.mp = 12; state.mpMax = 12;
+        state.xp = 0; state.xpMax = 20;
+        state.lvl = 1;
+        state.gold = 15;
+        state.keys = 0;
+        state.pots = 1;
+        spawnEnemy();
         return;
       }
 
-      holdProgress = 0;
-      setOrbs(0);
-      ritualBtn.textContent = "UNLOCKING…";
-      holdTimer = setInterval(()=>{
-        holdProgress++;
-        setOrbs(holdProgress);
-        if(Math.random() < 0.35) flashOnce();
-        if(holdProgress >= 5){
-          clearInterval(holdTimer);
-          holdTimer = null;
-          ritualBtn.textContent = "UNLOCKED";
-          unlock();
-        }
-      }, 220);
-    }
-
-    function cancelHold(){
-      if(unlocked) return;
-      if(holdTimer){
-        clearInterval(holdTimer);
-        holdTimer = null;
+      if(!state.canAct){
+        spawnEnemy();
+        return;
       }
-      holdProgress = 0;
-      setOrbs(0);
-      ritualBtn.textContent = "HOLD TO UNLOCK";
-    }
 
-    ritualBtn.addEventListener("pointerdown", (e)=>{
-      spark(e.clientX, e.clientY);
-      startHold();
+      const ok = Math.random() < 0.55;
+      if(ok){
+        say("ESCAPE SUCCESS.\n\nYou slip into the arcade crowd.");
+        spawnEnemy();
+      }else{
+        say("ESCAPE FAILED.\n\nThe enemy closes in!");
+        setTimeout(enemyTurn, 520);
+      }
     });
-    ritualBtn.addEventListener("pointerup", cancelHold);
-    ritualBtn.addEventListener("pointercancel", cancelHold);
-    ritualBtn.addEventListener("pointerleave", cancelHold);
 
-    ritualBtn.addEventListener("touchstart", (e)=>{
-      const t = e.touches[0];
-      spark(t.clientX, t.clientY);
-      startHold();
-    }, {passive:true});
-    ritualBtn.addEventListener("touchend", cancelHold, {passive:true});
+    // QTE button
+    el("qbtn").addEventListener("click", ()=>{
+      const good = (state.qpos >= 60 && state.qpos <= 78);
+      say(good ? "TIMING: PERFECT.\nCritical ready." : "TIMING: OK.\nNormal hit.");
+    });
 
-    // =========================
-    // GLOBAL FX + TRAIL (desktop)
-    // =========================
-    let lastTrail = 0;
-    document.addEventListener("pointermove", (e)=>{
-      // no spamear en móvil
-      if(e.pointerType !== "mouse") return;
-      const now = Date.now();
-      if(now - lastTrail < 35) return;
-      lastTrail = now;
-      trail(e.clientX, e.clientY);
-    }, {passive:true});
+    // ========== SECRETS (Easter eggs) ==========
+    // Tap the title 7 times => +1 key, +gold, message
+    let taps = 0;
+    document.querySelector(".title").addEventListener("click", ()=>{
+      taps++;
+      if(taps >= 7){
+        taps = 0;
+        state.keys++;
+        state.gold += 10;
+        render();
+        say("SECRET FOUND!\n+1 KEY • +10 GOLD\n\n(Arcade remembers you.)");
+      }
+    });
 
-    // any click makes sparks + resets idle
-    document.addEventListener("click", (e)=>{
-      resetIdle();
-      spark(e.clientX, e.clientY);
-    }, {passive:true});
-
-    // when user touches screen in idle, snap back
-    document.addEventListener("pointerdown", ()=> setIdle(false), {passive:true});
-    document.addEventListener("touchstart", ()=> setIdle(false), {passive:true});
+    // ========== INTRO ==========
+    render();
+    say("INSERT COIN.\n\nPLAYER: DAYANARA\nCLASS: BARD OF HAWKINS\n\nPress ATTACK to start.");
   </script>
 </body>
 </html>
