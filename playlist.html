@@ -19,24 +19,27 @@
 
     *{ box-sizing:border-box; }
     html, body { height:100%; }
+
     body{
       margin:0;
       background:#000;
       color:#fff;
-      overflow-x:hidden;
-      overflow-y:auto; /* ✅ antes estaba hidden y en tablet/PC se siente “cortado” */
       font-family: system-ui, -apple-system, Arial;
+      overflow:hidden; /* el scroll lo hace el panel internamente */
     }
 
+    /* ===== BACKGROUND IMAGE ===== */
     .bg{ position:fixed; inset:0; background:#000; z-index:0; }
     .bg img{
       position:absolute; inset:0;
       width:100%; height:100%;
       object-fit:cover;
-      filter: saturate(0.95) contrast(1.05);
+      /* un pelín más “cine” */
+      filter: saturate(0.95) contrast(1.06);
       transform: scale(1.01);
       user-select:none;
       -webkit-user-drag:none;
+      object-position: center top; /* para favorecer rostro en tablet/desktop */
     }
 
     .vignette{
@@ -57,6 +60,7 @@
       transition: opacity .6s ease, filter .6s ease;
     }
 
+    /* ===== IDLE VISUALS ===== */
     .idleDark{
       position:fixed; inset:0;
       opacity:0;
@@ -109,10 +113,8 @@
       80% { opacity:0; }
     }
 
-    /* ✅ NO sacudimos TODO el panel en desktop (se ve feo)
-       Solo aplicamos “shake” a un wrapper interno cuando idle */
-    .shakeWrap{ will-change: transform; }
-    body.idle .shakeWrap{ animation: shake .22s infinite; }
+    /* (solo vibra cuando idle) */
+    body.idle .ui{ animation: shake .22s infinite; }
     @keyframes shake{
       0%{ transform: translate(0,0); }
       25%{ transform: translate(1px,-1px); }
@@ -121,13 +123,15 @@
       100%{ transform: translate(0,0); }
     }
 
+    /* ===== PARTICLES CANVAS ===== */
     canvas#fx{
       position:fixed; inset:0;
       z-index:4;
       pointer-events:none;
-      opacity:.9;
+      opacity:.95;
     }
 
+    /* ===== WHISPER ===== */
     .whisper{
       position:fixed;
       top:14px; left:50%;
@@ -153,8 +157,7 @@
       transform: translateX(-50%) translateY(0);
     }
 
-    /* ✅ LAYOUT: en móvil queda abajo-izq como antes.
-       En tablet/PC pasa a “barra inferior” para NO tapar a Max. */
+    /* ===== UI PANEL ===== */
     .ui{
       position:fixed;
       left:16px;
@@ -173,11 +176,17 @@
       box-shadow: 0 0 32px rgba(255,0,0,.12);
       backdrop-filter: blur(10px);
       overflow:hidden;
+
+      /* ✅ clave: no romper en tablet/pc */
+      max-height: calc(100vh - 32px);
+      display:flex;
+      flex-direction:column;
     }
 
     .header{
       padding:14px 14px 12px;
       border-bottom: 1px solid rgba(255,255,255,.08);
+      flex:0 0 auto;
     }
 
     .logo{
@@ -215,6 +224,12 @@
       display:grid;
       grid-template-columns: 1fr 1fr;
       gap:10px;
+
+      /* ✅ scroll interno si no cabe */
+      overflow:auto;
+      flex:1 1 auto;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
     }
 
     .track{
@@ -232,11 +247,6 @@
     }
     .track:hover{ transform: translateY(-1px); }
     .track:active{ transform: translateY(1px); }
-
-    .track.playing{
-      border-color: rgba(0,255,255,.35);
-      box-shadow: 0 0 0 2px rgba(0,255,255,.08), 0 0 22px rgba(255,0,0,.10);
-    }
 
     .track .tag{
       font-family: 'Press Start 2P', monospace;
@@ -264,6 +274,7 @@
       align-items:center;
       justify-content:space-between;
       flex-wrap:wrap;
+      flex:0 0 auto;
     }
 
     .btn{
@@ -288,6 +299,7 @@
       box-shadow: 0 0 18px rgba(255,0,0,.18);
     }
 
+    /* ===== OBJECTS ===== */
     .objects{
       position:fixed; inset:0;
       z-index:40;
@@ -328,12 +340,14 @@
       color: rgba(255,255,255,.82);
     }
 
+    /* ✅ reacomodo (para que no choque con panel y se vea mejor) */
     .obj.clock{ left:14px; top:110px; }
-    .obj.walkie{ left:16px; top:250px; transform: rotate(7deg); }
-    .obj.bag{ right:16px; bottom:140px; transform: rotate(10deg); }
+    .obj.walkie{ left:16px; top:235px; transform: rotate(7deg); }
+    .obj.bag{ left:16px; bottom:140px; transform: rotate(10deg); } /* antes estaba a la derecha */
     .obj.vecna{ right:16px; top:140px; transform: rotate(10deg); opacity:.45; }
     .obj.vecna:hover{ opacity:.85; }
 
+    /* ===== MODAL ===== */
     .modal{
       position:fixed; inset:0;
       display:none;
@@ -373,26 +387,40 @@
       width:100%;
     }
 
-    /* ✅ RESPONSIVE: tablet/PC => panel abajo centrado y ancho grande
-       así NO se come la cara/cuerpo del fondo */
+    /* ===== RESPONSIVE ===== */
+
+    /* ✅ tablet/desktop: panel a la derecha para NO tapar la cara */
     @media (min-width: 900px){
       .ui{
-        left:50%;
-        transform: translateX(-50%);
-        bottom:22px;
-        width: min(980px, calc(100vw - 60px));
+        left:auto;
+        right:26px;
+        bottom:26px;
+        width: 460px;
       }
-      .logo{ font-size: 38px; }
-      .playlist{ grid-template-columns: repeat(5, 1fr); } /* ✅ más compacto, menos alto */
-      .track{ min-height: 62px; }
+      .logo{ font-size: 40px; }
       .obj{ width:84px; height:84px; }
+
+      /* mochi y walkie se quedan a la izquierda, vecna a la derecha */
+      .obj.bag{ left:20px; bottom:160px; }
+      .obj.walkie{ left:20px; top:260px; }
     }
 
-    @media (min-width: 1200px){
-      .playlist{ grid-template-columns: repeat(5, 1fr); }
+    /* tablets medianas: también a la derecha pero más estrecho */
+    @media (min-width: 720px) and (max-width: 899px){
+      .ui{
+        left:auto;
+        right:16px;
+        bottom:16px;
+        width: min(420px, calc(100vw - 32px));
+      }
     }
 
-    @media (max-width: 420px){
+    /* phones: panel abajo, pero sin comerse toda la pantalla */
+    @media (max-width: 520px){
+      .ui{ left:12px; right:12px; bottom:12px; width:auto; }
+      .panel{ max-height: calc(100vh - 24px); }
+      .logo{ font-size: 26px; }
+      .subtitle{ font-size: 13px; }
       .playlist{ grid-template-columns: 1fr 1fr; }
     }
   </style>
@@ -436,7 +464,7 @@
   </div>
 
   <div class="ui">
-    <section class="panel shakeWrap">
+    <section class="panel">
       <div class="header">
         <h1 class="logo" id="logo">ANTI-VECNA<br> MIXTAPE</h1>
         <div class="subtitle">Estas canciones la mantienen a salvo. No son nostalgia. Son supervivencia.</div>
@@ -505,7 +533,7 @@
 
   <script>
     // =========================
-    // PARTICLES
+    // PARTICLES (más + más grandes)
     // =========================
     const canvas = document.getElementById("fx");
     const ctx = canvas.getContext("2d");
@@ -525,32 +553,45 @@
     resize();
 
     const particles = [];
-    const COUNT = 110;
+    const COUNT = 220; // ✅ doble
     const rand = (a,b)=> a + Math.random()*(b-a);
 
     for(let i=0;i<COUNT;i++){
       particles.push({
         x: rand(0,W), y: rand(0,H),
-        r: rand(0.8, 2.2),
-        vx: rand(-0.18, 0.22),
-        vy: rand(-0.35, 0.15),
-        a: rand(0.05, 0.22)
+        r: rand(1.2, 3.6),          // ✅ más grandes
+        vx: rand(-0.22, 0.26),
+        vy: rand(-0.36, 0.18),
+        a: rand(0.06, 0.22),
+        tw: rand(0, Math.PI*2)
       });
     }
 
     function tick(){
       ctx.clearRect(0,0,W,H);
       for(const p of particles){
-        p.x += p.vx; p.y += p.vy;
+        p.tw += 0.02;
+        p.x += p.vx + Math.sin(p.tw)*0.10;
+        p.y += p.vy;
+
         if(p.x < -10) p.x = W+10;
         if(p.x > W+10) p.x = -10;
         if(p.y < -10) p.y = H+10;
         if(p.y > H+10) p.y = -10;
 
+        // white spore
         ctx.beginPath();
         ctx.fillStyle = `rgba(255,255,255,${p.a})`;
         ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
         ctx.fill();
+
+        // ember red sometimes
+        if(Math.random() < 0.008){
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(255,0,0,${rand(0.08,0.20)})`;
+          ctx.arc(p.x+rand(-4,4), p.y+rand(-4,4), p.r+rand(1.2,2.2), 0, Math.PI*2);
+          ctx.fill();
+        }
       }
       requestAnimationFrame(tick);
     }
@@ -592,8 +633,145 @@
     };
 
     let vecnaTaps = 0;
+
+    // =========================
+    // AUDIO (iPhone/iPad FIX real)
+    // =========================
+    const player = document.getElementById("player");
+    const aUnderw = document.getElementById("underw");
+    const aVecna  = document.getElementById("vecnaAudio");
+
+    let audioUnlocked = false;
+    let vecnaHasPlayedThisVisit = false;
+    let inIdle = false;
+    let idleTimer = null;
+    let vecnaDelayTimer = null;
+    let isSongPlaying = false;
+
+    function stopIdleAudio(){
+      clearTimeout(vecnaDelayTimer);
+      vecnaDelayTimer = null;
+
+      if(aUnderw){
+        try{ aUnderw.pause(); }catch(e){}
+      }
+      if(aVecna){
+        try{ aVecna.pause(); }catch(e){}
+      }
+    }
+
+    function startIdleAudioSequence(){
+      if(!audioUnlocked) return;
+      if(isSongPlaying) return;
+
+      // underw loop
+      if(aUnderw){
+        try{
+          aUnderw.loop = true;
+          aUnderw.volume = 0.55;
+          aUnderw.play().catch(()=>{});
+        }catch(e){}
+      }
+
+      // vecna after 7s (once per visit)
+      clearTimeout(vecnaDelayTimer);
+      vecnaDelayTimer = setTimeout(()=>{
+        if(!inIdle) return;
+        if(isSongPlaying) return;
+        if(vecnaHasPlayedThisVisit) return;
+
+        if(aVecna){
+          try{
+            aVecna.loop = false;
+            aVecna.volume = 0.75;
+            aVecna.currentTime = 0;
+            aVecna.play().then(()=>{
+              vecnaHasPlayedThisVisit = true;
+            }).catch(()=>{});
+          }catch(e){}
+        } else {
+          vecnaHasPlayedThisVisit = true;
+        }
+      }, 7000);
+    }
+
+    function setIdle(on){
+      inIdle = on;
+      document.body.classList.toggle("idle", on);
+
+      if(on){
+        if(isSongPlaying) return; // si hay cancion, no idle audio
+        showWhisper("Running won’t save you…");
+        startIdleAudioSequence();
+      }else{
+        stopIdleAudio();
+      }
+    }
+
+    function resetIdle(){
+      if(isSongPlaying) return;  // si hay cancion, no arranca idle
+      setIdle(false);
+      clearTimeout(idleTimer);
+      idleTimer = setTimeout(()=> setIdle(true), 6500);
+    }
+
+    // ✅ DESBLOQUEO REAL: primer toque en cualquier lugar
+    // y “primeamos” audio con play muted (truco iOS)
+    function unlockAudioNow(){
+      if(audioUnlocked) return;
+      audioUnlocked = true;
+
+      const prime = (a)=>{
+        if(!a) return;
+        try{
+          a.muted = true;
+          const p = a.play();
+          if(p){
+            p.then(()=>{
+              a.pause();
+              a.currentTime = 0;
+              a.muted = false;
+            }).catch(()=>{
+              a.muted = false;
+            });
+          }else{
+            a.muted = false;
+          }
+        }catch(e){}
+      };
+
+      prime(aUnderw);
+      prime(aVecna);
+      prime(player);
+
+      // si ya está idle cuando desbloquea, arrancar ahora mismo
+      if(inIdle && !isSongPlaying){
+        startIdleAudioSequence();
+      } else {
+        // reinicia el conteo limpio
+        resetIdle();
+      }
+    }
+
+    // IMPORTANT: pointerdown + touchstart + click
+    window.addEventListener("pointerdown", unlockAudioNow, { once:true });
+    window.addEventListener("touchstart", unlockAudioNow, { once:true, passive:true });
+    window.addEventListener("click", unlockAudioNow, { once:true });
+
+    // actividad para idle
+    ["pointerdown","mousemove","touchstart","keydown","scroll"].forEach(ev=>{
+      window.addEventListener(ev, resetIdle, { passive:true });
+    });
+    resetIdle();
+
+    // =========================
+    // OBJECTS click
+    // =========================
     document.querySelectorAll(".obj").forEach(o=>{
       o.addEventListener("click", ()=>{
+        // si es el primer gesto del usuario, esto también desbloquea audio
+        if(!audioUnlocked) unlockAudioNow();
+
         resetIdle();
         const k = o.dataset.obj;
 
@@ -616,175 +794,55 @@
     });
 
     // =========================
-    // AUDIO unlock (iPhone)
-    // =========================
-    let audioUnlocked = false;
-    function unlockAudio(){
-      audioUnlocked = true;
-      window.removeEventListener("pointerdown", unlockAudio);
-      window.removeEventListener("touchstart", unlockAudio);
-      window.removeEventListener("click", unlockAudio);
-    }
-    window.addEventListener("pointerdown", unlockAudio, { once:true });
-    window.addEventListener("touchstart", unlockAudio, { once:true });
-    window.addEventListener("click", unlockAudio, { once:true });
-
-    // =========================
     // PLAYLIST
     // =========================
     const tracks = [...document.querySelectorAll(".track")];
-    const player = document.getElementById("player");
     const panicBtn = document.getElementById("panicBtn");
 
-    function stopPlayer(){
-      try{ player.pause(); }catch(e){}
-      try{ player.currentTime = 0; }catch(e){}
-      tracks.forEach(t=>t.classList.remove("playing"));
-    }
-
-    function setPlaying(el){
-      tracks.forEach(t=>t.classList.remove("playing"));
-      if(el) el.classList.add("playing");
-    }
-
     function playTrack(el){
-      resetIdle();
+      if(!audioUnlocked) unlockAudioNow();
+
+      // al elegir musica: cancela idle + audios
+      isSongPlaying = true;
+      setIdle(false);
+      stopIdleAudio();
+
       showWhisper("Good. You chose music.");
 
-      // Si todavía no hay src, igual “cuenta como música elegida” (y corta idle)
       const src = (el.dataset.src || "").trim();
-      setPlaying(el);
-
       if(src){
         player.src = src;
         player.currentTime = 0;
         player.volume = 0.55;
         player.play().catch(()=>{});
-      }else{
-        // Si no hay src, por lo menos paramos audios de idle
-        stopIdleAudio();
+      } else {
+        // si aun no pusiste previews, igual damos “proteccion” por un rato
+        setTimeout(()=>{
+          isSongPlaying = false;
+          resetIdle();
+        }, 5500);
       }
     }
 
     tracks.forEach(el=> el.addEventListener("click", ()=> playTrack(el)));
 
     panicBtn.addEventListener("click", ()=>{
-      resetIdle();
+      if(!audioUnlocked) unlockAudioNow();
       const i = Math.floor(Math.random()*tracks.length);
       playTrack(tracks[i]);
     });
 
-    // =========================
-    // IDLE + 2 audios (FIX)
-    // Reglas:
-    // - idle a los 6.5s sin interacción
-    // - solo si NO está sonando player (canción)
-    // - underw loop mientras idle
-    // - vecna a los 7s después de entrar a idle (solo 1 vez por visita)
-    // =========================
-    const aUnderw = document.getElementById("underw");
-    const aVecna  = document.getElementById("vecnaAudio");
-
-    let idleTimer = null;
-    let vecnaDelayTimer = null;
-    let inIdle = false;
-    let vecnaHasPlayedThisVisit = false;
-
-    function isSongPlaying(){
-      return player && !player.paused && player.currentTime > 0;
-    }
-
-    function stopIdleAudio(){
-      clearTimeout(vecnaDelayTimer);
-      vecnaDelayTimer = null;
-
-      if(aUnderw){
-        try{ aUnderw.pause(); }catch(e){}
-        try{ aUnderw.currentTime = 0; }catch(e){}
-      }
-      if(aVecna){
-        try{ aVecna.pause(); }catch(e){}
-        try{ aVecna.currentTime = 0; }catch(e){}
-      }
-    }
-
-    function startIdleAudioSequence(){
-      // Solo si audio permitido y no hay canción sonando
-      if(!audioUnlocked) return;
-      if(isSongPlaying()) return;
-
-      // underw primero (loop)
-      if(aUnderw){
-        try{
-          aUnderw.loop = true;
-          aUnderw.volume = 0.55;
-          aUnderw.play().catch(()=>{});
-        }catch(e){}
-      }
-
-      // 7 segundos después: vecna una vez por visita
-      clearTimeout(vecnaDelayTimer);
-      vecnaDelayTimer = setTimeout(()=>{
-        if(!inIdle) return;
-        if(isSongPlaying()) return;
-        if(vecnaHasPlayedThisVisit) return;
-
-        if(aVecna){
-          try{
-            aVecna.loop = false;
-            aVecna.volume = 0.75;
-            aVecna.currentTime = 0;
-            aVecna.play().then(()=>{
-              vecnaHasPlayedThisVisit = true;
-            }).catch(()=>{});
-          }catch(e){}
-        } else {
-          vecnaHasPlayedThisVisit = true;
-        }
-      }, 7000);
-    }
-
-    function setIdle(on){
-      // Si hay canción sonando, jamás entramos a idle “sonoro”
-      if(on && isSongPlaying()){
-        document.body.classList.remove("idle");
-        inIdle = false;
-        stopIdleAudio();
-        return;
-      }
-
-      inIdle = on;
-      document.body.classList.toggle("idle", on);
-
-      if(on){
-        showWhisper("Running won’t save you…");
-        startIdleAudioSequence();
-      }else{
-        stopIdleAudio();
-      }
-    }
-
-    function resetIdle(){
-      setIdle(false);
-      clearTimeout(idleTimer);
-      idleTimer = setTimeout(()=>{
-        setIdle(true);
-      }, 6500);
-    }
-
-    ["pointerdown","mousemove","touchstart","keydown","scroll"].forEach(ev=>{
-      window.addEventListener(ev, resetIdle, {passive:true});
-    });
-    resetIdle();
-
-    // Si empieza a sonar una canción, cortar idle inmediatamente
-    player.addEventListener("play", ()=>{
-      setIdle(false);
-      stopIdleAudio();
+    // si estabas usando previews y termina
+    player.addEventListener("ended", ()=>{
+      isSongPlaying = false;
+      resetIdle();
     });
     player.addEventListener("pause", ()=>{
-      // si pausa y no toca nada, el timer normal decide
-      resetIdle();
+      // si pausas manualmente una preview, vuelve a idle normal
+      if(player.currentTime > 0 && player.currentTime < (player.duration || Infinity)){
+        isSongPlaying = false;
+        resetIdle();
+      }
     });
 
     // =========================
@@ -793,6 +851,7 @@
     let logoTaps = 0;
     const logo = document.getElementById("logo");
     logo.addEventListener("click", ()=>{
+      if(!audioUnlocked) unlockAudioNow();
       resetIdle();
       logoTaps++;
       if(logoTaps >= 7){
