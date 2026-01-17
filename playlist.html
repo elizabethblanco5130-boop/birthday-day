@@ -23,7 +23,8 @@
       margin:0;
       background:#000;
       color:#fff;
-      overflow:hidden;
+      overflow-x:hidden;
+      overflow-y:auto; /* ✅ antes estaba hidden y en tablet/PC se siente “cortado” */
       font-family: system-ui, -apple-system, Arial;
     }
 
@@ -108,7 +109,10 @@
       80% { opacity:0; }
     }
 
-    body.idle .ui{ animation: shake .22s infinite; }
+    /* ✅ NO sacudimos TODO el panel en desktop (se ve feo)
+       Solo aplicamos “shake” a un wrapper interno cuando idle */
+    .shakeWrap{ will-change: transform; }
+    body.idle .shakeWrap{ animation: shake .22s infinite; }
     @keyframes shake{
       0%{ transform: translate(0,0); }
       25%{ transform: translate(1px,-1px); }
@@ -149,6 +153,8 @@
       transform: translateX(-50%) translateY(0);
     }
 
+    /* ✅ LAYOUT: en móvil queda abajo-izq como antes.
+       En tablet/PC pasa a “barra inferior” para NO tapar a Max. */
     .ui{
       position:fixed;
       left:16px;
@@ -226,6 +232,11 @@
     }
     .track:hover{ transform: translateY(-1px); }
     .track:active{ transform: translateY(1px); }
+
+    .track.playing{
+      border-color: rgba(0,255,255,.35);
+      box-shadow: 0 0 0 2px rgba(0,255,255,.08), 0 0 22px rgba(255,0,0,.10);
+    }
 
     .track .tag{
       font-family: 'Press Start 2P', monospace;
@@ -362,10 +373,27 @@
       width:100%;
     }
 
+    /* ✅ RESPONSIVE: tablet/PC => panel abajo centrado y ancho grande
+       así NO se come la cara/cuerpo del fondo */
     @media (min-width: 900px){
-      .ui{ left:26px; bottom:26px; width: 440px; }
-      .logo{ font-size: 40px; }
+      .ui{
+        left:50%;
+        transform: translateX(-50%);
+        bottom:22px;
+        width: min(980px, calc(100vw - 60px));
+      }
+      .logo{ font-size: 38px; }
+      .playlist{ grid-template-columns: repeat(5, 1fr); } /* ✅ más compacto, menos alto */
+      .track{ min-height: 62px; }
       .obj{ width:84px; height:84px; }
+    }
+
+    @media (min-width: 1200px){
+      .playlist{ grid-template-columns: repeat(5, 1fr); }
+    }
+
+    @media (max-width: 420px){
+      .playlist{ grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
@@ -408,7 +436,7 @@
   </div>
 
   <div class="ui">
-    <section class="panel">
+    <section class="panel shakeWrap">
       <div class="header">
         <h1 class="logo" id="logo">ANTI-VECNA<br> MIXTAPE</h1>
         <div class="subtitle">Estas canciones la mantienen a salvo. No son nostalgia. Son supervivencia.</div>
@@ -602,8 +630,57 @@
     window.addEventListener("click", unlockAudio, { once:true });
 
     // =========================
-    // IDLE + 2 audios
-    // ✅ vecna: 1 vez por entrada (por load)
+    // PLAYLIST
+    // =========================
+    const tracks = [...document.querySelectorAll(".track")];
+    const player = document.getElementById("player");
+    const panicBtn = document.getElementById("panicBtn");
+
+    function stopPlayer(){
+      try{ player.pause(); }catch(e){}
+      try{ player.currentTime = 0; }catch(e){}
+      tracks.forEach(t=>t.classList.remove("playing"));
+    }
+
+    function setPlaying(el){
+      tracks.forEach(t=>t.classList.remove("playing"));
+      if(el) el.classList.add("playing");
+    }
+
+    function playTrack(el){
+      resetIdle();
+      showWhisper("Good. You chose music.");
+
+      // Si todavía no hay src, igual “cuenta como música elegida” (y corta idle)
+      const src = (el.dataset.src || "").trim();
+      setPlaying(el);
+
+      if(src){
+        player.src = src;
+        player.currentTime = 0;
+        player.volume = 0.55;
+        player.play().catch(()=>{});
+      }else{
+        // Si no hay src, por lo menos paramos audios de idle
+        stopIdleAudio();
+      }
+    }
+
+    tracks.forEach(el=> el.addEventListener("click", ()=> playTrack(el)));
+
+    panicBtn.addEventListener("click", ()=>{
+      resetIdle();
+      const i = Math.floor(Math.random()*tracks.length);
+      playTrack(tracks[i]);
+    });
+
+    // =========================
+    // IDLE + 2 audios (FIX)
+    // Reglas:
+    // - idle a los 6.5s sin interacción
+    // - solo si NO está sonando player (canción)
+    // - underw loop mientras idle
+    // - vecna a los 7s después de entrar a idle (solo 1 vez por visita)
     // =========================
     const aUnderw = document.getElementById("underw");
     const aVecna  = document.getElementById("vecnaAudio");
@@ -611,25 +688,30 @@
     let idleTimer = null;
     let vecnaDelayTimer = null;
     let inIdle = false;
-
-    // ✅ bandera SOLO para esta sesión de página
-    // (si recargas, vuelve a false automáticamente)
     let vecnaHasPlayedThisVisit = false;
+
+    function isSongPlaying(){
+      return player && !player.paused && player.currentTime > 0;
+    }
 
     function stopIdleAudio(){
       clearTimeout(vecnaDelayTimer);
       vecnaDelayTimer = null;
 
       if(aUnderw){
-        try{ aUnderw.pause(); aUnderw.currentTime = 0; }catch(e){}
+        try{ aUnderw.pause(); }catch(e){}
+        try{ aUnderw.currentTime = 0; }catch(e){}
       }
       if(aVecna){
-        try{ aVecna.pause(); aVecna.currentTime = 0; }catch(e){}
+        try{ aVecna.pause(); }catch(e){}
+        try{ aVecna.currentTime = 0; }catch(e){}
       }
     }
 
     function startIdleAudioSequence(){
+      // Solo si audio permitido y no hay canción sonando
       if(!audioUnlocked) return;
+      if(isSongPlaying()) return;
 
       // underw primero (loop)
       if(aUnderw){
@@ -640,9 +722,11 @@
         }catch(e){}
       }
 
-      // 7 segundos después, vecna UNA sola vez por entrada
+      // 7 segundos después: vecna una vez por visita
+      clearTimeout(vecnaDelayTimer);
       vecnaDelayTimer = setTimeout(()=>{
         if(!inIdle) return;
+        if(isSongPlaying()) return;
         if(vecnaHasPlayedThisVisit) return;
 
         if(aVecna){
@@ -650,9 +734,8 @@
             aVecna.loop = false;
             aVecna.volume = 0.75;
             aVecna.currentTime = 0;
-
             aVecna.play().then(()=>{
-              vecnaHasPlayedThisVisit = true; // ✅ ya se usó en esta visita
+              vecnaHasPlayedThisVisit = true;
             }).catch(()=>{});
           }catch(e){}
         } else {
@@ -662,6 +745,14 @@
     }
 
     function setIdle(on){
+      // Si hay canción sonando, jamás entramos a idle “sonoro”
+      if(on && isSongPlaying()){
+        document.body.classList.remove("idle");
+        inIdle = false;
+        stopIdleAudio();
+        return;
+      }
+
       inIdle = on;
       document.body.classList.toggle("idle", on);
 
@@ -676,7 +767,9 @@
     function resetIdle(){
       setIdle(false);
       clearTimeout(idleTimer);
-      idleTimer = setTimeout(()=> setIdle(true), 6500);
+      idleTimer = setTimeout(()=>{
+        setIdle(true);
+      }, 6500);
     }
 
     ["pointerdown","mousemove","touchstart","keydown","scroll"].forEach(ev=>{
@@ -684,32 +777,14 @@
     });
     resetIdle();
 
-    // =========================
-    // PLAYLIST (sin previews todavía)
-    // =========================
-    const tracks = [...document.querySelectorAll(".track")];
-    const player = document.getElementById("player");
-    const panicBtn = document.getElementById("panicBtn");
-
-    function playTrack(el){
+    // Si empieza a sonar una canción, cortar idle inmediatamente
+    player.addEventListener("play", ()=>{
+      setIdle(false);
+      stopIdleAudio();
+    });
+    player.addEventListener("pause", ()=>{
+      // si pausa y no toca nada, el timer normal decide
       resetIdle();
-      showWhisper("Good. You chose music.");
-
-      const src = (el.dataset.src || "").trim();
-      if(src){
-        player.src = src;
-        player.currentTime = 0;
-        player.volume = 0.55;
-        player.play().catch(()=>{});
-      }
-    }
-
-    tracks.forEach(el=> el.addEventListener("click", ()=> playTrack(el)));
-
-    panicBtn.addEventListener("click", ()=>{
-      resetIdle();
-      const i = Math.floor(Math.random()*tracks.length);
-      playTrack(tracks[i]);
     });
 
     // =========================
