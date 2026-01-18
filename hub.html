@@ -5,66 +5,66 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>Hawkins Hub</title>
 
-  <!-- Stranger-ish font -->
   <link href="https://fonts.cdnfonts.com/css/benguiat" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=1000">
+  <link rel="stylesheet" href="style.css?v=9999">
 
   <style>
-    /* ✅ Extras SOLO para que los GIFs sí se vean (encima del video) */
+    /* ===== GIF LAYER (no bloquea clicks) ===== */
     .gif-layer{
-      position: fixed;
-      inset: 0;
-      z-index: 8;              /* arriba del video/vignette, abajo del UI */
-      pointer-events: none;
-      overflow: hidden;
+      position:fixed;
+      inset:0;
+      z-index:5;              /* debajo de iconos */
+      pointer-events:none;    /* ✅ nunca bloquea */
+      overflow:hidden;
     }
-
     .hub-gif{
-      position: absolute;
+      position:absolute;
       left: var(--x);
       top: var(--y);
       width: var(--s);
-      height: auto;
-      opacity: .95;
+      height:auto;
+      opacity:.9;
       transform: translate(-50%,-50%) rotate(var(--r));
-      filter: drop-shadow(0 0 16px rgba(255,0,0,.22));
+      filter: drop-shadow(0 0 12px rgba(255,0,0,.22));
       animation: hubFloat var(--t) ease-in-out infinite;
       will-change: transform;
     }
-
     @keyframes hubFloat{
       0%,100%{ transform: translate(-50%,-50%) rotate(var(--r)) translateY(0); }
-      50%{ transform: translate(-50%,-50%) rotate(var(--r)) translateY(-16px); }
+      50%{ transform: translate(-50%,-50%) rotate(var(--r)) translateY(-14px); }
     }
 
-    /* ✅ Iconos del hub: más grandes + label Benguiat */
+    /* ===== Iconos más grandes + letra Stranger ===== */
     .hub-icon img{
-      width: 86px;
-      height: 86px;
+      width: 115px;
+      height: 115px;
       object-fit: cover;
-      border-radius: 12px;
+      border-radius: 14px;
       display:block;
     }
     .hub-icon span{
       font-family: 'Benguiat', serif !important;
       letter-spacing: .14em;
       text-transform: uppercase;
-      font-size: 16px;
+      font-size: 18px;
       text-shadow:
         0 0 18px rgba(255,0,0,.20),
         2px 0 rgba(0,255,255,.12),
         -2px 0 rgba(255,0,0,.12);
     }
 
-    /* ✅ En pantallas grandes, aún más grandes */
+    /* En compu más grandes */
     @media (min-width: 900px){
-      .hub-icon img{ width: 110px; height: 110px; }
-      .hub-icon span{ font-size: 18px; }
+      .hub-icon img{
+        width: 150px;
+        height: 150px;
+      }
+      .hub-icon span{ font-size: 20px; }
     }
 
-    /* ✅ Solo mostrar Arcade/Archivos en NORMAL */
+    /* ===== Solo mostrar estos botones en NORMAL ===== */
     body.upside .only-normal,
-    body.will .only-normal{
+    body.will   .only-normal{
       display:none !important;
     }
   </style>
@@ -78,7 +78,7 @@
   </video>
   <div class="hub-vignette"></div>
 
-  <!-- ✅ capa para GIFs flotantes -->
+  <!-- ✅ GIFs flotantes -->
   <div class="gif-layer" id="gifLayer" aria-hidden="true"></div>
 
   <!-- 🔊 MÚSICA HUB -->
@@ -93,17 +93,17 @@
     <button class="hub-worldbtn" id="worldBtn" type="button">WORLD: NORMAL</button>
   </header>
 
-  <!-- ICONOS -->
+  <!-- ICONOS (como antes, flotantes) -->
   <main class="hub-stage" id="stage">
 
-    <!-- ✅ ARCADE (solo normal) -->
-    <a class="hub-icon float2 only-normal" href="facts.html?v=1000" data-spark="light" aria-label="Arcade">
+    <!-- ✅ ARCADE -->
+    <a class="hub-icon float2 only-normal" href="facts.html?v=2000" data-spark="light" aria-label="Arcade">
       <img src="img/icons/arcade.GIF" alt="Arcade">
       <span>Arcade</span>
     </a>
 
-    <!-- ✅ ARCHIVOS (solo normal) -->
-    <a class="hub-icon float4 only-normal" href="edits-hub.html?v=1000" data-spark="ash" aria-label="Archivos">
+    <!-- ✅ ARCHIVOS -->
+    <a class="hub-icon float4 only-normal" href="edits-hub.html?v=2000" data-spark="ash" aria-label="Archivos">
       <img src="img/icons/archivos.GIF" alt="Archivos">
       <span>Archivos</span>
     </a>
@@ -115,6 +115,6 @@
 
   </main>
 
-  <script src="hub.js?v=1000"></script>
+  <script src="hub.js?v=9999"></script>
 </body>
 </html>
