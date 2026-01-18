@@ -40,7 +40,7 @@
       letter-spacing:.06em;
       text-transform:uppercase;
       white-space:nowrap;
-      opacity:.9;
+      opacity:.92;
       animation:phFloat var(--t) ease-in-out infinite;
     }
     @keyframes phFloat{
@@ -48,7 +48,7 @@
       50%{ transform:translate(-50%,-50%) rotate(var(--r)) translateY(-16px); }
     }
 
-    /* Mostrar GIFs SOLO en NORMAL */
+    /* Mostrar placeholders SOLO en NORMAL */
     body.upside .gif-layer,
     body.will .gif-layer{
       display:none !important;
@@ -137,7 +137,7 @@
   <div class="gif-layer" id="gifLayer" aria-hidden="true"></div>
 
   <!-- MENSAJE UPSIDE -->
-  <div class="upside-note">
+  <div class="upside-note" aria-hidden="true">
     <div class="big">02·02·2005 — INDIANA, USA</div>
     DAYS ELAPSED: 7,670<br>
     AGE: 21<br>
@@ -153,20 +153,20 @@
 
   <!-- TOP BAR -->
   <header class="hub-top">
-    <a class="hub-back" href="index.html?v=1000">←</a>
+    <a class="hub-back" href="index.html?v=1000" aria-label="Volver">←</a>
     <div class="hub-title">HAWKINS HUB</div>
-    <button class="hub-worldbtn" id="worldBtn">WORLD: NORMAL</button>
+    <button class="hub-worldbtn" id="worldBtn" type="button">WORLD: NORMAL</button>
   </header>
 
   <!-- ICONOS -->
   <main class="hub-stage" id="stage">
 
-    <a class="hub-icon float2 only-normal" href="facts.html?v=2000" data-spark="light">
+    <a class="hub-icon float2 only-normal" href="facts.html?v=2000" data-spark="light" aria-label="Arcade">
       <img src="img/icons/arcade.GIF" alt="Arcade">
       <span>Arcade</span>
     </a>
 
-    <a class="hub-icon float4 only-normal" href="edits-hub.html?v=2000" data-spark="ash">
+    <a class="hub-icon float4 only-normal" href="edits-hub.html?v=2000" data-spark="ash" aria-label="Archivos">
       <img src="img/icons/archivos.GIF" alt="Archivos">
       <span>Archivos</span>
     </a>
@@ -181,29 +181,41 @@
   <script src="hub.js?v=9999"></script>
 
   <script>
-    // ===== 22 PLACEHOLDERS =====
+    // ===== 22 PLACEHOLDERS (solo NORMAL) =====
     const gifLayer = document.getElementById("gifLayer");
+    const worldBtn = document.getElementById("worldBtn");
+
     function rand(a,b){ return a + Math.random()*(b-a); }
 
     function renderPlaceholders(){
+      if(!gifLayer) return;
       gifLayer.innerHTML = "";
+
+      // Solo en NORMAL
       if(!document.body.classList.contains("normal")) return;
 
-      const H = window.innerHeight;
       for(let i=1;i<=22;i++){
         const d = document.createElement("div");
         d.className = "gif-ph";
         d.textContent = `hawkins${i}.GIF`;
         d.style.setProperty("--x", rand(8,92) + "%");
-        d.style.setProperty("--y", rand(18,88) + "%");
+        d.style.setProperty("--y", rand(14,88) + "%");
         d.style.setProperty("--r", rand(-14,14) + "deg");
         d.style.setProperty("--t", rand(2.6,5.2) + "s");
         gifLayer.appendChild(d);
       }
     }
 
-    renderPlaceholders();
+    // Inicial
+    window.addEventListener("load", renderPlaceholders);
     window.addEventListener("resize", renderPlaceholders);
+
+    // Cuando cambias WORLD (hub.js cambia la clase del body)
+    if(worldBtn){
+      worldBtn.addEventListener("click", ()=>{
+        setTimeout(renderPlaceholders, 60);
+      });
+    }
   </script>
 
 </body>
