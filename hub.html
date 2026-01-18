@@ -13,8 +13,8 @@
     .gif-layer{
       position:fixed;
       inset:0;
-      z-index:5;              /* debajo de iconos */
-      pointer-events:none;    /* ✅ nunca bloquea */
+      z-index:5;
+      pointer-events:none;
       overflow:hidden;
     }
     .hub-gif{
@@ -52,20 +52,51 @@
         2px 0 rgba(0,255,255,.12),
         -2px 0 rgba(255,0,0,.12);
     }
-
-    /* En compu más grandes */
     @media (min-width: 900px){
-      .hub-icon img{
-        width: 150px;
-        height: 150px;
-      }
+      .hub-icon img{ width: 150px; height: 150px; }
       .hub-icon span{ font-size: 20px; }
     }
 
-    /* ===== Solo mostrar estos botones en NORMAL ===== */
+    /* ===== Solo mostrar Arcade/Archivos en NORMAL ===== */
     body.upside .only-normal,
     body.will   .only-normal{
       display:none !important;
+    }
+
+    /* ===== UPSIDE NOTE (solo en upside) ===== */
+    .upside-note{
+      position:fixed;
+      left:50%;
+      top:56%;
+      transform: translate(-50%,-50%);
+      width:min(520px, 88vw);
+      z-index:30;
+      display:none; /* default */
+      padding:14px 14px;
+      border-radius:18px;
+      border:1px solid rgba(255,0,0,.35);
+      background: rgba(0,0,0,.35);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 30px rgba(255,0,0,.12);
+      text-align:center;
+      pointer-events:none;
+      font-family:'Press Start 2P', monospace;
+      font-size:10px;
+      letter-spacing:.08em;
+      line-height:1.7;
+      color: rgba(255,255,255,.86);
+      text-transform:uppercase;
+      opacity:.95;
+    }
+    body.upside .upside-note{ display:block; }
+
+    .upside-note .big{
+      font-family:'Benguiat', serif;
+      letter-spacing:.16em;
+      font-size:18px;
+      color: rgba(255,255,255,.92);
+      text-shadow: 0 0 18px rgba(255,0,0,.18);
+      margin-bottom:8px;
     }
   </style>
 </head>
@@ -81,6 +112,16 @@
   <!-- ✅ GIFs flotantes -->
   <div class="gif-layer" id="gifLayer" aria-hidden="true"></div>
 
+  <!-- ✅ Mensaje solo UPSIDE -->
+  <div class="upside-note" id="upsideNote" aria-hidden="true">
+    <div class="big">02·02·2005 — INDIANA, USA</div>
+    DAYS ELAPSED: 7,670<br>
+    AGE: 21<br>
+    STATUS: OFFICIALLY LEGAL<br>
+    SYSTEM: ONLINE<br><br>
+    FELIZ VIGÉSIMA-PRIMER VUELTA AL SOL.
+  </div>
+
   <!-- 🔊 MÚSICA HUB -->
   <audio id="hubMusic" loop preload="auto">
     <source src="should.mp3" type="audio/mpeg">
@@ -93,7 +134,7 @@
     <button class="hub-worldbtn" id="worldBtn" type="button">WORLD: NORMAL</button>
   </header>
 
-  <!-- ICONOS (como antes, flotantes) -->
+  <!-- ICONOS -->
   <main class="hub-stage" id="stage">
 
     <!-- ✅ ARCADE -->
