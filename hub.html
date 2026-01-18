@@ -5,18 +5,56 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>Hawkins Hub</title>
   <link rel="stylesheet" href="style.css?v=20">
+  <link href="https://fonts.cdnfonts.com/css/benguiat" rel="stylesheet">
 
-  <!-- ✅ Solo agregado: estilos para gifs + panel upside (sin tocar tu style.css) -->
   <style>
-    /* GIFs dentro del icono */
+    /* ===== Ajustes sin tocar tu style.css ===== */
+
+    /* Iconos grandes + label Stranger */
     .hub-icon img{
-      width: 62px;
-      height: 62px;
+      width: clamp(84px, 11vw, 140px);
+      height: clamp(84px, 11vw, 140px);
       object-fit: contain;
       display:block;
+      filter: drop-shadow(0 0 18px rgba(255,0,0,.18));
+    }
+    .hub-icon span{
+      font-family: "Benguiat", serif;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      font-size: clamp(14px, 1.6vw, 18px);
+      text-shadow: 0 0 18px rgba(255,0,0,.20), 2px 0 rgba(0,255,255,.12), -2px 0 rgba(255,0,0,.12);
     }
 
-    /* ✅ Panel tipo máquina: SOLO aparece en UPSIDE DOWN */
+    /* SOLO en NORMAL: mostrar botones */
+    body:not(.normal) .hub-only-normal{ display:none !important; }
+
+    /* Decor gifs flotantes (solo normal) */
+    .float-gifs{
+      position: fixed;
+      inset: 0;
+      z-index: 6;            /* debajo de los iconos (que suelen estar 10+) */
+      pointer-events: none;  /* no bloquea clics */
+      display: none;
+    }
+    body.normal .float-gifs{ display:block; }
+
+    .float-gifs img{
+      position:absolute;
+      width: clamp(42px, 6vw, 86px);
+      height:auto;
+      opacity: .85;
+      filter: drop-shadow(0 0 12px rgba(0,0,0,.35));
+      animation: drift 6.5s ease-in-out infinite;
+      transform: translate(-50%,-50%);
+    }
+
+    @keyframes drift{
+      0%,100%{ transform: translate(-50%,-50%) translateY(0) rotate(0deg); }
+      50%{ transform: translate(-50%,-50%) translateY(-14px) rotate(2deg); }
+    }
+
+    /* ✅ Panel texto UPSIDE DOWN (solo upside) */
     .hub-terminal{
       position: fixed;
       left: 50%;
@@ -24,7 +62,7 @@
       transform: translate(-50%, -50%);
       width: min(520px, calc(100vw - 32px));
       z-index: 20;
-      pointer-events: none; /* no bloquea clicks */
+      pointer-events: none;
       opacity: 0;
       transition: opacity .35s ease;
       filter: drop-shadow(0 0 18px rgba(255,0,0,.14));
@@ -56,7 +94,6 @@
     @media (min-width: 900px){
       .hub-terminal{ width: min(560px, calc(100vw - 48px)); }
       .hub-terminal .mono{ font-size: 13px; }
-      .hub-icon img{ width: 74px; height: 74px; }
     }
   </style>
 </head>
@@ -113,25 +150,28 @@
     </div>
   </section>
 
+  <!-- ✅ 22 GIFs flotando SOLO NORMAL -->
+  <div class="float-gifs" id="floatGifs" aria-hidden="true"></div>
+
   <!-- ICONOS -->
   <main class="hub-stage" id="stage">
 
-    <!-- ✅ ARCADE (antes Luces) -->
-    <a class="hub-icon float2"
+    <!-- ✅ ARCADE (solo normal) -->
+    <a class="hub-icon hub-only-normal float2"
        href="facts.html?v=1000"
        data-spark="light"
        aria-label="Arcade"
-       style="left:18%; top:44%;">
+       style="left:18%; top:46%;">
       <img src="img/icons/arcade.GIF" alt="Arcade icon">
       <span>Arcade</span>
     </a>
 
-    <!-- ✅ ARCHIVOS (antes Edits) -->
-    <a class="hub-icon float4"
+    <!-- ✅ ARCHIVOS (solo normal) -->
+    <a class="hub-icon hub-only-normal float4"
        href="edits-hub.html?v=1000"
        data-spark="ash"
        aria-label="Archivos"
-       style="left:64%; top:52%;">
+       style="left:66%; top:54%;">
       <img src="img/icons/archivos.GIF" alt="Archivos icon">
       <span>Archivos</span>
     </a>
@@ -143,7 +183,6 @@
 
   </main>
 
-  <!-- Tu JS igual -->
   <script src="hub.js?v=20"></script>
 
   <script>
@@ -161,6 +200,41 @@
     window.addEventListener("pointerdown", startHubMusic, { once:true });
     window.addEventListener("touchstart", startHubMusic, { once:true });
     window.addEventListener("click", startHubMusic, { once:true });
+
+    // ====== GIFs flotantes (1-22) SOLO NORMAL ======
+    const GIF_PATH = "img/icons/"; // <-- cambia si los tienes en otra carpeta
+    const gifHolder = document.getElementById("floatGifs");
+
+    const positions = [
+      [10,18],[22,12],[34,22],[46,14],[58,20],[70,12],[84,18],
+      [14,40],[30,44],[44,38],[60,42],[76,40],
+      [10,70],[24,76],[38,66],[52,74],[66,68],[80,76],[92,66],
+      [6,52],[90,52],[50,86]
+    ];
+
+    function buildGifs(){
+      if(!gifHolder) return;
+      gifHolder.innerHTML = "";
+
+      for(let i=1;i<=22;i++){
+        const img = document.createElement("img");
+        img.src = GIF_PATH + "hawkins" + i + ".GIF";
+        img.alt = "hawkins gif " + i;
+
+        const p = positions[i-1] || [Math.random()*90+5, Math.random()*80+10];
+        img.style.left = p[0] + "%";
+        img.style.top  = p[1] + "%";
+
+        // variaciones para que se vean vivos
+        img.style.animationDuration = (5 + Math.random()*4) + "s";
+        img.style.animationDelay = (-Math.random()*4) + "s";
+        img.style.opacity = (0.55 + Math.random()*0.35).toFixed(2);
+        img.style.filter = "drop-shadow(0 0 12px rgba(0,0,0,.35))";
+
+        gifHolder.appendChild(img);
+      }
+    }
+    buildGifs();
   </script>
 
 </body>
