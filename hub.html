@@ -1,210 +1,79 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>Hawkins Hub</title>
+<style>
+  /* ==============================
+     PLACEHOLDERS VISIBLES (NORMAL)
+     ============================== */
 
-  <link href="https://fonts.cdnfonts.com/css/benguiat" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=9999">
+  .gif-layer{
+    position:fixed;
+    inset:0;
+    z-index:60; /* 🔴 MÁS ALTO que todo */
+    pointer-events:none;
+  }
 
-  <style>
-    /* ===============================
-       GIF PLACEHOLDERS (NO bloquean clicks)
-    =============================== */
-    .gif-layer{
-      position:fixed;
-      inset:0;
-      z-index:6;
-      pointer-events:none;
-      overflow:hidden;
+  .gif-ph{
+    position:absolute;
+    transform:translate(-50%,-50%) rotate(var(--r));
+    padding:10px 14px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.25);
+    background:rgba(0,0,0,.45);
+    backdrop-filter:blur(6px);
+    font-family:'Press Start 2P', monospace;
+    font-size:10px;
+    letter-spacing:.06em;
+    color:#fff;
+    text-transform:uppercase;
+    text-shadow:
+      0 0 12px rgba(255,0,0,.35),
+      0 0 8px rgba(0,255,255,.25);
+    box-shadow:
+      0 0 0 2px rgba(255,0,0,.12),
+      0 0 30px rgba(255,0,0,.35);
+    animation:floatPH var(--t) ease-in-out infinite;
+    opacity:.95;
+    white-space:nowrap;
+  }
+
+  @keyframes floatPH{
+    0%,100%{ transform:translate(-50%,-50%) rotate(var(--r)) translateY(0); }
+    50%{ transform:translate(-50%,-50%) rotate(var(--r)) translateY(-20px); }
+  }
+
+  /* ❌ NO mostrar en UPSIDE */
+  body.upside .gif-layer,
+  body.will .gif-layer{
+    display:none !important;
+  }
+</style>
+
+<!-- PLACEHOLDERS -->
+<div class="gif-layer" id="gifLayer"></div>
+
+<script>
+  const gifLayer = document.getElementById("gifLayer");
+  const rand = (a,b)=> a + Math.random()*(b-a);
+
+  function renderPlaceholders(){
+    if(!gifLayer) return;
+    gifLayer.innerHTML = "";
+
+    // SOLO WORLD NORMAL
+    if(!document.body.classList.contains("normal")) return;
+
+    for(let i=1;i<=22;i++){
+      const el = document.createElement("div");
+      el.className = "gif-ph";
+      el.textContent = `hawkins${i}.GIF`;
+
+      el.style.left = rand(8,92) + "%";   // TODA la pantalla
+      el.style.top  = rand(10,90) + "%";
+      el.style.setProperty("--r", rand(-18,18) + "deg");
+      el.style.setProperty("--t", rand(3,6) + "s");
+
+      gifLayer.appendChild(el);
     }
-    .gif-ph{
-      position:absolute;
-      left:var(--x);
-      top:var(--y);
-      transform:translate(-50%,-50%) rotate(var(--r));
-      padding:10px 12px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.14);
-      background:rgba(0,0,0,.28);
-      backdrop-filter:blur(8px);
-      box-shadow:
-        0 0 0 2px rgba(255,0,0,.06),
-        0 0 18px rgba(255,0,0,.10),
-        0 0 18px rgba(0,255,255,.06);
-      color:rgba(255,255,255,.86);
-      font-family:'Press Start 2P', monospace;
-      font-size:9px;
-      letter-spacing:.06em;
-      text-transform:uppercase;
-      white-space:nowrap;
-      opacity:.9;
-      animation:phFloat var(--t) ease-in-out infinite;
-    }
-    @keyframes phFloat{
-      0%,100%{ transform:translate(-50%,-50%) rotate(var(--r)) translateY(0); }
-      50%{ transform:translate(-50%,-50%) rotate(var(--r)) translateY(-16px); }
-    }
+  }
 
-    /* Mostrar GIFs SOLO en NORMAL */
-    body.upside .gif-layer,
-    body.will .gif-layer{
-      display:none !important;
-    }
-
-    /* ===============================
-       ICONOS GRANDES + LETRA STRANGER
-    =============================== */
-    .hub-icon img{
-      width:130px;
-      height:130px;
-      object-fit:cover;
-      border-radius:18px;
-      display:block;
-      box-shadow:0 0 28px rgba(255,0,0,.22);
-    }
-    .hub-icon span{
-      font-family:'Benguiat', serif;
-      letter-spacing:.16em;
-      text-transform:uppercase;
-      font-size:18px;
-      margin-top:10px;
-      text-shadow:
-        0 0 18px rgba(255,0,0,.20),
-        2px 0 rgba(0,255,255,.12),
-        -2px 0 rgba(255,0,0,.12);
-    }
-    @media(min-width:900px){
-      .hub-icon img{ width:160px; height:160px; }
-      .hub-icon span{ font-size:20px; }
-    }
-
-    /* Arcade y Archivos SOLO en NORMAL */
-    body.upside .only-normal,
-    body.will .only-normal{
-      display:none !important;
-    }
-
-    /* ===============================
-       MENSAJE UPSIDE DOWN
-    =============================== */
-    .upside-note{
-      position:fixed;
-      left:50%;
-      top:55%;
-      transform:translate(-50%,-50%);
-      width:min(560px,90vw);
-      z-index:30;
-      display:none;
-      padding:16px;
-      border-radius:18px;
-      border:1px solid rgba(255,0,0,.35);
-      background:rgba(0,0,0,.38);
-      backdrop-filter:blur(10px);
-      text-align:center;
-      pointer-events:none;
-      font-family:'Press Start 2P', monospace;
-      font-size:10px;
-      letter-spacing:.08em;
-      line-height:1.8;
-      color:rgba(255,255,255,.88);
-      text-transform:uppercase;
-      box-shadow:0 0 32px rgba(255,0,0,.18);
-    }
-    body.upside .upside-note{ display:block; }
-
-    .upside-note .big{
-      font-family:'Benguiat', serif;
-      font-size:20px;
-      letter-spacing:.18em;
-      margin-bottom:10px;
-      text-shadow:0 0 18px rgba(255,0,0,.25);
-    }
-  </style>
-</head>
-
-<body class="hub-world normal">
-
-  <!-- VIDEO FONDO -->
-  <video autoplay muted loop playsinline id="bg">
-    <source src="background.mp4" type="video/mp4">
-  </video>
-  <div class="hub-vignette"></div>
-
-  <!-- GIF PLACEHOLDERS -->
-  <div class="gif-layer" id="gifLayer" aria-hidden="true"></div>
-
-  <!-- MENSAJE UPSIDE -->
-  <div class="upside-note">
-    <div class="big">02·02·2005 — INDIANA, USA</div>
-    DAYS ELAPSED: 7,670<br>
-    AGE: 21<br>
-    STATUS: OFFICIALLY LEGAL<br>
-    SYSTEM: ONLINE<br><br>
-    FELIZ VIGÉSIMA-PRIMER VUELTA AL SOL
-  </div>
-
-  <!-- AUDIO -->
-  <audio id="hubMusic" loop preload="auto">
-    <source src="should.mp3" type="audio/mpeg">
-  </audio>
-
-  <!-- TOP BAR -->
-  <header class="hub-top">
-    <a class="hub-back" href="index.html?v=1000">←</a>
-    <div class="hub-title">HAWKINS HUB</div>
-    <button class="hub-worldbtn" id="worldBtn">WORLD: NORMAL</button>
-  </header>
-
-  <!-- ICONOS -->
-  <main class="hub-stage" id="stage">
-
-    <a class="hub-icon float2 only-normal" href="facts.html?v=2000" data-spark="light">
-      <img src="img/icons/arcade.GIF" alt="Arcade">
-      <span>Arcade</span>
-    </a>
-
-    <a class="hub-icon float4 only-normal" href="edits-hub.html?v=2000" data-spark="ash">
-      <img src="img/icons/archivos.GIF" alt="Archivos">
-      <span>Archivos</span>
-    </a>
-
-    <div class="hub-hint">
-      Toca los iconos. Cambia el mundo arriba.<br>
-      <b>Easter:</b> toca 7 veces “WORLD”.
-    </div>
-
-  </main>
-
-  <script src="hub.js?v=9999"></script>
-
-  <script>
-    // ===== 22 PLACEHOLDERS =====
-    const gifLayer = document.getElementById("gifLayer");
-    function rand(a,b){ return a + Math.random()*(b-a); }
-
-    function renderPlaceholders(){
-      gifLayer.innerHTML = "";
-      if(!document.body.classList.contains("normal")) return;
-
-      const H = window.innerHeight;
-      for(let i=1;i<=22;i++){
-        const d = document.createElement("div");
-        d.className = "gif-ph";
-        d.textContent = `hawkins${i}.GIF`;
-        d.style.setProperty("--x", rand(8,92) + "%");
-        d.style.setProperty("--y", rand(18,88) + "%");
-        d.style.setProperty("--r", rand(-14,14) + "deg");
-        d.style.setProperty("--t", rand(2.6,5.2) + "s");
-        gifLayer.appendChild(d);
-      }
-    }
-
-    renderPlaceholders();
-    window.addEventListener("resize", renderPlaceholders);
-  </script>
-
-</body>
-</html>
+  window.addEventListener("load", renderPlaceholders);
+  window.addEventListener("resize", renderPlaceholders);
+</script>
