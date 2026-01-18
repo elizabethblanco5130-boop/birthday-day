@@ -4,7 +4,6 @@ let hubMusicStarted = false;
 
 function startHubMusic(){
   if(!hubMusic) return;
-
   hubMusic.volume = 0.35;
 
   hubMusic.play()
@@ -38,6 +37,9 @@ function setWorld(i){
   body.classList.remove("normal","upside","will");
   body.classList.add(worlds[i].cls);
   worldBtn.textContent = worlds[i].label;
+
+  // ✅ GIFs solo en NORMAL
+  renderHubGifs();
 }
 
 worldBtn.addEventListener("click", () => {
@@ -89,15 +91,72 @@ stage.addEventListener("click", (e) => {
 
 
 // =====================================================
-// ✅ ADD-ON (NO borra nada): Edits del HUB → edits-hub.html
+// ✅ FLOATING GIFS (hawkins1.GIF ... hawkins22.GIF)
+// Solo se ven en WORLD: NORMAL
+// Carpeta: img/icons/
 // =====================================================
-// Esto fuerza que el icono "Edits" del hub vaya al álbum libro,
-// aunque el href en el HTML todavía diga gallery.html.
-stage.addEventListener("click", (e) => {
-  const editsIcon = e.target.closest('a.hub-icon.float4');
-  if(!editsIcon) return;
+const gifLayer = document.getElementById("gifLayer");
 
-  // Si el usuario toca "Edits", lo mandamos al álbum
-  e.preventDefault();
-  window.location.href = "edits-hub.html?v=1000";
-}, true);
+function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+function rand(a,b){ return a + Math.random()*(b-a); }
+
+function clearGifs(){
+  if(!gifLayer) return;
+  gifLayer.innerHTML = "";
+}
+
+function buildGifs(){
+  if(!gifLayer) return;
+
+  // zona segura (no tapar header ni hint de abajo)
+  const topPad = 90;
+  const bottomPad = 140;
+
+  const W = window.innerWidth;
+  const H = window.innerHeight;
+
+  for(let n=1; n<=22; n++){
+    const img = document.createElement("img");
+    img.className = "hub-gif";
+    img.alt = `hawkins ${n}`;
+
+    // ✅ IMPORTANTE: tus archivos son .GIF en mayúscula
+    img.src = `img/icons/hawkins${n}.GIF`;
+
+    // tamaño responsive
+    const size = (W < 520) ? rand(38, 62) : rand(44, 78);
+    const x = rand(6, 94);
+    const yPx = rand(topPad, H - bottomPad);
+    const y = (yPx / H) * 100;
+
+    img.style.setProperty("--s", `${size}px`);
+    img.style.setProperty("--x", `${x}%`);
+    img.style.setProperty("--y", `${clamp(y, 10, 92)}%`);
+    img.style.setProperty("--r", `${rand(-12, 12)}deg`);
+    img.style.setProperty("--t", `${rand(2.6, 4.8)}s`);
+
+    gifLayer.appendChild(img);
+  }
+}
+
+function renderHubGifs(){
+  if(!gifLayer) return;
+
+  // Solo en NORMAL
+  if(!document.body.classList.contains("normal")){
+    clearGifs();
+    return;
+  }
+
+  // Rebuild limpio
+  clearGifs();
+  buildGifs();
+}
+
+// Recalcular cuando cambie el tamaño (tablet/desktop)
+window.addEventListener("resize", () => {
+  renderHubGifs();
+});
+
+// Primera vez
+renderHubGifs();
