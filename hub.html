@@ -5,151 +5,116 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>Hawkins Hub</title>
 
+  <!-- Stranger-ish font -->
   <link href="https://fonts.cdnfonts.com/css/benguiat" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=9999">
+  <link rel="stylesheet" href="style.css?v=1000">
 
   <style>
-    /* ✅ Forzar layout centrado (sin pelear con float1/float2 del style.css) */
-    .hub-stage{
-      position: fixed;
-      inset: 0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding: 96px 18px 120px; /* espacio para header + hint */
-      z-index: 20;
-    }
-    .hub-menu{
-      width: min(520px, 92vw);
-      display:flex;
-      flex-direction:column;
-      gap:18px;
-      align-items:center;
-    }
-
-    /* ✅ Capa de GIFs: arriba del video/vignette, abajo de botones */
+    /* ✅ Extras SOLO para que los GIFs sí se vean (encima del video) */
     .gif-layer{
       position: fixed;
       inset: 0;
-      z-index: 12;
+      z-index: 8;              /* arriba del video/vignette, abajo del UI */
       pointer-events: none;
       overflow: hidden;
     }
+
     .hub-gif{
-      position:absolute;
+      position: absolute;
       left: var(--x);
       top: var(--y);
       width: var(--s);
-      height:auto;
-      opacity:.95;
+      height: auto;
+      opacity: .95;
       transform: translate(-50%,-50%) rotate(var(--r));
-      filter: drop-shadow(0 0 14px rgba(255,0,0,.25));
+      filter: drop-shadow(0 0 16px rgba(255,0,0,.22));
       animation: hubFloat var(--t) ease-in-out infinite;
       will-change: transform;
     }
+
     @keyframes hubFloat{
       0%,100%{ transform: translate(-50%,-50%) rotate(var(--r)) translateY(0); }
       50%{ transform: translate(-50%,-50%) rotate(var(--r)) translateY(-16px); }
     }
 
-    /* ✅ Iconos grandes + letra Stranger */
-    .hub-icon{
-      width: min(280px, 78vw);
-    }
+    /* ✅ Iconos del hub: más grandes + label Benguiat */
     .hub-icon img{
-      width: 100%;
-      height: auto;
-      max-height: 170px;
+      width: 86px;
+      height: 86px;
       object-fit: cover;
-      border-radius: 14px;
+      border-radius: 12px;
       display:block;
     }
     .hub-icon span{
       font-family: 'Benguiat', serif !important;
       letter-spacing: .14em;
       text-transform: uppercase;
-      font-size: 18px;
+      font-size: 16px;
       text-shadow:
         0 0 18px rgba(255,0,0,.20),
         2px 0 rgba(0,255,255,.12),
         -2px 0 rgba(255,0,0,.12);
-      margin-top: 8px;
-      display:block;
-      text-align:center;
     }
 
+    /* ✅ En pantallas grandes, aún más grandes */
     @media (min-width: 900px){
-      .hub-menu{
-        flex-direction: row;
-        justify-content:center;
-        gap: 28px;
-        width: min(860px, 92vw);
-      }
-      .hub-icon{ width: 360px; }
-      .hub-icon img{ max-height: 210px; }
-      .hub-icon span{ font-size: 20px; }
+      .hub-icon img{ width: 110px; height: 110px; }
+      .hub-icon span{ font-size: 18px; }
     }
 
-    /* ✅ Solo mostrar estos botones en NORMAL */
+    /* ✅ Solo mostrar Arcade/Archivos en NORMAL */
     body.upside .only-normal,
     body.will .only-normal{
       display:none !important;
-    }
-
-    /* ✅ Hint fijo abajo */
-    .hub-hint{
-      position: fixed;
-      left: 16px;
-      right: 16px;
-      bottom: 16px;
-      z-index: 30;
     }
   </style>
 </head>
 
 <body class="hub-world normal">
 
+  <!-- VIDEO FONDO -->
   <video autoplay muted loop playsinline id="bg">
     <source src="background.mp4" type="video/mp4">
   </video>
-
   <div class="hub-vignette"></div>
 
-  <!-- ✅ GIFs flotantes -->
+  <!-- ✅ capa para GIFs flotantes -->
   <div class="gif-layer" id="gifLayer" aria-hidden="true"></div>
 
+  <!-- 🔊 MÚSICA HUB -->
   <audio id="hubMusic" loop preload="auto">
     <source src="should.mp3" type="audio/mpeg">
   </audio>
 
+  <!-- BARRA SUPERIOR -->
   <header class="hub-top">
     <a class="hub-back" href="index.html?v=1000" aria-label="Volver">←</a>
     <div class="hub-title">HAWKINS HUB</div>
     <button class="hub-worldbtn" id="worldBtn" type="button">WORLD: NORMAL</button>
   </header>
 
+  <!-- ICONOS -->
   <main class="hub-stage" id="stage">
-    <div class="hub-menu">
 
-      <a class="hub-icon only-normal" href="facts.html?v=2000" data-spark="light" aria-label="Arcade">
-        <img src="img/icons/arcade.GIF" alt="Arcade">
-        <span>ARCADE</span>
-      </a>
+    <!-- ✅ ARCADE (solo normal) -->
+    <a class="hub-icon float2 only-normal" href="facts.html?v=1000" data-spark="light" aria-label="Arcade">
+      <img src="img/icons/arcade.GIF" alt="Arcade">
+      <span>Arcade</span>
+    </a>
 
-      <a class="hub-icon only-normal" href="edits-hub.html?v=2000" data-spark="ash" aria-label="Archivos">
-        <img src="img/icons/archivos.GIF" alt="Archivos">
-        <span>ARCHIVOS</span>
-      </a>
-
-    </div>
+    <!-- ✅ ARCHIVOS (solo normal) -->
+    <a class="hub-icon float4 only-normal" href="edits-hub.html?v=1000" data-spark="ash" aria-label="Archivos">
+      <img src="img/icons/archivos.GIF" alt="Archivos">
+      <span>Archivos</span>
+    </a>
 
     <div class="hub-hint">
       Toca los iconos. Cambia el mundo arriba.<br>
       <b>Easter:</b> toca 7 veces “WORLD”.
     </div>
+
   </main>
 
-  <!-- ✅ sube el v para romper cache -->
-  <script src="hub.js?v=2001"></script>
+  <script src="hub.js?v=1000"></script>
 </body>
 </html>
