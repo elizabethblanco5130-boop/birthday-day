@@ -6,97 +6,121 @@
   <title>Hawkins Hub</title>
 
   <link href="https://fonts.cdnfonts.com/css/benguiat" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=9999">
 
   <style>
-    /* ===== GIF LAYER (no bloquea clicks) ===== */
+    /* ===============================
+       GIF PLACEHOLDERS (NO bloquean clicks)
+    =============================== */
     .gif-layer{
       position:fixed;
       inset:0;
-      z-index:5;
+      z-index:6;
       pointer-events:none;
       overflow:hidden;
     }
-    .hub-gif{
+    .gif-ph{
       position:absolute;
-      left: var(--x);
-      top: var(--y);
-      width: var(--s);
-      height:auto;
+      left:var(--x);
+      top:var(--y);
+      transform:translate(-50%,-50%) rotate(var(--r));
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(0,0,0,.28);
+      backdrop-filter:blur(8px);
+      box-shadow:
+        0 0 0 2px rgba(255,0,0,.06),
+        0 0 18px rgba(255,0,0,.10),
+        0 0 18px rgba(0,255,255,.06);
+      color:rgba(255,255,255,.86);
+      font-family:'Press Start 2P', monospace;
+      font-size:9px;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      white-space:nowrap;
       opacity:.9;
-      transform: translate(-50%,-50%) rotate(var(--r));
-      filter: drop-shadow(0 0 12px rgba(255,0,0,.22));
-      animation: hubFloat var(--t) ease-in-out infinite;
-      will-change: transform;
+      animation:phFloat var(--t) ease-in-out infinite;
     }
-    @keyframes hubFloat{
-      0%,100%{ transform: translate(-50%,-50%) rotate(var(--r)) translateY(0); }
-      50%{ transform: translate(-50%,-50%) rotate(var(--r)) translateY(-14px); }
+    @keyframes phFloat{
+      0%,100%{ transform:translate(-50%,-50%) rotate(var(--r)) translateY(0); }
+      50%{ transform:translate(-50%,-50%) rotate(var(--r)) translateY(-16px); }
     }
 
-    /* ===== Iconos más grandes + letra Stranger ===== */
+    /* Mostrar GIFs SOLO en NORMAL */
+    body.upside .gif-layer,
+    body.will .gif-layer{
+      display:none !important;
+    }
+
+    /* ===============================
+       ICONOS GRANDES + LETRA STRANGER
+    =============================== */
     .hub-icon img{
-      width: 115px;
-      height: 115px;
-      object-fit: cover;
-      border-radius: 14px;
+      width:130px;
+      height:130px;
+      object-fit:cover;
+      border-radius:18px;
       display:block;
+      box-shadow:0 0 28px rgba(255,0,0,.22);
     }
     .hub-icon span{
-      font-family: 'Benguiat', serif !important;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      font-size: 18px;
+      font-family:'Benguiat', serif;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      font-size:18px;
+      margin-top:10px;
       text-shadow:
         0 0 18px rgba(255,0,0,.20),
         2px 0 rgba(0,255,255,.12),
         -2px 0 rgba(255,0,0,.12);
     }
-    @media (min-width: 900px){
-      .hub-icon img{ width: 150px; height: 150px; }
-      .hub-icon span{ font-size: 20px; }
+    @media(min-width:900px){
+      .hub-icon img{ width:160px; height:160px; }
+      .hub-icon span{ font-size:20px; }
     }
 
-    /* ===== Solo mostrar Arcade/Archivos en NORMAL ===== */
+    /* Arcade y Archivos SOLO en NORMAL */
     body.upside .only-normal,
-    body.will   .only-normal{
+    body.will .only-normal{
       display:none !important;
     }
 
-    /* ===== UPSIDE NOTE (solo en upside) ===== */
+    /* ===============================
+       MENSAJE UPSIDE DOWN
+    =============================== */
     .upside-note{
       position:fixed;
       left:50%;
-      top:56%;
-      transform: translate(-50%,-50%);
-      width:min(520px, 88vw);
+      top:55%;
+      transform:translate(-50%,-50%);
+      width:min(560px,90vw);
       z-index:30;
-      display:none; /* default */
-      padding:14px 14px;
+      display:none;
+      padding:16px;
       border-radius:18px;
       border:1px solid rgba(255,0,0,.35);
-      background: rgba(0,0,0,.35);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 0 30px rgba(255,0,0,.12);
+      background:rgba(0,0,0,.38);
+      backdrop-filter:blur(10px);
       text-align:center;
       pointer-events:none;
       font-family:'Press Start 2P', monospace;
       font-size:10px;
       letter-spacing:.08em;
-      line-height:1.7;
-      color: rgba(255,255,255,.86);
+      line-height:1.8;
+      color:rgba(255,255,255,.88);
       text-transform:uppercase;
-      opacity:.95;
+      box-shadow:0 0 32px rgba(255,0,0,.18);
     }
     body.upside .upside-note{ display:block; }
 
     .upside-note .big{
       font-family:'Benguiat', serif;
-      letter-spacing:.16em;
-      font-size:18px;
-      color: rgba(255,255,255,.92);
-      text-shadow: 0 0 18px rgba(255,0,0,.18);
-      margin-bottom:8px;
+      font-size:20px;
+      letter-spacing:.18em;
+      margin-bottom:10px;
+      text-shadow:0 0 18px rgba(255,0,0,.25);
     }
   </style>
 </head>
@@ -109,42 +133,40 @@
   </video>
   <div class="hub-vignette"></div>
 
-  <!-- ✅ GIFs flotantes -->
+  <!-- GIF PLACEHOLDERS -->
   <div class="gif-layer" id="gifLayer" aria-hidden="true"></div>
 
-  <!-- ✅ Mensaje solo UPSIDE -->
-  <div class="upside-note" id="upsideNote" aria-hidden="true">
+  <!-- MENSAJE UPSIDE -->
+  <div class="upside-note">
     <div class="big">02·02·2005 — INDIANA, USA</div>
     DAYS ELAPSED: 7,670<br>
     AGE: 21<br>
     STATUS: OFFICIALLY LEGAL<br>
     SYSTEM: ONLINE<br><br>
-    FELIZ VIGÉSIMA-PRIMER VUELTA AL SOL.
+    FELIZ VIGÉSIMA-PRIMER VUELTA AL SOL
   </div>
 
-  <!-- 🔊 MÚSICA HUB -->
+  <!-- AUDIO -->
   <audio id="hubMusic" loop preload="auto">
     <source src="should.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- BARRA SUPERIOR -->
+  <!-- TOP BAR -->
   <header class="hub-top">
-    <a class="hub-back" href="index.html?v=1000" aria-label="Volver">←</a>
+    <a class="hub-back" href="index.html?v=1000">←</a>
     <div class="hub-title">HAWKINS HUB</div>
-    <button class="hub-worldbtn" id="worldBtn" type="button">WORLD: NORMAL</button>
+    <button class="hub-worldbtn" id="worldBtn">WORLD: NORMAL</button>
   </header>
 
   <!-- ICONOS -->
   <main class="hub-stage" id="stage">
 
-    <!-- ✅ ARCADE -->
-    <a class="hub-icon float2 only-normal" href="facts.html?v=2000" data-spark="light" aria-label="Arcade">
+    <a class="hub-icon float2 only-normal" href="facts.html?v=2000" data-spark="light">
       <img src="img/icons/arcade.GIF" alt="Arcade">
       <span>Arcade</span>
     </a>
 
-    <!-- ✅ ARCHIVOS -->
-    <a class="hub-icon float4 only-normal" href="edits-hub.html?v=2000" data-spark="ash" aria-label="Archivos">
+    <a class="hub-icon float4 only-normal" href="edits-hub.html?v=2000" data-spark="ash">
       <img src="img/icons/archivos.GIF" alt="Archivos">
       <span>Archivos</span>
     </a>
@@ -157,5 +179,32 @@
   </main>
 
   <script src="hub.js?v=9999"></script>
+
+  <script>
+    // ===== 22 PLACEHOLDERS =====
+    const gifLayer = document.getElementById("gifLayer");
+    function rand(a,b){ return a + Math.random()*(b-a); }
+
+    function renderPlaceholders(){
+      gifLayer.innerHTML = "";
+      if(!document.body.classList.contains("normal")) return;
+
+      const H = window.innerHeight;
+      for(let i=1;i<=22;i++){
+        const d = document.createElement("div");
+        d.className = "gif-ph";
+        d.textContent = `hawkins${i}.GIF`;
+        d.style.setProperty("--x", rand(8,92) + "%");
+        d.style.setProperty("--y", rand(18,88) + "%");
+        d.style.setProperty("--r", rand(-14,14) + "deg");
+        d.style.setProperty("--t", rand(2.6,5.2) + "s");
+        gifLayer.appendChild(d);
+      }
+    }
+
+    renderPlaceholders();
+    window.addEventListener("resize", renderPlaceholders);
+  </script>
+
 </body>
 </html>
