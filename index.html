@@ -1,119 +1,70 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>STRANGER BIRTHDAY</title>
+<!-- Decor flotando (SOLO GIFs index) -->
+<div class="stickers">
 
-  <!-- Fuente tipo Stranger -->
-  <link href="https://fonts.cdnfonts.com/css/benguiat" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=1000">
-</head>
+  <!-- IZQUIERDA ARRIBA -->
+  <img class="sticker"
+       src="img/icons/index1.GIF"
+       style="
+         position:absolute;
+         left:6%;
+         top:22%;
+         width:110px;
+         z-index:30;
+         filter: drop-shadow(0 0 18px rgba(255,0,0,.45));
+       "
+       alt="index gif 1">
 
-<body class="landing">
+  <!-- DERECHA ARRIBA -->
+  <img class="sticker"
+       src="img/icons/index2.GIF"
+       style="
+         position:absolute;
+         right:6%;
+         top:24%;
+         width:110px;
+         z-index:30;
+         filter: drop-shadow(0 0 18px rgba(255,0,0,.45));
+       "
+       alt="index gif 2">
 
-  <!-- 🎵 AUDIO DE FONDO (NO CAMBIA NADA MÁS) -->
-  <audio id="bgm" loop preload="auto">
-    <source src="bgm.mp3.mp3" type="audio/mpeg">
-  </audio>
+  <!-- IZQUIERDA CENTRO -->
+  <img class="sticker"
+       src="img/icons/index3.GIF"
+       style="
+         position:absolute;
+         left:4%;
+         top:52%;
+         width:120px;
+         z-index:30;
+         filter: drop-shadow(0 0 22px rgba(255,0,0,.5));
+       "
+       alt="index gif 3">
 
-  <!-- Fondo -->
-  <video autoplay muted loop playsinline id="bg">
-    <source src="background.mp4" type="video/mp4">
-  </video>
-  <div class="landing-vignette"></div>
-  <div class="dust"></div>
+  <!-- DERECHA CENTRO -->
+  <img class="sticker"
+       src="img/icons/index4.GIF"
+       style="
+         position:absolute;
+         right:4%;
+         top:54%;
+         width:120px;
+         z-index:30;
+         filter: drop-shadow(0 0 22px rgba(255,0,0,.5));
+       "
+       alt="index gif 4">
 
-  <!-- Decor flotando -->
-  <div class="stickers">
-    <img class="sticker s1" src="img/compass.png" style="left:10%; top:18%;" alt="">
-    <img class="sticker s2" src="img/vhs.png" style="left:78%; top:22%;" alt="">
-    <img class="sticker s3" src="img/dice.png" style="left:12%; top:72%;" alt="">
-    <img class="sticker s4" src="img/walkie.png" style="left:82%; top:70%;" alt="">
+  <!-- CENTRO ARRIBA (ACENTO) -->
+  <img class="sticker"
+       src="img/icons/index5.GIF"
+       style="
+         position:absolute;
+         left:50%;
+         top:10%;
+         transform: translateX(-50%);
+         width:100px;
+         z-index:30;
+         filter: drop-shadow(0 0 20px rgba(255,0,0,.5));
+       "
+       alt="index gif 5">
 
-    <!-- ✅ NUEVO: 5 GIFs (index1..index5) en lugar del “?” -->
-    <img class="sticker s5" src="img/icons/index1.GIF"
-         style="position:absolute; left:6%; top:52%; width:72px; height:auto; z-index:30; filter: drop-shadow(0 0 14px rgba(255,0,0,.35));"
-         alt="index gif 1">
-
-    <img class="sticker s6" src="img/icons/index2.GIF"
-         style="position:absolute; left:90%; top:48%; width:66px; height:auto; z-index:30; filter: drop-shadow(0 0 14px rgba(255,0,0,.35));"
-         alt="index gif 2">
-
-    <img class="sticker s7" src="img/icons/index3.GIF"
-         style="position:absolute; left:8%; top:34%; width:62px; height:auto; z-index:30; filter: drop-shadow(0 0 14px rgba(255,0,0,.35));"
-         alt="index gif 3">
-
-    <img class="sticker s8" src="img/icons/index4.GIF"
-         style="position:absolute; left:84%; top:36%; width:62px; height:auto; z-index:30; filter: drop-shadow(0 0 14px rgba(255,0,0,.35));"
-         alt="index gif 4">
-
-    <img class="sticker s9" src="img/icons/index5.GIF"
-         style="position:absolute; left:50%; top:14%; width:58px; height:auto; z-index:30; filter: drop-shadow(0 0 14px rgba(255,0,0,.35)); transform: translateX(-50%);"
-         alt="index gif 5">
-  </div>
-
-  <main class="landing-center">
-    <section class="landing-panel">
-
-      <!-- Logo glitch -->
-      <h1 class="st-logo" aria-label="Stranger Birthday">
-        <span class="logo-layer base">STRANGER<br>BIRTHDAY</span>
-        <span class="logo-layer cyan" aria-hidden="true">STRANGER<br>BIRTHDAY</span>
-        <span class="logo-layer mag" aria-hidden="true">STRANGER<br>BIRTHDAY</span>
-      </h1>
-
-      <p class="landing-sub">Para Day — 02/02/2005. Hawkins te está mirando.</p>
-
-      <div class="enterTitle">✦ ENTER ✦</div>
-
-      <!-- Botones -->
-      <div class="grid">
-        <a class="landing-btn" href="story.html?v=1000">Tu historia en Hawkins</a>
-        <a class="landing-btn" href="playlist.html?v=1000">Playlist</a>
-        <a class="landing-btn" href="facts.html?v=1000">Facts</a>
-
-        <!-- ✅ CAMBIO: Edits ahora va a edits.html -->
-        <a class="landing-btn" href="edits.html?v=1000">Edits</a>
-
-        <a class="landing-btn big" href="hub.html?v=1000">Entrar al Hawkins Hub</a>
-      </div>
-
-      <!-- ❌ Dock eliminado (para quitar: HUB / WILL / CAKE / STORY repetidos) -->
-
-      <div class="tip">Tip: toca el logo 7 veces para un easter egg.</div>
-    </section>
-  </main>
-
-  <script>
-    // 🎵 iPhone / Safari: la música se activa al primer toque
-    const bgm = document.getElementById("bgm");
-
-    function startMusic() {
-      if(!bgm) return;
-      bgm.volume = 0.5;
-      bgm.play().catch(()=>{});
-      document.removeEventListener("pointerdown", startMusic);
-      document.removeEventListener("touchstart", startMusic);
-      document.removeEventListener("click", startMusic);
-    }
-
-    // usar pointerdown + fallback
-    document.addEventListener("pointerdown", startMusic, { once:true });
-    document.addEventListener("touchstart", startMusic, { once:true });
-    document.addEventListener("click", startMusic, { once:true });
-
-    // Easter egg
-    const logo = document.querySelector(".st-logo");
-    let taps = 0;
-    logo.addEventListener("click", () => {
-      taps++;
-      if (taps >= 7) {
-        taps = 0;
-        alert("📡 Señal encontrada. Hawkins te responde.");
-      }
-    });
-  </script>
-
-</body>
-</html>
+</div>
