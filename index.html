@@ -1,70 +1,127 @@
-<!-- Decor flotando (SOLO GIFs index) -->
-<div class="stickers">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>STRANGER BIRTHDAY</title>
 
-  <!-- IZQUIERDA ARRIBA -->
-  <img class="sticker"
-       src="img/icons/index1.GIF"
-       style="
-         position:absolute;
-         left:6%;
-         top:22%;
-         width:110px;
-         z-index:30;
-         filter: drop-shadow(0 0 18px rgba(255,0,0,.45));
-       "
-       alt="index gif 1">
+  <!-- Fuente tipo Stranger -->
+  <link href="https://fonts.cdnfonts.com/css/benguiat" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=1000">
 
-  <!-- DERECHA ARRIBA -->
-  <img class="sticker"
-       src="img/icons/index2.GIF"
-       style="
-         position:absolute;
-         right:6%;
-         top:24%;
-         width:110px;
-         z-index:30;
-         filter: drop-shadow(0 0 18px rgba(255,0,0,.45));
-       "
-       alt="index gif 2">
+  <style>
+    /* ✅ SOLO para los GIF del index (no rompe tu style.css) */
+    .stickers{
+      position:absolute;
+      inset:0;
+      pointer-events:none; /* no bloquea clicks en botones */
+      z-index:5;
+    }
+    .stickers .sticker{
+      position:absolute;
+      width:92px;
+      height:auto;
+      pointer-events:none;
+      filter: drop-shadow(0 0 18px rgba(255,0,0,.40));
+      opacity:.95;
+      animation: floatIndex 5.6s ease-in-out infinite;
+    }
+    @keyframes floatIndex{
+      0%,100%{ transform: translateY(0); }
+      50%{ transform: translateY(-14px); }
+    }
 
-  <!-- IZQUIERDA CENTRO -->
-  <img class="sticker"
-       src="img/icons/index3.GIF"
-       style="
-         position:absolute;
-         left:4%;
-         top:52%;
-         width:120px;
-         z-index:30;
-         filter: drop-shadow(0 0 22px rgba(255,0,0,.5));
-       "
-       alt="index gif 3">
+    /* tablets */
+    @media (min-width: 700px){
+      .stickers .sticker{ width:110px; }
+    }
+    /* desktop */
+    @media (min-width: 1000px){
+      .stickers .sticker{ width:140px; }
+    }
+  </style>
+</head>
 
-  <!-- DERECHA CENTRO -->
-  <img class="sticker"
-       src="img/icons/index4.GIF"
-       style="
-         position:absolute;
-         right:4%;
-         top:54%;
-         width:120px;
-         z-index:30;
-         filter: drop-shadow(0 0 22px rgba(255,0,0,.5));
-       "
-       alt="index gif 4">
+<body class="landing">
 
-  <!-- CENTRO ARRIBA (ACENTO) -->
-  <img class="sticker"
-       src="img/icons/index5.GIF"
-       style="
-         position:absolute;
-         left:50%;
-         top:10%;
-         transform: translateX(-50%);
-         width:100px;
-         z-index:30;
-         filter: drop-shadow(0 0 20px rgba(255,0,0,.5));
-       "
-       alt="index gif 5">
+  <!-- 🎵 AUDIO DE FONDO -->
+  <audio id="bgm" loop preload="auto">
+    <source src="bgm.mp3.mp3" type="audio/mpeg">
+  </audio>
 
-</div>
+  <!-- Fondo -->
+  <video autoplay muted loop playsinline id="bg">
+    <source src="background.mp4" type="video/mp4">
+  </video>
+  <div class="landing-vignette"></div>
+  <div class="dust"></div>
+
+  <!-- ✅ GIFs (reemplazan los “?”) -->
+  <div class="stickers" aria-hidden="true">
+    <!-- Esquinas / laterales para que se vean siempre -->
+    <img class="sticker" src="img/icons/index1.GIF" style="left:6%; top:12%; animation-delay:.0s;" alt="">
+    <img class="sticker" src="img/icons/index2.GIF" style="right:6%; top:14%; animation-delay:.4s;" alt="">
+    <img class="sticker" src="img/icons/index3.GIF" style="left:4%; bottom:14%; animation-delay:.7s;" alt="">
+    <img class="sticker" src="img/icons/index4.GIF" style="right:5%; bottom:16%; animation-delay:1.0s;" alt="">
+    <!-- uno extra al centro-izq pero fuera del panel -->
+    <img class="sticker" src="img/icons/index5.GIF" style="left:8%; top:52%; animation-delay:1.3s;" alt="">
+  </div>
+
+  <main class="landing-center">
+    <section class="landing-panel">
+
+      <!-- Logo glitch -->
+      <h1 class="st-logo" aria-label="Stranger Birthday">
+        <span class="logo-layer base">STRANGER<br>BIRTHDAY</span>
+        <span class="logo-layer cyan" aria-hidden="true">STRANGER<br>BIRTHDAY</span>
+        <span class="logo-layer mag" aria-hidden="true">STRANGER<br>BIRTHDAY</span>
+      </h1>
+
+      <p class="landing-sub">Para Day — 02/02/2005. Hawkins te está mirando.</p>
+
+      <div class="enterTitle">✦ ENTER ✦</div>
+
+      <!-- Botones -->
+      <div class="grid">
+        <a class="landing-btn" href="story.html?v=1000">Tu historia en Hawkins</a>
+        <a class="landing-btn" href="playlist.html?v=1000">Playlist</a>
+        <a class="landing-btn" href="facts.html?v=1000">Facts</a>
+        <a class="landing-btn" href="edits.html?v=1000">Edits</a>
+        <a class="landing-btn big" href="hub.html?v=1000">Entrar al Hawkins Hub</a>
+      </div>
+
+      <div class="tip">Tip: toca el logo 7 veces para un easter egg.</div>
+    </section>
+  </main>
+
+  <script>
+    // 🎵 iPhone / Safari: la música se activa al primer toque
+    const bgm = document.getElementById("bgm");
+
+    function startMusic() {
+      if(!bgm) return;
+      bgm.volume = 0.5;
+      bgm.play().catch(()=>{});
+      document.removeEventListener("pointerdown", startMusic);
+      document.removeEventListener("touchstart", startMusic);
+      document.removeEventListener("click", startMusic);
+    }
+
+    document.addEventListener("pointerdown", startMusic, { once:true });
+    document.addEventListener("touchstart", startMusic, { once:true });
+    document.addEventListener("click", startMusic, { once:true });
+
+    // Easter egg
+    const logo = document.querySelector(".st-logo");
+    let taps = 0;
+    logo.addEventListener("click", () => {
+      taps++;
+      if (taps >= 7) {
+        taps = 0;
+        alert("📡 Señal encontrada. Hawkins te responde.");
+      }
+    });
+  </script>
+
+</body>
+</html>
