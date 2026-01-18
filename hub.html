@@ -5,6 +5,60 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>Hawkins Hub</title>
   <link rel="stylesheet" href="style.css?v=20">
+
+  <!-- ✅ Solo agregado: estilos para gifs + panel upside (sin tocar tu style.css) -->
+  <style>
+    /* GIFs dentro del icono */
+    .hub-icon img{
+      width: 62px;
+      height: 62px;
+      object-fit: contain;
+      display:block;
+    }
+
+    /* ✅ Panel tipo máquina: SOLO aparece en UPSIDE DOWN */
+    .hub-terminal{
+      position: fixed;
+      left: 50%;
+      top: 62%;
+      transform: translate(-50%, -50%);
+      width: min(520px, calc(100vw - 32px));
+      z-index: 20;
+      pointer-events: none; /* no bloquea clicks */
+      opacity: 0;
+      transition: opacity .35s ease;
+      filter: drop-shadow(0 0 18px rgba(255,0,0,.14));
+    }
+    body.upside .hub-terminal{ opacity: 1; }
+
+    .hub-terminal .box{
+      border-radius: 18px;
+      border: 1px solid rgba(255,0,0,.55);
+      background: rgba(0,0,0,.42);
+      backdrop-filter: blur(10px);
+      padding: 14px 14px 12px;
+      box-shadow: 0 0 26px rgba(255,0,0,.10);
+    }
+
+    .hub-terminal .mono{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      letter-spacing: .08em;
+      line-height: 1.55;
+      color: rgba(255,255,255,.86);
+      text-transform: uppercase;
+      text-align: center;
+      white-space: pre-line;
+    }
+    .hub-terminal .dim{ color: rgba(255,255,255,.70); }
+    .hub-terminal .cyan{ color: rgba(0,255,255,.80); }
+
+    @media (min-width: 900px){
+      .hub-terminal{ width: min(560px, calc(100vw - 48px)); }
+      .hub-terminal .mono{ font-size: 13px; }
+      .hub-icon img{ width: 74px; height: 74px; }
+    }
+  </style>
 </head>
 
 <body class="hub-world normal">
@@ -27,33 +81,59 @@
     <button class="hub-worldbtn" id="worldBtn" type="button">WORLD: NORMAL</button>
   </header>
 
+  <!-- ✅ TEXTO (solo UPSIDE DOWN) -->
+  <section class="hub-terminal" aria-hidden="true">
+    <div class="box">
+      <div class="mono">
+<span class="cyan">02·02·2005</span>
+<span class="dim">INDIANA, USA</span>
+
+<span class="dim">⸻</span>
+
+<span class="dim">DAYS ELAPSED:</span>
+<span class="cyan">7,670</span>
+
+<span class="dim">⸻</span>
+
+<span class="dim">AGE:</span>
+<span class="cyan">21</span>
+
+<span class="dim">⸻</span>
+
+<span class="dim">STATUS:</span>
+<span class="cyan">OFFICIALLY LEGAL</span>
+
+<span class="dim">⸻</span>
+
+<span class="dim">SYSTEM:</span>
+<span class="cyan">ONLINE</span>
+
+<span class="dim">FELIZ VIGESIMOPRIMER VUELTA AL SOL.</span>
+      </div>
+    </div>
+  </section>
+
   <!-- ICONOS -->
   <main class="hub-stage" id="stage">
 
-    <a class="hub-icon float1" href="story.html?v=1000" data-spark="ink" aria-label="Tu historia">
-      <img src="img/tape.png" alt="Tape">
-      <span>Historia</span>
+    <!-- ✅ ARCADE (antes Luces) -->
+    <a class="hub-icon float2"
+       href="facts.html?v=1000"
+       data-spark="light"
+       aria-label="Arcade"
+       style="left:18%; top:44%;">
+      <img src="img/icons/arcade.GIF" alt="Arcade icon">
+      <span>Arcade</span>
     </a>
 
-    <a class="hub-icon float2" href="facts.html?v=1000" data-spark="light" aria-label="Luces">
-      <img src="img/lights.png" alt="Lights">
-      <span>Luces</span>
-    </a>
-
-    <a class="hub-icon float3" href="playlist.html?v=1000" data-spark="ink" aria-label="Playlist">
-      <img src="img/radio.png" alt="Radio">
-      <span>Mixtape</span>
-    </a>
-
-    <!-- ✅ EDlTS DEL HUB (álbum libro) -->
-    <a class="hub-icon float4" href="edits-hub.html?v=1000" data-spark="ash" aria-label="Edits">
-      <img src="img/portal.png" alt="Portal">
-      <span>Edits</span>
-    </a>
-
-    <a class="hub-icon float5" href="lab.html?v=1000" data-spark="ink" aria-label="Lab">
-      <img src="img/lab.png" alt="Lab">
-      <span>Lab</span>
+    <!-- ✅ ARCHIVOS (antes Edits) -->
+    <a class="hub-icon float4"
+       href="edits-hub.html?v=1000"
+       data-spark="ash"
+       aria-label="Archivos"
+       style="left:64%; top:52%;">
+      <img src="img/icons/archivos.GIF" alt="Archivos icon">
+      <span>Archivos</span>
     </a>
 
     <div class="hub-hint">
@@ -63,6 +143,7 @@
 
   </main>
 
+  <!-- Tu JS igual -->
   <script src="hub.js?v=20"></script>
 
   <script>
@@ -77,7 +158,6 @@
       hubStarted = true;
     }
 
-    // primer toque en cualquier parte de la página
     window.addEventListener("pointerdown", startHubMusic, { once:true });
     window.addEventListener("touchstart", startHubMusic, { once:true });
     window.addEventListener("click", startHubMusic, { once:true });
