@@ -5,13 +5,9 @@ let hubMusicStarted = false;
 function startHubMusic(){
   if(!hubMusic) return;
   hubMusic.volume = 0.35;
-
-  hubMusic.play()
-    .then(()=>{ hubMusicStarted = true; })
-    .catch(()=>{});
+  hubMusic.play().then(()=>{ hubMusicStarted = true; }).catch(()=>{});
 }
 
-// iPhone: intenta arrancar con cualquier interacción real
 ["touchstart","click","pointerdown"].forEach(evt=>{
   window.addEventListener(evt, () => {
     if(!hubMusicStarted) startHubMusic();
@@ -22,7 +18,6 @@ function startHubMusic(){
 // ===== WORLDS =====
 const body = document.body;
 const worldBtn = document.getElementById("worldBtn");
-const stage = document.getElementById("stage");
 
 const worlds = [
   { cls: "normal", label: "WORLD: NORMAL" },
@@ -58,7 +53,9 @@ worldBtn.addEventListener("click", () => {
 setWorld(0);
 
 
-// ===== SPARKS =====
+// ===== SPARKS (si tu style.css ya trae .spark animación, esto funciona igual) =====
+const stage = document.getElementById("stage");
+
 function spawnSparkBurst(x, y, mode="ink"){
   const count = 18;
   for(let i=0;i<count;i++){
@@ -83,7 +80,6 @@ function spawnSparkBurst(x, y, mode="ink"){
 
 stage.addEventListener("click", (e) => {
   if(!hubMusicStarted) startHubMusic();
-
   const target = e.target.closest("[data-spark]");
   const mode = target?.dataset?.spark || "ash";
   spawnSparkBurst(e.clientX, e.clientY, mode);
@@ -92,13 +88,12 @@ stage.addEventListener("click", (e) => {
 
 // =====================================================
 // ✅ FLOATING GIFS (hawkins1.GIF ... hawkins22.GIF)
-// Solo se ven en WORLD: NORMAL
 // Carpeta: img/icons/
 // =====================================================
 const gifLayer = document.getElementById("gifLayer");
 
-function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
 function rand(a,b){ return a + Math.random()*(b-a); }
+function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
 
 function clearGifs(){
   if(!gifLayer) return;
@@ -108,9 +103,8 @@ function clearGifs(){
 function buildGifs(){
   if(!gifLayer) return;
 
-  // zona segura (no tapar header ni hint de abajo)
   const topPad = 90;
-  const bottomPad = 140;
+  const bottomPad = 150;
 
   const W = window.innerWidth;
   const H = window.innerHeight;
@@ -120,11 +114,13 @@ function buildGifs(){
     img.className = "hub-gif";
     img.alt = `hawkins ${n}`;
 
-    // ✅ IMPORTANTE: tus archivos son .GIF en mayúscula
+    // ✅ CASE SENSITIVE: tus archivos son .GIF
     img.src = `img/icons/hawkins${n}.GIF`;
 
-    // tamaño responsive
-    const size = (W < 520) ? rand(38, 62) : rand(44, 78);
+    // si falla cargar, lo escondemos para que no moleste
+    img.onerror = () => { img.style.display = "none"; };
+
+    const size = (W < 520) ? rand(34, 58) : rand(42, 76);
     const x = rand(6, 94);
     const yPx = rand(topPad, H - bottomPad);
     const y = (yPx / H) * 100;
@@ -142,21 +138,14 @@ function buildGifs(){
 function renderHubGifs(){
   if(!gifLayer) return;
 
-  // Solo en NORMAL
   if(!document.body.classList.contains("normal")){
     clearGifs();
     return;
   }
 
-  // Rebuild limpio
   clearGifs();
   buildGifs();
 }
 
-// Recalcular cuando cambie el tamaño (tablet/desktop)
-window.addEventListener("resize", () => {
-  renderHubGifs();
-});
-
-// Primera vez
+window.addEventListener("resize", renderHubGifs);
 renderHubGifs();
