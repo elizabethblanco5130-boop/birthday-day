@@ -298,5 +298,49 @@
   </audio>
 
   <script src="story.js?v=999"></script>
+
+  <!-- ✅ NUEVO: GATE WILL (solo aparece con 2 llaves) -->
+  <script>
+    (function(){
+      const keysEl = document.getElementById("keys");
+      const choices = document.getElementById("choices");
+
+      function getKeys(){
+        const n = parseInt((keysEl?.textContent || "0").trim(), 10);
+        return Number.isFinite(n) ? n : 0;
+      }
+
+      function gateWillButton(){
+        if(!choices) return;
+        const k = getKeys();
+
+        // Busca botones/links dentro de choices que digan "IR A WILL" o apunten a will.html
+        const items = choices.querySelectorAll("button, a");
+        items.forEach(el=>{
+          const txt = (el.textContent || "").toUpperCase().replace(/\s+/g," ").trim();
+          const href = (el.getAttribute("href") || "").toLowerCase();
+
+          const isWill =
+            txt.includes("IR A WILL") ||
+            href.includes("will.html") ||
+            href.endsWith("/will.html");
+
+          if(isWill){
+            el.style.display = (k >= 2) ? "" : "none";
+          }
+        });
+      }
+
+      // Corre al cargar
+      gateWillButton();
+
+      // Observa cambios (porque story.js re-renderiza choices)
+      const obs = new MutationObserver(gateWillButton);
+      if(choices) obs.observe(choices, { childList:true, subtree:true });
+
+      // También observa si cambia el contador de llaves
+      if(keysEl) obs.observe(keysEl, { childList:true, characterData:true, subtree:true });
+    })();
+  </script>
 </body>
 </html>
