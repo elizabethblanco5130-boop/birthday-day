@@ -14,7 +14,11 @@
     body{
       margin:0;
       background:#000;
-      overflow:hidden;
+
+      /* ✅ CAMBIO: ahora SÍ se puede hacer scroll */
+      overflow-y:auto;
+      overflow-x:hidden;
+
       font-family: system-ui, -apple-system, Arial;
     }
 
@@ -160,6 +164,15 @@
     @media (max-width:420px){
       .letter p{ font-size:9.5px; }
     }
+
+    /* ✅ NUEVO: “espaciador” invisible para que el scroll tenga altura
+       (SIN mover nada visual, solo permite deslizar para ver todo el texto) */
+    .scroll-spacer{
+      height: 220vh;
+    }
+    @media (max-width: 520px){
+      .scroll-spacer{ height: 260vh; }
+    }
   </style>
 </head>
 
@@ -203,10 +216,18 @@
     </p>
   </div>
 
+  <!-- ✅ NUEVO: solo para permitir scroll (no se ve) -->
+  <div class="scroll-spacer" aria-hidden="true"></div>
+
   <div class="controls">
     <a class="btn" href="hub.html?v=999">← HUB</a>
     <button class="btn btn-main" id="flipBtn">CRUZAR AL OTRO LADO</button>
   </div>
+
+  <!-- ✅ NUEVO: audio de Will’s Wall -->
+  <audio id="wallSong" preload="auto">
+    <source src="audio/mixtape/matil.mp3" type="audio/mpeg">
+  </audio>
 
   <script>
     const normal = document.getElementById("sceneNormal");
@@ -249,6 +270,22 @@
 
     // Asegura estado inicial limpio
     setWorld();
+
+    // ✅ NUEVO: música al tocar (iPhone-safe)
+    const wallSong = document.getElementById("wallSong");
+    let startedSong = false;
+
+    function startSong(){
+      if(startedSong) return;
+      startedSong = true;
+      try{
+        wallSong.volume = 0.6;
+        wallSong.play().catch(()=>{});
+      }catch(e){}
+    }
+
+    window.addEventListener("touchstart", startSong, { once:true, passive:true });
+    window.addEventListener("click", startSong, { once:true });
   </script>
 
 </body>
