@@ -472,35 +472,35 @@
       </div>
 
       <div class="playlist" id="playlist">
-        <div class="track" data-index="0" data-src="" data-title="Song 01" data-artist="Artist">
-          <div class="tag">Cassette 01</div><div class="name">Song 01 — Artist</div>
+        <div class="track" data-index="0" data-src="audio/mixtape/pontepami.mp3" data-title="Ponte pa’ mi" data-artist="Tu esposo">
+          <div class="tag">Cassette 01</div><div class="name">Ponte pa’ mi — Tu esposo</div>
         </div>
-        <div class="track" data-index="1" data-src="" data-title="Song 02" data-artist="Artist">
-          <div class="tag">Cassette 02</div><div class="name">Song 02 — Artist</div>
+        <div class="track" data-index="1" data-src="audio/mixtape/pensandote.mp3" data-title="Pensándote" data-artist="Tu esposo">
+          <div class="tag">Cassette 02</div><div class="name">Pensándote — Tu esposo</div>
         </div>
-        <div class="track" data-index="2" data-src="" data-title="Song 03" data-artist="Artist">
-          <div class="tag">Cassette 03</div><div class="name">Song 03 — Artist</div>
+        <div class="track" data-index="2" data-src="audio/mixtape/decaro.mp3" data-title="De Carolina" data-artist="Tu esposo">
+          <div class="tag">Cassette 03</div><div class="name">De Carolina — Tu esposo</div>
         </div>
-        <div class="track" data-index="3" data-src="" data-title="Song 04" data-artist="Artist">
-          <div class="tag">Cassette 04</div><div class="name">Song 04 — Artist</div>
+        <div class="track" data-index="3" data-src="audio/mixtape/deja.mp3" data-title="Deja" data-artist="Tu esposo">
+          <div class="tag">Cassette 04</div><div class="name">Deja — Tu esposo</div>
         </div>
-        <div class="track" data-index="4" data-src="" data-title="Song 05" data-artist="Artist">
-          <div class="tag">Cassette 05</div><div class="name">Song 05 — Artist</div>
+        <div class="track" data-index="4" data-src="audio/mixtape/212.mp3" data-title="2:12 am" data-artist="Tu esposo">
+          <div class="tag">Cassette 05</div><div class="name">2:12 am — Tu esposo</div>
         </div>
-        <div class="track" data-index="5" data-src="" data-title="Song 06" data-artist="Artist">
-          <div class="tag">Cassette 06</div><div class="name">Song 06 — Artist</div>
+        <div class="track" data-index="5" data-src="audio/mixtape/punto4.mp3" data-title="Punto 40" data-artist="Tu esposo">
+          <div class="tag">Cassette 06</div><div class="name">Punto 40 — Tu esposo</div>
         </div>
-        <div class="track" data-index="6" data-src="" data-title="Song 07" data-artist="Artist">
-          <div class="tag">Cassette 07</div><div class="name">Song 07 — Artist</div>
+        <div class="track" data-index="6" data-src="audio/mixtape/tuconel.mp3" data-title="Tú con él" data-artist="Tu esposo">
+          <div class="tag">Cassette 07</div><div class="name">Tú con él — Tu esposo</div>
         </div>
-        <div class="track" data-index="7" data-src="" data-title="Song 08" data-artist="Artist">
-          <div class="tag">Cassette 08</div><div class="name">Song 08 — Artist</div>
+        <div class="track" data-index="7" data-src="audio/mixtape/expresso.mp3" data-title="Expresso martini." data-artist="Tu esposo">
+          <div class="tag">Cassette 08</div><div class="name">Expresso martini. — Tu esposo</div>
         </div>
-        <div class="track" data-index="8" data-src="" data-title="Song 09" data-artist="Artist">
-          <div class="tag">Cassette 09</div><div class="name">Song 09 — Artist</div>
+        <div class="track" data-index="8" data-src="audio/mixtape/desesperados.mp3" data-title="Desesperados" data-artist="Tu esposo">
+          <div class="tag">Cassette 09</div><div class="name">Desesperados — Tu esposo</div>
         </div>
-        <div class="track" data-index="9" data-src="" data-title="Song 10" data-artist="Artist">
-          <div class="tag">Cassette 10</div><div class="name">Song 10 — Artist</div>
+        <div class="track" data-index="9" data-src="audio/mixtape/fantasias.mp3" data-title="Fantasías" data-artist="Tu esposo">
+          <div class="tag">Cassette 10</div><div class="name">Fantasías — Tu esposo</div>
         </div>
       </div>
 
@@ -744,21 +744,17 @@
       prime(aVecna);
       prime(player);
 
-      // si ya está idle cuando desbloquea, arrancar ahora mismo
       if(inIdle && !isSongPlaying){
         startIdleAudioSequence();
       } else {
-        // reinicia el conteo limpio
         resetIdle();
       }
     }
 
-    // IMPORTANT: pointerdown + touchstart + click
     window.addEventListener("pointerdown", unlockAudioNow, { once:true });
     window.addEventListener("touchstart", unlockAudioNow, { once:true, passive:true });
     window.addEventListener("click", unlockAudioNow, { once:true });
 
-    // actividad para idle
     ["pointerdown","mousemove","touchstart","keydown","scroll"].forEach(ev=>{
       window.addEventListener(ev, resetIdle, { passive:true });
     });
@@ -769,7 +765,6 @@
     // =========================
     document.querySelectorAll(".obj").forEach(o=>{
       o.addEventListener("click", ()=>{
-        // si es el primer gesto del usuario, esto también desbloquea audio
         if(!audioUnlocked) unlockAudioNow();
 
         resetIdle();
@@ -802,7 +797,6 @@
     function playTrack(el){
       if(!audioUnlocked) unlockAudioNow();
 
-      // al elegir musica: cancela idle + audios
       isSongPlaying = true;
       setIdle(false);
       stopIdleAudio();
@@ -816,7 +810,6 @@
         player.volume = 0.55;
         player.play().catch(()=>{});
       } else {
-        // si aun no pusiste previews, igual damos “proteccion” por un rato
         setTimeout(()=>{
           isSongPlaying = false;
           resetIdle();
@@ -832,13 +825,11 @@
       playTrack(tracks[i]);
     });
 
-    // si estabas usando previews y termina
     player.addEventListener("ended", ()=>{
       isSongPlaying = false;
       resetIdle();
     });
     player.addEventListener("pause", ()=>{
-      // si pausas manualmente una preview, vuelve a idle normal
       if(player.currentTime > 0 && player.currentTime < (player.duration || Infinity)){
         isSongPlaying = false;
         resetIdle();
