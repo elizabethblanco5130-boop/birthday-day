@@ -15,8 +15,8 @@
       --red: rgba(255,0,0,.75);
       --glass: rgba(0,0,0,.45);
       --txt: rgba(255,255,255,.92);
-      --cyan: rgba(0,255,255,.72);
-      --cyanSoft: rgba(0,255,255,.22);
+      --cyan: rgba(0,255,255,.65);
+      --cyanSoft: rgba(0,255,255,.20);
     }
 
     *{ box-sizing:border-box; }
@@ -27,7 +27,7 @@
       background:#000;
       color:#fff;
       font-family: system-ui, -apple-system, Arial;
-      overflow:hidden; /* el scroll lo hace el panel internamente */
+      overflow:hidden; /* fondo fijo, panel scrollea */
     }
 
     /* ===== BACKGROUND IMAGE ===== */
@@ -61,7 +61,7 @@
       transition: opacity .6s ease, filter .6s ease;
     }
 
-    /* ===== IDLE VISUALS ===== */
+    /* ===== IDLE VISUALS (solo cuando idle y NO hay canción sonando) ===== */
     .idleDark{
       position:fixed; inset:0;
       opacity:0;
@@ -114,6 +114,7 @@
       80% { opacity:0; }
     }
 
+    /* (solo vibra cuando idle) */
     body.idle .ui{ animation: shake .22s infinite; }
     @keyframes shake{
       0%{ transform: translate(0,0); }
@@ -175,17 +176,16 @@
       background: rgba(0,0,0,.45);
       box-shadow: 0 0 32px rgba(255,0,0,.12);
       backdrop-filter: blur(10px);
-      overflow:hidden;
 
+      /* ✅ FIX SCROLL: el panel entero scrollea */
       max-height: calc(100vh - 32px);
-      display:flex;
-      flex-direction:column;
+      overflow:auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     .header{
       padding:14px 14px 12px;
       border-bottom: 1px solid rgba(255,255,255,.08);
-      flex:0 0 auto;
     }
 
     .logo{
@@ -223,10 +223,6 @@
       display:grid;
       grid-template-columns: 1fr 1fr;
       gap:10px;
-      overflow:auto;
-      flex:1 1 auto;
-      overscroll-behavior: contain;
-      -webkit-overflow-scrolling: touch;
     }
 
     .track{
@@ -240,18 +236,15 @@
       user-select:none;
       overflow:hidden;
       min-height:64px;
-      transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease;
+      transition: transform .12s ease, border-color .15s ease, box-shadow .15s ease;
     }
     .track:hover{ transform: translateY(-1px); }
     .track:active{ transform: translateY(1px); }
 
-    /* ✅ track activo */
-    .track.playing{
-      border-color: rgba(0,255,255,.70);
-      box-shadow:
-        0 0 0 2px rgba(0,255,255,.14),
-        0 0 26px rgba(0,255,255,.14),
-        0 0 18px rgba(255,0,0,.10);
+    /* ✅ Track activo (borde cyan) */
+    .track.active{
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 2px rgba(0,255,255,.14), 0 0 22px rgba(0,255,255,.10);
     }
 
     .track .tag{
@@ -272,6 +265,75 @@
       text-transform: uppercase;
     }
 
+    /* ===== Player controls area ===== */
+    .playerBox{
+      padding: 10px 14px 14px;
+      border-top: 1px solid rgba(255,255,255,.08);
+    }
+
+    .transport{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:10px;
+    }
+
+    .tbtn{
+      flex:1;
+      min-height: 52px;
+      border-radius:14px;
+      border:1px solid rgba(0,255,255,.38);
+      background: rgba(0,0,0,.45);
+      color:#fff;
+      font-family:'Press Start 2P', monospace;
+      font-size:12px;
+      letter-spacing:.06em;
+      text-transform: uppercase;
+      cursor:pointer;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 0 18px rgba(0,255,255,.06);
+    }
+    .tbtn:active{ transform: translateY(1px); }
+
+    .autoBtn{
+      width:100%;
+      margin-bottom:10px;
+      min-height: 52px;
+      border-radius:14px;
+      border:1px solid rgba(255,0,0,.60);
+      background: rgba(0,0,0,.45);
+      color:#fff;
+      font-family:'Press Start 2P', monospace;
+      font-size:12px;
+      letter-spacing:.06em;
+      text-transform: uppercase;
+      cursor:pointer;
+    }
+    .autoBtn.on{
+      border-color: rgba(0,255,255,.55);
+      box-shadow: 0 0 18px rgba(0,255,255,.12);
+    }
+
+    .progressRow{
+      display:grid;
+      grid-template-columns: 52px 1fr 52px;
+      gap:10px;
+      align-items:center;
+    }
+    .time{
+      font-family:'Press Start 2P', monospace;
+      font-size:10px;
+      letter-spacing:.06em;
+      color: rgba(255,255,255,.82);
+      text-align:center;
+      user-select:none;
+    }
+    input[type="range"]{
+      width:100%;
+      accent-color: rgba(0,255,255,.85);
+    }
+
     .controls{
       padding:12px 14px;
       border-top: 1px solid rgba(255,255,255,.08);
@@ -280,7 +342,6 @@
       align-items:center;
       justify-content:space-between;
       flex-wrap:wrap;
-      flex:0 0 auto;
     }
 
     .btn{
@@ -299,93 +360,10 @@
       text-align:center;
       cursor:pointer;
       backdrop-filter: blur(8px);
-      user-select:none;
     }
     .btn.main{
       border:2px solid rgba(255,0,0,.75);
       box-shadow: 0 0 18px rgba(255,0,0,.18);
-    }
-
-    /* ✅ transport / progreso */
-    .transport{
-      width:100%;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      padding:12px 14px;
-      border-top: 1px solid rgba(255,255,255,.08);
-      background: rgba(0,0,0,.25);
-      backdrop-filter: blur(8px);
-      flex:0 0 auto;
-    }
-
-    .transportRow{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      justify-content:space-between;
-      flex-wrap:wrap;
-    }
-
-    .tbtn{
-      flex:1;
-      min-width: 90px;
-      padding:10px 10px;
-      border-radius:14px;
-      border:1px solid rgba(0,255,255,.30);
-      background: rgba(0,0,0,.28);
-      color:#fff;
-      font-family:'Press Start 2P', monospace;
-      font-size:11px;
-      letter-spacing:.06em;
-      text-transform: uppercase;
-      cursor:pointer;
-      box-shadow: 0 0 18px rgba(0,255,255,.08);
-      user-select:none;
-    }
-    .tbtn:active{ transform: translateY(1px); }
-
-    .tbtn.auto{
-      border-color: rgba(255,0,0,.45);
-      box-shadow: 0 0 18px rgba(255,0,0,.10);
-      min-width: 150px;
-    }
-    .tbtn.auto.on{
-      border-color: rgba(0,255,255,.55);
-      box-shadow: 0 0 20px rgba(0,255,255,.12);
-    }
-
-    .seekWrap{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      width:100%;
-    }
-    .time{
-      font-family:'Press Start 2P', monospace;
-      font-size:9px;
-      letter-spacing:.06em;
-      opacity:.88;
-      white-space:nowrap;
-    }
-    input[type="range"]{
-      -webkit-appearance:none;
-      appearance:none;
-      width:100%;
-      height:12px;
-      border-radius:999px;
-      background: rgba(255,255,255,.12);
-      border:1px solid rgba(255,255,255,.10);
-      outline:none;
-    }
-    input[type="range"]::-webkit-slider-thumb{
-      -webkit-appearance:none;
-      appearance:none;
-      width:18px; height:18px;
-      border-radius:50%;
-      background: rgba(0,255,255,.85);
-      border:1px solid rgba(0,255,255,.30);
-      box-shadow: 0 0 16px rgba(0,255,255,.18);
     }
 
     /* ===== OBJECTS ===== */
@@ -485,7 +463,6 @@
       }
       .logo{ font-size: 40px; }
       .obj{ width:84px; height:84px; }
-
       .obj.bag{ left:20px; bottom:160px; }
       .obj.walkie{ left:20px; top:260px; }
     }
@@ -501,12 +478,10 @@
 
     @media (max-width: 520px){
       .ui{ left:12px; right:12px; bottom:12px; width:auto; }
-      .panel{ max-height: calc(100vh - 24px); }
       .logo{ font-size: 26px; }
       .subtitle{ font-size: 13px; }
       .playlist{ grid-template-columns: 1fr 1fr; }
-      .tbtn{ min-width: 88px; }
-      .tbtn.auto{ min-width: 150px; }
+      .tbtn, .autoBtn{ font-size:11px; }
     }
   </style>
 </head>
@@ -556,52 +531,53 @@
         <div class="quote">“When the noise gets too loud, this is what brings her back.”</div>
       </div>
 
+      <!-- ✅ TRACKS CON RUTAS REALES -->
       <div class="playlist" id="playlist">
-        <!-- SOLO cambie Cassette 04 => Dajau’ -->
-        <div class="track" data-index="0" data-src="" data-title="Song 01" data-artist="Artist">
-          <div class="tag">Cassette 01</div><div class="name">Song 01 — Artist</div>
+        <div class="track" data-index="0" data-src="audio/mixtape/pontepami.mp3" data-title="Ponte pa' mi" data-artist="Tu esposo">
+          <div class="tag">Cassette 01</div><div class="name">PONTE PA' MI — TU ESPOSO</div>
         </div>
-        <div class="track" data-index="1" data-src="" data-title="Song 02" data-artist="Artist">
-          <div class="tag">Cassette 02</div><div class="name">Song 02 — Artist</div>
+        <div class="track" data-index="1" data-src="audio/mixtape/pensandote.mp3" data-title="Pensándote" data-artist="Tu esposo">
+          <div class="tag">Cassette 02</div><div class="name">PENSÁNDOTE — TU ESPOSO</div>
         </div>
-        <div class="track" data-index="2" data-src="" data-title="Song 03" data-artist="Artist">
-          <div class="tag">Cassette 03</div><div class="name">Song 03 — Artist</div>
+        <div class="track" data-index="2" data-src="audio/mixtape/decaro.mp3" data-title="De Carolina" data-artist="Tu esposo">
+          <div class="tag">Cassette 03</div><div class="name">DE CAROLINA — TU ESPOSO</div>
         </div>
-        <div class="track" data-index="3" data-src="" data-title="Dajau’" data-artist="Artist">
-          <div class="tag">Cassette 04</div><div class="name">Dajau’ — Artist</div>
+        <div class="track" data-index="3" data-src="audio/mixtape/deja.mp3" data-title="Dajau’" data-artist="Tu esposo">
+          <div class="tag">Cassette 04</div><div class="name">DAJAU’ — TU ESPOSO</div>
         </div>
-        <div class="track" data-index="4" data-src="" data-title="Song 05" data-artist="Artist">
-          <div class="tag">Cassette 05</div><div class="name">Song 05 — Artist</div>
+        <div class="track" data-index="4" data-src="audio/mixtape/212.mp3" data-title="2:12 am" data-artist="Tu esposo">
+          <div class="tag">Cassette 05</div><div class="name">2:12 AM — TU ESPOSO</div>
         </div>
-        <div class="track" data-index="5" data-src="" data-title="Song 06" data-artist="Artist">
-          <div class="tag">Cassette 06</div><div class="name">Song 06 — Artist</div>
+        <div class="track" data-index="5" data-src="audio/mixtape/punto4.mp3" data-title="Punto 40" data-artist="Tu esposo">
+          <div class="tag">Cassette 06</div><div class="name">PUNTO 40 — TU ESPOSO</div>
         </div>
-        <div class="track" data-index="6" data-src="" data-title="Song 07" data-artist="Artist">
-          <div class="tag">Cassette 07</div><div class="name">Song 07 — Artist</div>
+        <div class="track" data-index="6" data-src="audio/mixtape/tuconel.mp3" data-title="Tú con él" data-artist="Tu esposo">
+          <div class="tag">Cassette 07</div><div class="name">TÚ CON ÉL — TU ESPOSO</div>
         </div>
-        <div class="track" data-index="7" data-src="" data-title="Song 08" data-artist="Artist">
-          <div class="tag">Cassette 08</div><div class="name">Song 08 — Artist</div>
+        <div class="track" data-index="7" data-src="audio/mixtape/expresso.mp3" data-title="Expresso martini" data-artist="Tu esposo">
+          <div class="tag">Cassette 08</div><div class="name">EXPRESSO MARTINI — TU ESPOSO</div>
         </div>
-        <div class="track" data-index="8" data-src="" data-title="Song 09" data-artist="Artist">
-          <div class="tag">Cassette 09</div><div class="name">Song 09 — Artist</div>
+        <div class="track" data-index="8" data-src="audio/mixtape/desesperados.mp3" data-title="Desesperados" data-artist="Tu esposo">
+          <div class="tag">Cassette 09</div><div class="name">DESESPERADOS — TU ESPOSO</div>
         </div>
-        <div class="track" data-index="9" data-src="" data-title="Song 10" data-artist="Artist">
-          <div class="tag">Cassette 10</div><div class="name">Song 10 — Artist</div>
+        <div class="track" data-index="9" data-src="audio/mixtape/fantasias.mp3" data-title="Fantasías" data-artist="Tu esposo">
+          <div class="tag">Cassette 10</div><div class="name">FANTASÍAS — TU ESPOSO</div>
         </div>
       </div>
 
-      <!-- ✅ CONTROLES DE REPRODUCCION + PROGRESO + AUTO NEXT -->
-      <div class="transport" id="transport">
-        <div class="transportRow">
-          <button class="tbtn" id="prevBtn" type="button" title="Anterior">⏮︎</button>
-          <button class="tbtn" id="ppBtn" type="button" title="Play/Pause">⏯︎</button>
-          <button class="tbtn" id="nextBtn" type="button" title="Siguiente">⏭︎</button>
-          <button class="tbtn auto" id="autoBtn" type="button" title="Auto Next">AUTO: OFF</button>
+      <!-- ✅ CONTROLES DEL PLAYER -->
+      <div class="playerBox">
+        <div class="transport">
+          <button class="tbtn" id="prevBtn" type="button">⏮︎</button>
+          <button class="tbtn" id="playBtn" type="button">⏯︎</button>
+          <button class="tbtn" id="nextBtn" type="button">⏭︎</button>
         </div>
 
-        <div class="seekWrap">
+        <button class="autoBtn" id="autoBtn" type="button">AUTO: OFF</button>
+
+        <div class="progressRow">
           <div class="time" id="tCur">0:00</div>
-          <input id="seek" type="range" min="0" max="1000" value="0" step="1" />
+          <input id="seek" type="range" min="0" max="100" value="0" />
           <div class="time" id="tDur">0:00</div>
         </div>
       </div>
@@ -614,13 +590,13 @@
     </section>
   </div>
 
-  <audio id="player" preload="auto"></audio>
+  <audio id="player" preload="auto" playsinline></audio>
 
   <!-- ✅ IDLE AUDIO -->
-  <audio id="underw" preload="auto" loop>
+  <audio id="underw" preload="auto" loop playsinline>
     <source src="underw.mp3" type="audio/mpeg">
   </audio>
-  <audio id="vecnaAudio" preload="auto">
+  <audio id="vecnaAudio" preload="auto" playsinline>
     <source src="vecna.wav" type="audio/wav">
   </audio>
 
@@ -746,29 +722,24 @@
     let inIdle = false;
     let idleTimer = null;
     let vecnaDelayTimer = null;
-
-    // ✅ bandera de “hay canción sonando”
     let isSongPlaying = false;
 
     function stopIdleAudio(){
       clearTimeout(vecnaDelayTimer);
       vecnaDelayTimer = null;
-
-      if(aUnderw){ try{ aUnderw.pause(); }catch(e){} }
-      if(aVecna){ try{ aVecna.pause(); }catch(e){} }
+      try{ aUnderw.pause(); }catch(e){}
+      try{ aVecna.pause(); }catch(e){}
     }
 
     function startIdleAudioSequence(){
       if(!audioUnlocked) return;
       if(isSongPlaying) return;
 
-      if(aUnderw){
-        try{
-          aUnderw.loop = true;
-          aUnderw.volume = 0.55;
-          aUnderw.play().catch(()=>{});
-        }catch(e){}
-      }
+      try{
+        aUnderw.loop = true;
+        aUnderw.volume = 0.55;
+        aUnderw.play().catch(()=>{});
+      }catch(e){}
 
       clearTimeout(vecnaDelayTimer);
       vecnaDelayTimer = setTimeout(()=>{
@@ -776,23 +747,20 @@
         if(isSongPlaying) return;
         if(vecnaHasPlayedThisVisit) return;
 
-        if(aVecna){
-          try{
-            aVecna.loop = false;
-            aVecna.volume = 0.75;
-            aVecna.currentTime = 0;
-            aVecna.play().then(()=>{ vecnaHasPlayedThisVisit = true; }).catch(()=>{});
-          }catch(e){}
-        } else {
+        try{
+          aVecna.loop = false;
+          aVecna.volume = 0.75;
+          aVecna.currentTime = 0;
+          aVecna.play().then(()=>{ vecnaHasPlayedThisVisit = true; }).catch(()=>{});
+        }catch(e){
           vecnaHasPlayedThisVisit = true;
         }
       }, 7000);
     }
 
-    // ✅ IDLE visual SOLO si no hay canción sonando
     function setIdle(on){
-      // si hay canción sonando, jamás permitimos idle visuals
-      if(isSongPlaying) on = false;
+      // ✅ nunca aplicar idle si hay canción sonando
+      if(isSongPlaying && on) return;
 
       inIdle = on;
       document.body.classList.toggle("idle", on);
@@ -805,16 +773,18 @@
       }
     }
 
-    // ✅ 6.5s sin tocar Y sin canción => idle
     function resetIdle(){
-      if(isSongPlaying) return;
-
+      // ✅ si hay canción sonando, no entres en idle y quita el rojo
+      if(isSongPlaying){
+        setIdle(false);
+        clearTimeout(idleTimer);
+        return;
+      }
       setIdle(false);
       clearTimeout(idleTimer);
       idleTimer = setTimeout(()=> setIdle(true), 6500);
     }
 
-    // ✅ “prime” audio para iOS
     function unlockAudioNow(){
       if(audioUnlocked) return;
       audioUnlocked = true;
@@ -830,7 +800,7 @@
               a.currentTime = 0;
               a.muted = false;
             }).catch(()=>{ a.muted = false; });
-          }else{
+          } else {
             a.muted = false;
           }
         }catch(e){}
@@ -840,12 +810,8 @@
       prime(aVecna);
       prime(player);
 
-      // si ya estabas idle al desbloquear, inicia secuencia
-      if(inIdle && !isSongPlaying){
-        startIdleAudioSequence();
-      }else{
-        resetIdle();
-      }
+      // reinicia timer
+      resetIdle();
     }
 
     window.addEventListener("pointerdown", unlockAudioNow, { once:true });
@@ -892,192 +858,142 @@
     const panicBtn = document.getElementById("panicBtn");
 
     const prevBtn = document.getElementById("prevBtn");
-    const ppBtn   = document.getElementById("ppBtn");
+    const playBtn = document.getElementById("playBtn");
     const nextBtn = document.getElementById("nextBtn");
     const autoBtn = document.getElementById("autoBtn");
-    const seek    = document.getElementById("seek");
-    const tCur    = document.getElementById("tCur");
-    const tDur    = document.getElementById("tDur");
+    const seek = document.getElementById("seek");
+    const tCur = document.getElementById("tCur");
+    const tDur = document.getElementById("tDur");
 
     let currentIndex = -1;
     let autoNext = false;
-    let seeking = false;
+    let userScrubbing = false;
 
-    function fmtTime(sec){
-      if(!isFinite(sec) || sec < 0) return "0:00";
-      const m = Math.floor(sec/60);
-      const s = Math.floor(sec%60);
-      return m + ":" + String(s).padStart(2,"0");
+    function fmtTime(s){
+      if(!isFinite(s) || s < 0) return "0:00";
+      const m = Math.floor(s/60);
+      const ss = Math.floor(s%60).toString().padStart(2,"0");
+      return `${m}:${ss}`;
     }
 
-    function setPlayingIndex(i){
-      currentIndex = i;
-      tracks.forEach(t=> t.classList.remove("playing"));
-      if(i >= 0 && tracks[i]) tracks[i].classList.add("playing");
+    function setActive(i){
+      tracks.forEach(t=>t.classList.remove("active"));
+      if(i >= 0 && tracks[i]) tracks[i].classList.add("active");
     }
 
-    function setSongPlaying(on){
-      isSongPlaying = on;
-
-      // si empieza canción: apagar idle visual y audios idle
-      if(on){
-        setIdle(false);
-        stopIdleAudio();
-        document.body.classList.remove("idle");
-      }else{
-        // si se detiene canción: reiniciar conteo idle
-        resetIdle();
-      }
-    }
-
-    function loadTrack(i){
+    function loadAndPlay(i){
       if(i < 0 || i >= tracks.length) return;
+      if(!audioUnlocked) unlockAudioNow();
+
       const el = tracks[i];
       const src = (el.dataset.src || "").trim();
+      if(!src) return;
 
-      setPlayingIndex(i);
+      currentIndex = i;
+      setActive(i);
 
-      // si no hay src, no podemos reproducir, pero igual “marca” la selección
-      if(!src){
-        showWhisper("Good. You chose music.");
-        setSongPlaying(false);
-        return;
-      }
+      // ✅ al reproducir: NO idle, NO rojo, NO underw/vecna
+      isSongPlaying = true;
+      setIdle(false);
+      stopIdleAudio();
 
       player.src = src;
       player.currentTime = 0;
-    }
-
-    function playCurrent(){
-      if(currentIndex < 0) return;
-      const el = tracks[currentIndex];
-      const src = (el.dataset.src || "").trim();
-      if(!src){
-        showWhisper("Good. You chose music.");
-        return;
-      }
-
-      showWhisper("Good. You chose music.");
-      player.volume = 0.55;
-
+      player.volume = 0.65;
       player.play().then(()=>{
-        setSongPlaying(true);
-      }).catch(()=>{});
+        showWhisper("Good. You chose music.");
+      }).catch(()=>{
+        // si iOS bloqueó, pide toque
+        showWhisper("Tap PLAY again.");
+        isSongPlaying = false;
+        resetIdle();
+      });
     }
 
-    function pauseCurrent(){
-      try{ player.pause(); }catch(e){}
-      setSongPlaying(false);
-    }
-
-    function playTrackAt(i){
+    function togglePlay(){
       if(!audioUnlocked) unlockAudioNow();
-      loadTrack(i);
-      playCurrent();
+
+      if(player.src && !player.paused){
+        player.pause();
+      } else {
+        if(currentIndex === -1) loadAndPlay(0);
+        else player.play().catch(()=> showWhisper("Tap PLAY again."));
+      }
     }
 
-    function playTrack(el){
-      if(!audioUnlocked) unlockAudioNow();
-      const i = Number(el.dataset.index);
-      playTrackAt(i);
+    function prev(){
+      if(currentIndex <= 0) loadAndPlay(0);
+      else loadAndPlay(currentIndex - 1);
+    }
+    function next(){
+      if(currentIndex === -1) loadAndPlay(0);
+      else if(currentIndex >= tracks.length - 1) loadAndPlay(tracks.length - 1);
+      else loadAndPlay(currentIndex + 1);
     }
 
-    tracks.forEach(el=> el.addEventListener("click", ()=> playTrack(el)));
+    tracks.forEach((el, idx)=>{
+      el.addEventListener("click", ()=> loadAndPlay(idx));
+    });
 
     panicBtn.addEventListener("click", ()=>{
-      if(!audioUnlocked) unlockAudioNow();
       const i = Math.floor(Math.random()*tracks.length);
-      playTrackAt(i);
+      loadAndPlay(i);
     });
 
-    prevBtn.addEventListener("click", ()=>{
-      if(tracks.length === 0) return;
-      const i = (currentIndex <= 0) ? tracks.length - 1 : currentIndex - 1;
-      playTrackAt(i);
-    });
-
-    nextBtn.addEventListener("click", ()=>{
-      if(tracks.length === 0) return;
-      const i = (currentIndex >= tracks.length - 1) ? 0 : currentIndex + 1;
-      playTrackAt(i);
-    });
-
-    ppBtn.addEventListener("click", ()=>{
-      if(currentIndex < 0){
-        // si no hay track seleccionado, inicia random
-        const i = Math.floor(Math.random()*tracks.length);
-        playTrackAt(i);
-        return;
-      }
-
-      if(!player.src){
-        // no hay audio, solo toggle visual
-        showWhisper("Pick a cassette.");
-        return;
-      }
-
-      if(player.paused) playCurrent();
-      else pauseCurrent();
-    });
+    prevBtn.addEventListener("click", prev);
+    nextBtn.addEventListener("click", next);
+    playBtn.addEventListener("click", togglePlay);
 
     autoBtn.addEventListener("click", ()=>{
       autoNext = !autoNext;
-      autoBtn.classList.toggle("on", autoNext);
       autoBtn.textContent = autoNext ? "AUTO: ON" : "AUTO: OFF";
+      autoBtn.classList.toggle("on", autoNext);
     });
 
     // progreso
     player.addEventListener("loadedmetadata", ()=>{
       tDur.textContent = fmtTime(player.duration);
+      seek.value = 0;
     });
 
     player.addEventListener("timeupdate", ()=>{
-      if(seeking) return;
+      if(!userScrubbing){
+        const p = (player.duration ? (player.currentTime/player.duration)*100 : 0);
+        seek.value = String(Math.max(0, Math.min(100, p)));
+      }
       tCur.textContent = fmtTime(player.currentTime);
-      if(isFinite(player.duration) && player.duration > 0){
-        seek.value = Math.floor((player.currentTime / player.duration) * 1000);
-      }else{
-        seek.value = 0;
-      }
+      if(isFinite(player.duration)) tDur.textContent = fmtTime(player.duration);
     });
 
-    seek.addEventListener("pointerdown", ()=>{ seeking = true; });
-    seek.addEventListener("pointerup", ()=>{
-      seeking = false;
-      if(isFinite(player.duration) && player.duration > 0){
-        const p = Number(seek.value) / 1000;
-        player.currentTime = p * player.duration;
-      }
-    });
     seek.addEventListener("input", ()=>{
-      if(isFinite(player.duration) && player.duration > 0){
-        const p = Number(seek.value) / 1000;
-        const preview = p * player.duration;
-        tCur.textContent = fmtTime(preview);
-      }
+      userScrubbing = true;
     });
 
-    // al terminar:
-    player.addEventListener("ended", ()=>{
-      setSongPlaying(false);
-      if(autoNext){
-        const i = (currentIndex >= tracks.length - 1) ? 0 : currentIndex + 1;
-        playTrackAt(i);
-      }else{
-        // queda resaltado, pero no suena nada
-        showWhisper("Paused. Choose next.");
-      }
+    seek.addEventListener("change", ()=>{
+      userScrubbing = false;
+      if(!player.duration) return;
+      const pct = Number(seek.value)/100;
+      player.currentTime = pct * player.duration;
     });
 
-    // si pausas manual
+    // estados
+    player.addEventListener("play", ()=>{
+      isSongPlaying = true;
+      setIdle(false);
+      stopIdleAudio();
+    });
+
     player.addEventListener("pause", ()=>{
-      if(player.currentTime > 0 && player.currentTime < (player.duration || Infinity)){
-        setSongPlaying(false);
-      }
+      // si pausas manualmente, vuelve a idle después de 6.5s
+      isSongPlaying = false;
+      resetIdle();
     });
 
-    // init: dejar AUTO en OFF visible
-    autoBtn.textContent = "AUTO: OFF";
+    player.addEventListener("ended", ()=>{
+      isSongPlaying = false;
+      if(autoNext) next();
+      else resetIdle();
+    });
 
     // =========================
     // EASTER: 7 taps en logo
